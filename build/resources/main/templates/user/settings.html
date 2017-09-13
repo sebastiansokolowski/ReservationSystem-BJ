@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css"/>
+        <script src="//code.jquery.com/jquery-1.10.2.js"/>
+        <script src="//code.jquery.com/ui/1.11.2/jquery-ui.js"/>
+        <meta charset="UTF-8"/>
+        <title>Title</title>
+    </head>
+    <body>
+        <center>
+            <h2>Ustawienia konta</h2>
+            <div style="margin-left: 35%; margin-right: 35%;">
+                <form method="post" action="/user/settings">
+                    <fieldset>
+                        <div align="right">
+                            <input type="checkbox" name="newLogin"/>Zmień login
+                            <p>
+                                Nowy login: <input maxlength="20" name="new_login" type="text" disabled="disabled"
+                                                   required="true"/>
+                            </p>
+                            <input type="checkbox" name="newName"/>Zmień imię
+                            <p>
+                                Podaj swoje imię: <input maxlength="20" name="new_name" type="text" disabled="disabled"
+                                                         required="true"/>
+                            </p>
+                            <input type="checkbox" name="newPassword"/>Zmień hasło
+                            <p>
+
+                                Nowe hasło: <input maxlength="20" name="new_password" type="password"
+                                                   disabled="disabled" required="true"/>
+                            </p>
+                            <p>
+                                Powtórz nowe hasło: <input maxlength="20" name="new_password_repeat"
+                                                           type="password" disabled="disabled" required="true"/>
+                            </p>
+                        </div>
+                    </fieldset>
+                    <br/>
+                    <fieldset>
+                        <div align="right">
+                            <p>
+                                Podaj hasło: <input maxlength="20" name="password_old"
+                                                    type="password" required="true"/>
+                            </p>
+                            <input type="submit" value="Wyślij"/>
+                        </div>
+                    </fieldset>
+                </form>
+                <br/>
+            </div>
+        </center>
+        <script type="text/javascript">
+        $(function () {
+            $("input:checkbox[name=newLogin]").click(function () {
+                $("input:text[name=new_login]").attr("disabled", !this.checked);
+            });
+            $("input:checkbox[name=newName]").click(function () {
+                $("input:text[name=new_name]").attr("disabled", !this.checked);
+            });
+            $("input:checkbox[name=newPassword]").click(function () {
+                $("input:password[name=new_password]").attr("disabled", !this.checked);
+                $("input:password[name=new_password_repeat]").attr("disabled", !this.checked);
+            });
+        });
+        </script>
+    </body>
+</html>
