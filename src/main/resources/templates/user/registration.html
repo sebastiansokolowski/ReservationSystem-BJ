@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:form="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta charset="UTF-8"/>
+        <title>Title</title>
+    </head>
+    <body>
+        <center>
+            <h2>Rejestracja konta</h2>
+            <fieldset>
+                <form:select path="room">
+                    <form:option value="" label="...."/>
+                    <form:options items="${rooms}"/>
+                </form:select>
+                <img width="600" height="900" alt="" src="/images/regulamin1.jpg"/>
+                <br/>
+                <img width="600" height="900" alt="" src="/images/regulamin2.jpg"/>
+                <div style="margin-left: 35%; margin-right: 35%;">
+                    <form th:object="${user}" th:action="@{/user/registration}" method="post">
+                        <div align="right">
+                            <p>
+                                Pokój:
+                                <select th:field="*{roomId}" required="true">
+                                    <option value=""/>
+                                    <option th:each="room : ${rooms}"
+                                            th:value="${room.id}"
+                                            th:text="${room.room}+${room.type}"/>
+                                </select>
+                                <label th:if="${#fields.hasErrors('roomId')}" th:errors="*{roomId}"
+                                       style="color:red;font-size:15px"
+                                       class="validation-message"/>
+                            </p>
+                            <p>
+                                Imię: <input type="text" th:field="*{name}" maxlength="30" required="true"/>
+                            <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}" style="color:red;font-size:15px"
+                               class="validation-message"/>
+                            </p>
+                            <p>
+                                Email: <input type="text" th:field="*{email}" maxlength="30" required="true"/>
+                            <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}"
+                               style="color:red;font-size:15px"
+                               class="validation-message"/>
+                            </p>
+                            <p>
+                                Login: <input type="text" th:field="*{username}" maxlength="30" required="true"/>
+                            <p th:if="${#fields.hasErrors('username')}" th:errors="*{username}"
+                               style="color:red;font-size:15px"
+                               class="validation-message"/>
+                            </p>
+                            <p>
+                                Hasło: <input type="password" th:field="*{password}" minlength="5" maxlength="30"
+                                              required="true"/>
+                            <p th:if="${#fields.hasErrors('password')}" th:errors="*{password}"
+                               style="color:red;font-size:15px"
+                               class="validation-message"/>
+                            </p>
+                            <p>
+                                Powtórz hasło: <input type="password" th:field="*{passwordRepeat}" minlength="5"
+                                                      maxlength="30" required="true"/>
+                            <p th:if="${#fields.hasErrors('passwordRepeat')}" th:errors="*{passwordRepeat}"
+                               style="color:red;font-size:15px"
+                               class="validation-message"/>
+                            </p>
+                            <p align="center">
+                                <input type="checkbox" name="accept" value="accept" required="true"/>Akceptuje regulamin
+                            </p>
+                            <center>
+                                <input type="submit" value="Rejestracja"/>
+                            </center>
+                        </div>
+                    </form>
+                </div>
+            </fieldset>
+        </center>
+    </body>
+</html>
