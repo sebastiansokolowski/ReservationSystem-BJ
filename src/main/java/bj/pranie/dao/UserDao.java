@@ -1,8 +1,11 @@
 package bj.pranie.dao;
 
+import bj.pranie.entity.Room;
 import bj.pranie.entity.User;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * Created by noon on 10.08.16.
@@ -13,5 +16,5 @@ public interface UserDao extends CrudRepository<User, Long> {
 
     User findByUsername(String username);
 
-
+    List<User> findByRoom(Room room);
 }
