@@ -21,16 +21,15 @@ public class User {
     @NotNull
     private String password;
 
-
     @NotNull
     private String name;
 
     @NotNull
-    private String tokens;
+    private int tokens = 0;
 
     @Enumerated(EnumType.STRING)
     @NotNull
-    private UserRole role;
+    private UserRole role = UserRole.USER;
 
     @NotNull
     private String email;
@@ -79,11 +78,11 @@ public class User {
         this.name = name;
     }
 
-    public String getTokens() {
+    public int getTokens() {
         return tokens;
     }
 
-    public void setTokens(String tokens) {
+    public void setTokens(int tokens) {
         this.tokens = tokens;
     }
 
