@@ -15,20 +15,22 @@
                 .alignright {
                     float: right;
                 }
-
-
-
         </style>
     </head>
     <body>
         <center>
             <h1>
-                Lista na pranie na tydzień <span th:text="${week}"/>
+                Lista na pranie na tydzień <span th:text="${weekFrame}"/>
             </h1>
             <p>
                 Liczba wolnych miejsc: <span th:text="${wmFree}"/>
             </p>
-            <input type="submit" value="Poprzedni tydzień" onclick="window.location = '/lastweek';"/>
+            <form th:action="@{/week/} + ${prevWeekId}" class="alignleft" style="margin-left:50 px">
+                <input type="submit" value="Poprzedni tydzień" />
+            </form>
+            <form th:action="@{/week/} + ${nextWeekId}" class="alignright" style="margin-right:45px">
+                <input type="submit" value="Następny tydzień" />
+            </form>
             <table width="100%">
                 <tbody>
                     <tr>
@@ -39,16 +41,21 @@
                         <th align="center">Piątek</th>
                         <th align="center">Sobota</th>
                     </tr>
-                    <tr th:each="reservations : ${reservations}">
-                        <th th:each="freeWm : ${reservations.value}" class="time" th:bgcolor="${freeWm.color}"
+                    <tr>
+                        <th th:each="dayDate : ${timesWeek[0].dates}">
+                            <span th:text="${dayDate.date}"/>
+                        </th>
+                    </tr>
+                    <tr th:each="timeWeek,i : ${timesWeek}">
+                        <th th:each="wmDate : ${timeWeek.dates}" class="time" th:bgcolor="${wmDate.color}"
                             style="border-radius: 7px; cursor: pointer; text-align: center; opacity: 1;">
-                            <form action="#" th:action="@{/dashboard/myEntries/} + ${freeWm}" method="get">
+                            <form action="#" th:action="@{/wm/} + ${wmDate.date} +@{/}+ ${i.index}" method="get">
                                 <button width="100%" th:id="'table_entry_childs_button_' + ${freeWm}" type="submit"
                                         style="border:none; background-color: transparent; cursor:pointer;">
-                                    <span th:text="${reservations.key}"/>
+                                    <span th:text="${timeWeek.time}"/>
                                     <br/>
                                     <br/>
-                                    Wolne pralki: <span th:text="${freeWm.wmFree}"/>
+                                    Wolne pralki: <span th:text="${wmDate.wmFree}"/>
                                 </button>
                             </form>
                         </th>
@@ -101,6 +108,7 @@
                 }, 20);
             });
         });
+
 
 
 
