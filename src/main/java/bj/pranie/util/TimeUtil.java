@@ -13,4 +13,8 @@ public class TimeUtil {
     public static String getTime() {
         return calendar.get(Calendar.HOUR_OF_DAY) + ":"+ calendar.get(Calendar.MINUTE);
     }
+
+    public static Calendar getCalendar(){
+        return (Calendar) calendar.clone();
+    }
 }
