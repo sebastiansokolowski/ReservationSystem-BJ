@@ -26,7 +26,6 @@ public class WeekController {
     private static final int RESET_TIME = 10;
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
     private static final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
-    private static final SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm");
 
     @Autowired
     private ReservationDao reservationDao;
@@ -141,7 +140,7 @@ public class WeekController {
                 TimeWeekModel.WmDate wmDate = timeWeekModel.new WmDate();
                 wmDate.setDate(date);
 
-                boolean isPast = isPast(fromTime, date);
+                boolean isPast = TimeUtil.isPast(fromTime, date);
 
                 List<Reservation> reservations = getWmFree(washTime.getId(), date);
 
@@ -223,25 +222,6 @@ public class WeekController {
         wmFree -= reservationDao.countByDatesBetween(fromDate, toDate);
 
         return wmFree;
-    }
-
-    private boolean isPast(String time, String date) {
-        Calendar now = TimeUtil.getCalendar();
-        now.setTime(new Date());
-
-        Calendar calendar = TimeUtil.getCalendar();
-        try {
-            calendar.setTime(format.parse(date + " " + time));
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return false;
-        }
-
-        if (now.before(calendar)) {
-            return false;
-        } else {
-            return true;
-        }
     }
 
     private String getCellColor(int freeSpace, boolean past, boolean myReservation) {
