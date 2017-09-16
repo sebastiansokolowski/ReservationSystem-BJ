@@ -8,7 +8,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
 /**
- * Created by noon on 13.10.16.
+ * Created by Sebastian Sokolowski on 13.10.16.
  */
 @Configuration
 @EnableWebSecurity
@@ -17,7 +17,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable();
         http.authorizeRequests()
-                .antMatchers("/", "/week" ,"/week/*", "/wm/*/*", "/user/registration", "/user/restore", "/images/*", "/js/*").permitAll()
+                .antMatchers("/", "/week", "/week/*", "/wm/*/*/*/*", "/user/registration", "/user/restore", "/images/*", "/js/*").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()

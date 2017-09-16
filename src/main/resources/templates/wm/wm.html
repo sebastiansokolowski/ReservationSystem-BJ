@@ -1,10 +1,35 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
     <head>
         <meta charset="UTF-8"/>
         <title>Title</title>
     </head>
     <body>
-        
+        <center>
+            <h1>
+                <span th:text="${dayName}"/> <span th:text="${date}"/>
+                <br/>
+                <span th:text="${time}"/>
+            </h1>
+            <p>
+                Liczba wolnych miejsc:
+                <span th:text="${wmFree}"/>
+            </p>
+            <table width="35%">
+                <tbody>
+                    <tr>
+                        <th th:each="reservation : ${reservations}" style="border-radius: 7px;vertical-align:top"
+                            width="11%" align="center"
+                            th:bgcolor="${reservation.color}">
+                            <img src="/images/wm.jpg"/>
+                            <spam th:if="reservation.type == 'RESERVED'" th:text="${reservation.user.name}"/>
+                            <br/>
+                            <spam th:if="reservation.type == 'RESERVED'"
+                                  th:text="${reservation.user.room.room}+${reservation.user.room.type}"/>
+                        </th>
+                    </tr>
+                </tbody>
+            </table>
+        </center>
     </body>
 </html>
