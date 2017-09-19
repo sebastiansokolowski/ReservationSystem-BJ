@@ -49,17 +49,18 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
 
         if (user.getRole().equals(UserRole.ADMIN)) {
-            grantedAuths.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+            grantedAuths.add(new SimpleGrantedAuthority("ADMIN"));
         }
 
         if (user.getRole().equals(UserRole.USER)) {
-            grantedAuths.add(new SimpleGrantedAuthority("ROLE_USER"));
+            grantedAuths.add(new SimpleGrantedAuthority("USER"));
         }
         return grantedAuths;
     }
 
     @Override
     public boolean supports(Class<?> authentication) {
-        return true;
+        return authentication.equals(
+                UsernamePasswordAuthenticationToken.class);
     }
 }
