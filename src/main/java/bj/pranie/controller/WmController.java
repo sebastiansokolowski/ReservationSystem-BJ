@@ -57,7 +57,7 @@ public class WmController {
     }
 
     private String getWashTime(WashTime washTime) {
-        return washTime.getFromTime() + " - " + washTime.getToTime();
+        return timeFormat.format(washTime.getFromTime()) + " - " + timeFormat.format(washTime.getToTime());
     }
 
     private List<WmModel> getWmModels(List<Reservation> reservationList, Date date, WashTime washTime) {
@@ -66,33 +66,33 @@ public class WmController {
         List<Integer> brokenWm = getBrokenWm();
         boolean isPast = TimeUtil.isPast(timeFormat.format(washTime.getFromTime()), dateFormat.format(date));
 
-        for(int i=0;i!=3;i++){
+        for (int i = 0; i != 3; i++) {
             WmModel wmModel = new WmModel();
 
             Reservation reservation = null;
-            for (Reservation reservation1: reservationList
-                 ) {
-                if(reservation1.getWm() == i){
+            for (Reservation reservation1 : reservationList
+                    ) {
+                if (reservation1.getWm() == i) {
                     reservation = reservation1;
                     break;
                 }
             }
 
-            if(reservation == null){
-                if(isPast){
+            if (reservation == null) {
+                if (isPast) {
                     wmModel.setType(WmModel.TYPE.PAST);
                     wmModel.setColor("#FF0000");
-                }else if(brokenWm.contains(i)){
+                } else if (brokenWm.contains(i)) {
                     wmModel.setType(WmModel.TYPE.BROKEN);
                     wmModel.setColor("#FF0000");
-                }else{
+                } else {
                     wmModel.setType(WmModel.TYPE.FREE);
                     wmModel.setColor("#1E9600");
                 }
-            }else{
-                if(isMyReservation()){
+            } else {
+                if (isMyReservation()) {
                     wmModel.setColor("#FFF200");
-                }else{
+                } else {
                     wmModel.setColor("#FF0000");
                     wmModel.setType(WmModel.TYPE.RESERVED);
                     wmModel.setUser(reservation.getUser());
@@ -109,15 +109,15 @@ public class WmController {
         return false;
     }
 
-    private List<Integer> getBrokenWm(){
+    private List<Integer> getBrokenWm() {
         return new ArrayList<>();
     }
 
-    private boolean isRegistrationAvailable(){
+    private boolean isRegistrationAvailable() {
         return false;
     }
 
-    private boolean isPast(){
+    private boolean isPast() {
         return false;
     }
 
