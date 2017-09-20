@@ -1,8 +1,7 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
     <head>
-        <title>DS Bursa Jagiellońska</title>
+        <div th:include="fragments/header :: header-css"/>
     </head>
     <body>
         <center>
@@ -31,4 +30,7 @@
             </div>
         </center>
     </body>
+    <footer>
+        <div th:replace="fragments/footer :: footer"/>
+    </footer>
 </html>

@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
     <head>
-        <meta charset="UTF-8"/>
-        <title>Title</title>
+        <div th:include="fragments/header :: header-css"/>
     </head>
     <body>
         <center>
@@ -29,4 +28,7 @@
             </p>
         </center>
     </body>
+    <footer>
+        <div th:replace="fragments/footer :: footer"/>
+    </footer>
 </html>

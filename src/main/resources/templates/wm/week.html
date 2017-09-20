@@ -5,17 +5,7 @@
               href="//code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css"/>
         <script src="//code.jquery.com/jquery-1.10.2.js"/>
         <script src="//code.jquery.com/ui/1.11.2/jquery-ui.js"/>
-        <meta charset="UTF-8"/>
-        <title>Title</title>
-        <style type="text/css">
-                .alignleft {
-                    float: left;
-                }
-
-                .alignright {
-                    float: right;
-                }
-        </style>
+        <div th:include="fragments/header :: header-css"/>
     </head>
     <body>
         <center>
@@ -25,10 +15,10 @@
             <p>
                 Liczba wolnych miejsc: <span th:text="${wmFree}"/>
             </p>
-            <form th:action="@{/week/} + ${prevWeekId}" class="alignleft" style="margin-left:50 px">
+            <form th:action="@{/week/} + ${prevWeekId}" class="alignleft" style="margin-left:50px">
                 <input type="submit" value="Poprzedni tydzień"/>
             </form>
-            <form th:action="@{/week/} + ${nextWeekId}" class="alignright" style="margin-right:45px">
+            <form th:action="@{/week/} + ${nextWeekId}" class="alignright" style="margin-right:50px">
                 <input type="submit" value="Następny tydzień"/>
             </form>
             <table width="100%">
@@ -108,14 +98,9 @@
                 }, 20);
             });
         });
-
-
-
-
-
-
-
-
         </script>
     </body>
+    <footer>
+        <div th:replace="fragments/footer :: footer"/>
+    </footer>
 </html>
