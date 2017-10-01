@@ -1,6 +1,6 @@
 package bj.pranie.entity;
 
-import bj.pranie.entity.myEnum.TypeRoom;
+import bj.pranie.entity.myEnum.RoomType;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -20,7 +20,7 @@ public class Room {
 
     @Enumerated(EnumType.STRING)
     @NotNull
-    private TypeRoom type;
+    private RoomType type;
 
     @NotNull
     private int peoples;
@@ -28,7 +28,7 @@ public class Room {
     public Room() {
     }
 
-    public Room(int room, TypeRoom type, int peoples) {
+    public Room(int room, RoomType type, int peoples) {
         this.room = room;
         this.type = type;
         this.peoples = peoples;
@@ -50,11 +50,11 @@ public class Room {
         this.room = room;
     }
 
-    public TypeRoom getType() {
+    public RoomType getType() {
         return type;
     }
 
-    public void setType(TypeRoom type) {
+    public void setType(RoomType type) {
         this.type = type;
     }
 

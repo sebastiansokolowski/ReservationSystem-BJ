@@ -1,5 +1,8 @@
 package bj.pranie.entity;
 
+import bj.pranie.entity.myEnum.ReservationType;
+import bj.pranie.entity.myEnum.RoomType;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.sql.Date;
@@ -21,6 +24,11 @@ public class Reservation {
     @JoinColumn(name = "user_id")
     @NotNull
     private User user;
+
+    @Enumerated(EnumType.STRING)
+    @NotNull
+    private ReservationType type;
+
 
     @NotNull
     private Date date;
@@ -52,6 +60,14 @@ public class Reservation {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public ReservationType getType() {
+        return type;
+    }
+
+    public void setType(ReservationType type) {
+        this.type = type;
     }
 
     public Date getDate() {

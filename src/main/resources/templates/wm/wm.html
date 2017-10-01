@@ -31,16 +31,24 @@
                                 </p>
                                 <div sec:authorize="hasAuthority('USER')">
                                     <p th:case="FREE">
-                                        <button type="submit">
-                                            <span th:text="Zarezerwuj"/>
-                                        </button>
+                                    <form th:action="${washTimeId}+@{/register}" method="post">
+                                        <input type="text" name="wmNumber" th:value="${i.count}" hidden="hidden"/>
+                                        <input type="submit" value="Zarezerwuj"/>
+                                    </form>
                                     </p>
                                 </div>
                                 <div sec:authorize="hasAuthority('ADMIN')">
                                     <p>
-                                        <button type="submit">
-                                            <span th:text="Usun"/>
-                                        </button>
+                                    <form th:action="${washTimeId}+@{/remove}" method="post">
+                                        <input type="text" name="wmNumber" th:value="${i.count}" hidden="hidden"/>
+                                        <input type="submit" value="Usuń"/>
+                                    </form>
+                                    </p>
+                                    <p>
+                                    <form th:action="${washTimeId}+@{/block}" method="post">
+                                        <input type="text" name="wmNumber" th:value="${i.count}" hidden="hidden"/>
+                                        <input type="submit" value="Blokada"/>
+                                    </form>
                                     </p>
                                 </div>
                             </div>

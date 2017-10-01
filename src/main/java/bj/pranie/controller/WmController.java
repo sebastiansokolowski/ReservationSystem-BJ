@@ -1,22 +1,20 @@
 package bj.pranie.controller;
 
 import bj.pranie.dao.ReservationDao;
+import bj.pranie.dao.UserDao;
 import bj.pranie.dao.WashTimeDao;
 import bj.pranie.entity.Reservation;
 import bj.pranie.entity.User;
 import bj.pranie.entity.WashTime;
+import bj.pranie.entity.myEnum.ReservationType;
 import bj.pranie.model.WmModel;
 import bj.pranie.util.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -40,6 +38,9 @@ public class WmController {
     @Autowired
     private WashTimeDao washTimeDao;
 
+    @Autowired
+    private UserDao userDao;
+
     @RequestMapping(path = "/{year}/{month}/{day}/{washTimeId}", method = RequestMethod.GET)
     public String wm(@PathVariable int year,
                      @PathVariable int month,
@@ -52,6 +53,7 @@ public class WmController {
         List<Reservation> reservationList = reservationDao.findByWashTimeIdAndDate(washTimeId, new java.sql.Date(date.getTime()));
         int wmFree = 3 - reservationList.size();
 
+        model.addAttribute("washTimeId", washTimeId);
         model.addAttribute("dayName", getDayName(date));
         model.addAttribute("date", dateFormat.format(date));
         model.addAttribute("time", getWashTime(washTime));
@@ -59,6 +61,74 @@ public class WmController {
         model.addAttribute("reservations", getWmModels(reservationList, date, washTime));
         model.addAttribute("user", SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         return "wm/wm";
+    }
+
+    @RequestMapping(path = "/{year}/{month}/{day}/{washTimeId}/unregister", method = RequestMethod.POST)
+    public String unregisterWm(@PathVariable int year,
+                               @PathVariable int month,
+                               @PathVariable int day,
+                               @PathVariable long washTimeId,
+                               @RequestParam long reservationId) {
+        reservationDao.delete(reservationId);
+
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        user.setTokens(user.getTokens() + 1);
+        userDao.save(user);
+
+        return "redirect:/wm/" + year + "/" + month + "/" + day + "/" + washTimeId;
+    }
+
+    @RequestMapping(path = "/{year}/{month}/{day}/{washTimeId}/remove", method = RequestMethod.POST)
+    public String removeWm(@PathVariable int year,
+                           @PathVariable int month,
+                           @PathVariable int day,
+                           @PathVariable long washTimeId,
+                           @RequestParam long reservationId) {
+        reservationDao.delete(reservationId);
+
+        return "redirect:/wm/" + year + "/" + month + "/" + day + "/" + washTimeId;
+    }
+
+    @RequestMapping(path = "/{year}/{month}/{day}/{washTimeId}/block", method = RequestMethod.POST)
+    public String blockWm(@PathVariable int year,
+                           @PathVariable int month,
+                           @PathVariable int day,
+                           @PathVariable long washTimeId,
+                           @RequestParam int wmNumber) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        makeReservation(user, year, month, day, washTimeId, wmNumber, ReservationType.BLOCKED);
+
+        return "redirect:/wm/" + year + "/" + month + "/" + day + "/" + washTimeId;
+    }
+
+    @PostMapping(path = "/{year}/{month}/{day}/{washTimeId}/register")
+    public String registerWm(@PathVariable int year,
+                             @PathVariable int month,
+                             @PathVariable int day,
+                             @PathVariable long washTimeId,
+                             @RequestParam int wmNumber) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        makeReservation(user, year, month, day, washTimeId, wmNumber, ReservationType.USER);
+
+        return "redirect:/wm/" + year + "/" + month + "/" + day + "/" + washTimeId;
+    }
+
+    private void makeReservation(User user, int year, int month, int day, long washTimeId, int wmNumber, ReservationType reservationType){
+        Calendar calendar = TimeUtil.getCalendar();
+        calendar.set(Calendar.YEAR, year);
+        calendar.set(Calendar.MONTH, month);
+        calendar.set(Calendar.DAY_OF_MONTH, day);
+
+        Reservation reservation = new Reservation();
+        reservation.setDate(new java.sql.Date(calendar.getTime().getTime()));
+        reservation.setUser(user);
+        reservation.setWashTime(washTimeDao.findOne(washTimeId));
+        reservation.setWm(wmNumber);
+        reservation.setType(reservationType);
+
+        reservationDao.save(reservation);
     }
 
     private String getWashTime(WashTime washTime) {
@@ -92,7 +162,10 @@ public class WmController {
                     wmModel.setColor("#1E9600");
                 }
             } else {
-                if (isMyReservation()) {
+                if(reservation.getType() == ReservationType.BLOCKED){
+                    wmModel.setColor("#FF0000");
+                    wmModel.setType(WmModel.TYPE.UNAVAILABLE);
+                } else if (isMyReservation()) {
                     wmModel.setColor("#FFF200");
                 } else {
                     wmModel.setColor("#FF0000");
