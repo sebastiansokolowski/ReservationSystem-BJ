@@ -7,31 +7,64 @@
         <div th:include="fragments/header :: header-css"/>
     </head>
     <body>
+        <div th:include="fragments/header :: menu"/>
         <center>
             <h2>Ustawienia konta</h2>
             <div style="margin-left: 35%; margin-right: 35%;">
-                <form method="post" action="/user/settings">
+                <form th:object="${userSettingsModel}" th:action="@{/user/settings}" method="post">
                     <fieldset>
                         <div align="right">
-                            <input type="checkbox" name="newLogin"/>Zmień login
+                            <input type="checkbox" th:field="*{setNewUsername}"/>
+                            Zmień login
                             <p>
-                                Nowy login: <input maxlength="20" name="new_login" type="text" disabled="disabled"
-                                                   required="true"/>
-                            </p>
-                            <input type="checkbox" name="newName"/>Zmień imię
-                            <p>
-                                Podaj swoje imię: <input maxlength="20" name="new_name" type="text" disabled="disabled"
-                                                         required="true"/>
-                            </p>
-                            <input type="checkbox" name="newPassword"/>Zmień hasło
-                            <p>
-
-                                Nowe hasło: <input maxlength="20" name="new_password" type="password"
+                                Nowy login: <input type="text" th:field="*{newUsername}"
+                                                   maxlength="30"
                                                    disabled="disabled" required="true"/>
+                            <p th:if="${#fields.hasErrors('newUsername')}" th:errors="*{newUsername}"
+                               style="color:red;font-size:15px"
+                               class="validation-message"/>
+                            </p>
+
+                            <input type="checkbox" th:field="*{setNewEmail}"/>
+                            Zmień email
+                            <p>
+                                Nowy email: <input type="text" th:field="*{newEmail}"
+                                                   maxlength="30"
+                                                   disabled="disabled" required="true"/>
+                            <p th:if="${#fields.hasErrors('newEmail')}" th:errors="*{newEmail}"
+                               style="color:red;font-size:15px"
+                               class="validation-message"/>
+                            </p>
+
+                            <input type="checkbox" th:field="*{setNewName}"/>
+                            Zmień imię
+                            <p>
+                                Podaj nowe imię: <input type="text" th:field="*{newName}"
+                                                        maxlength="30"
+                                                        disabled="disabled" required="true"/>
+                            <p th:if="${#fields.hasErrors('newName')}" th:errors="*{newName}"
+                               style="color:red;font-size:15px"
+                               class="validation-message"/>
+                            </p>
+
+                            <input type="checkbox" th:field="*{setNewPassword}"/>
+                            Zmień hasło
+                            <p>
+                                Nowe hasło: <input type="password" th:field="*{newPassword}"
+                                                   minlength="5" maxlength="30"
+                                                   disabled="disabled" required="true"/>
+                            <p th:if="${#fields.hasErrors('newPassword')}" th:errors="*{newPassword}"
+                               style="color:red;font-size:15px"
+                               class="validation-message"/>
                             </p>
                             <p>
-                                Powtórz nowe hasło: <input maxlength="20" name="new_password_repeat"
-                                                           type="password" disabled="disabled" required="true"/>
+                                Powtórz nowe hasło: <input type="password"
+                                                           th:field="*{newPasswordRepeat}"
+                                                           minlength="5" maxlength="30"
+                                                           disabled="disabled" required="true"/>
+                            <p th:if="${#fields.hasErrors('newPasswordRepeat')}" th:errors="*{newPasswordRepeat}"
+                               style="color:red;font-size:15px"
+                               class="validation-message"/>
                             </p>
                         </div>
                     </fieldset>
@@ -39,8 +72,13 @@
                     <fieldset>
                         <div align="right">
                             <p>
-                                Podaj hasło: <input maxlength="20" name="password_old"
-                                                    type="password" required="true"/>
+                                Podaj hasło: <input th:field="*{password}" type="password" required="true"/>
+                            <p th:if="${#fields.hasErrors('password')}" th:errors="*{password}"
+                               style="color:red;font-size:15px"
+                               class="validation-message"/>
+                            </p>
+                            <p style="color:green;font-size:15px">
+                                <span th:text="${successMessage}"/>
                             </p>
                             <input type="submit" value="Wyślij"/>
                         </div>
@@ -51,17 +89,22 @@
         </center>
         <script type="text/javascript">
         $(function () {
-            $("input:checkbox[name=newLogin]").click(function () {
-                $("input:text[name=new_login]").attr("disabled", !this.checked);
+            $("input:checkbox[name=setNewUsername]").click(function () {
+                $("input:text[name=newUsername]").attr("disabled", !this.checked);
             });
-            $("input:checkbox[name=newName]").click(function () {
-                $("input:text[name=new_name]").attr("disabled", !this.checked);
+            $("input:checkbox[name=setNewEmail]").click(function () {
+                $("input:text[name=newEmail]").attr("disabled", !this.checked);
             });
-            $("input:checkbox[name=newPassword]").click(function () {
-                $("input:password[name=new_password]").attr("disabled", !this.checked);
-                $("input:password[name=new_password_repeat]").attr("disabled", !this.checked);
+            $("input:checkbox[name=setNewName]").click(function () {
+                $("input:text[name=newName]").attr("disabled", !this.checked);
+            });
+            $("input:checkbox[name=setNewPassword]").click(function () {
+                $("input:password[name=newPassword]").attr("disabled", !this.checked);
+                $("input:password[name=newPasswordRepeat]").attr("disabled", !this.checked);
             });
         });
+
+
         </script>
     </body>
     <footer>
