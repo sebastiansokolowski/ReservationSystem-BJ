@@ -18,14 +18,32 @@
             <table width="35%">
                 <tbody>
                     <tr>
-                        <th th:each="reservation : ${reservations}" style="border-radius: 7px;vertical-align:top"
+                        <th th:each="reservation,i : ${reservations}" style="border-radius: 7px;vertical-align:top"
                             width="11%" align="center"
                             th:bgcolor="${reservation.color}">
+                            <span th:text="${i.count}"/>
                             <img src="/images/wm.jpg"/>
-                            <spam th:if="reservation.type == 'RESERVED'" th:text="${reservation.user.name}"/>
-                            <br/>
-                            <spam th:if="reservation.type == 'RESERVED'"
-                                  th:text="${reservation.user.room.room}+${reservation.user.room.type}"/>
+                            <div th:switch="${reservation.type.name()}">
+                                <p th:case="RESERVED">
+                                    <span th:text="${reservation.user.name}"/>
+                                    <br/>
+                                    <span th:text="${reservation.user.room.room}+${reservation.user.room.type}"/>
+                                </p>
+                                <div sec:authorize="hasAuthority('USER')">
+                                    <p th:case="FREE">
+                                        <button type="submit">
+                                            <span th:text="Zarezerwuj"/>
+                                        </button>
+                                    </p>
+                                </div>
+                                <div sec:authorize="hasAuthority('ADMIN')">
+                                    <p>
+                                        <button type="submit">
+                                            <span th:text="Usun"/>
+                                        </button>
+                                    </p>
+                                </div>
+                            </div>
                         </th>
                     </tr>
                 </tbody>

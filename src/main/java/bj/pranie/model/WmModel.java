@@ -7,7 +7,7 @@ import bj.pranie.entity.User;
  */
 public class WmModel {
     public enum TYPE {
-        PAST, RESERVED, FREE, BROKEN
+        UNAVAILABLE, MY, RESERVED, FREE
     }
 
     TYPE type;

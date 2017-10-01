@@ -84,11 +84,8 @@ public class WmController {
             }
 
             if (reservation == null) {
-                if (isPast) {
-                    wmModel.setType(WmModel.TYPE.PAST);
-                    wmModel.setColor("#FF0000");
-                } else if (brokenWm.contains(i)) {
-                    wmModel.setType(WmModel.TYPE.BROKEN);
+                if (isPast || brokenWm.contains(i)) {
+                    wmModel.setType(WmModel.TYPE.UNAVAILABLE);
                     wmModel.setColor("#FF0000");
                 } else {
                     wmModel.setType(WmModel.TYPE.FREE);
