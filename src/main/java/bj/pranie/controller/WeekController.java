@@ -7,6 +7,7 @@ import bj.pranie.entity.WashTime;
 import bj.pranie.model.TimeWeekModel;
 import bj.pranie.util.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -60,6 +61,7 @@ public class WeekController {
         model.addAttribute("weekFrame", getWeekFrame(weekId));
         model.addAttribute("wmFree", getWmFree(weekId));
         model.addAttribute("timesWeek", getWeekReservations(weekId));
+        model.addAttribute("user", SecurityContextHolder.getContext().getAuthentication().getPrincipal());
     }
 
     /*

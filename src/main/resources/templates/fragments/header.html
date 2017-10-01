@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.w3.org/1999/xhtml">
     <head>
         <div th:fragment="header-css">
             <meta charset="UTF-8"/>
@@ -20,8 +20,23 @@
     padding-bottom: 20px;
     width: 100%;
 }
-
             </style>
         </div>
     </head>
+    <div th:fragment="menu" class="alignleft">
+        <div sec:authorize="isAuthenticated()">
+            <span th:text="${user.name}"/>
+            <a href="javascript: document.logoutForm.submit()">Wyloguj</a>
+            <form name="logoutForm" th:action="@{/logout}" method="post" th:hidden="true">
+                <input hidden="true" type="submit" value="Logout"/>
+            </form>
+            <br/>
+            Tokeny: <span th:text="${user.tokens}"/>
+            <br/>
+            <a href="/user/settings">Ustawienia</a>
+        </div>
+        <div sec:authorize="isAnonymous()">
+            <a href="/login">Logowanie</a>
+        </div>
+    </div>
 </html>

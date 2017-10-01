@@ -3,16 +3,20 @@ package bj.pranie.controller;
 import bj.pranie.dao.ReservationDao;
 import bj.pranie.dao.WashTimeDao;
 import bj.pranie.entity.Reservation;
+import bj.pranie.entity.User;
 import bj.pranie.entity.WashTime;
 import bj.pranie.model.WmModel;
 import bj.pranie.util.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import java.security.Principal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -53,6 +57,7 @@ public class WmController {
         model.addAttribute("time", getWashTime(washTime));
         model.addAttribute("wmFree", wmFree);
         model.addAttribute("reservations", getWmModels(reservationList, date, washTime));
+        model.addAttribute("user", SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         return "wm/wm";
     }
 

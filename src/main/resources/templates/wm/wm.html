@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.w3.org/1999/xhtml">
     <head>
         <div th:include="fragments/header :: header-css"/>
     </head>
     <body>
+        <div th:include="fragments/header :: menu"/>
         <center>
             <h1>
                 <span th:text="${dayName}"/> <span th:text="${date}"/>
