@@ -2,8 +2,18 @@ group 'bj-pranie'
 version '0.1'
 
 apply plugin: 'java'
+apply plugin: 'spring-boot'
 
 sourceCompatibility = 1.8
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.7.RELEASE")
+    }
+}
 
 repositories {
     mavenCentral()
@@ -16,6 +26,7 @@ dependencies {
 
     compile("mysql:mysql-connector-java:5.1.44")
 
+    compile("org.springframework.boot:spring-boot-starter-web:1.5.7.RELEASE")
     compile('org.springframework.boot:spring-boot-starter-data-jpa:1.5.7.RELEASE')
     compile("org.springframework.boot:spring-boot-starter-security:1.5.7.RELEASE")
     compile("org.springframework.boot:spring-boot-starter-thymeleaf:1.5.7.RELEASE")
