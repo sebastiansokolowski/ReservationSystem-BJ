@@ -7,14 +7,16 @@ import bj.pranie.entity.User;
  */
 public class WmModel {
     public enum TYPE {
-        UNAVAILABLE, MY, RESERVED, FREE
+        UNAVAILABLE, USER, RESERVED, FREE
     }
 
-    TYPE type;
+    private TYPE type;
 
-    User user;
+    private User user;
 
-    String color;
+    private long reservationId;
+
+    private String color;
 
     public User getUser() {
         return user;
@@ -30,6 +32,14 @@ public class WmModel {
 
     public void setType(TYPE type) {
         this.type = type;
+    }
+
+    public long getReservationId() {
+        return reservationId;
+    }
+
+    public void setReservationId(long reservationId) {
+        this.reservationId = reservationId;
     }
 
     public String getColor() {

@@ -91,10 +91,10 @@ public class WmController {
 
     @RequestMapping(path = "/{year}/{month}/{day}/{washTimeId}/block", method = RequestMethod.POST)
     public String blockWm(@PathVariable int year,
-                           @PathVariable int month,
-                           @PathVariable int day,
-                           @PathVariable long washTimeId,
-                           @RequestParam int wmNumber) {
+                          @PathVariable int month,
+                          @PathVariable int day,
+                          @PathVariable long washTimeId,
+                          @RequestParam int wmNumber) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         makeReservation(user, year, month, day, washTimeId, wmNumber, ReservationType.BLOCKED);
@@ -115,20 +115,25 @@ public class WmController {
         return "redirect:/wm/" + year + "/" + month + "/" + day + "/" + washTimeId;
     }
 
-    private void makeReservation(User user, int year, int month, int day, long washTimeId, int wmNumber, ReservationType reservationType){
-        Calendar calendar = TimeUtil.getCalendar();
-        calendar.set(Calendar.YEAR, year);
-        calendar.set(Calendar.MONTH, month);
-        calendar.set(Calendar.DAY_OF_MONTH, day);
-
+    private void makeReservation(User user, int year, int month, int day, long washTimeId, int wmNumber, ReservationType reservationType) {
         Reservation reservation = new Reservation();
-        reservation.setDate(new java.sql.Date(calendar.getTime().getTime()));
+        reservation.setDate(getSqlDate(year, month, day));
         reservation.setUser(user);
         reservation.setWashTime(washTimeDao.findOne(washTimeId));
         reservation.setWm(wmNumber);
         reservation.setType(reservationType);
 
         reservationDao.save(reservation);
+    }
+
+    private java.sql.Date getSqlDate(int year, int month, int day) {
+        try {
+            Date date = dateFormat.parse(year + "/" + month + "/" + day);
+            return new java.sql.Date(date.getTime());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     private String getWashTime(WashTime washTime) {
@@ -144,16 +149,16 @@ public class WmController {
         for (int i = 0; i != 3; i++) {
             WmModel wmModel = new WmModel();
 
-            Reservation reservation = null;
-            for (Reservation reservation1 : reservationList
+            Reservation currentReservation = null;
+            for (Reservation reservation : reservationList
                     ) {
-                if (reservation1.getWm() == i) {
-                    reservation = reservation1;
+                if (reservation.getWm() == i) {
+                    currentReservation = reservation;
                     break;
                 }
             }
 
-            if (reservation == null) {
+            if (currentReservation == null) {
                 if (isPast || brokenWm.contains(i)) {
                     wmModel.setType(WmModel.TYPE.UNAVAILABLE);
                     wmModel.setColor("#FF0000");
@@ -162,7 +167,8 @@ public class WmController {
                     wmModel.setColor("#1E9600");
                 }
             } else {
-                if(reservation.getType() == ReservationType.BLOCKED){
+                wmModel.setReservationId(currentReservation.getId());
+                if (currentReservation.getType() == ReservationType.BLOCKED) {
                     wmModel.setColor("#FF0000");
                     wmModel.setType(WmModel.TYPE.UNAVAILABLE);
                 } else if (isMyReservation()) {
@@ -170,7 +176,7 @@ public class WmController {
                 } else {
                     wmModel.setColor("#FF0000");
                     wmModel.setType(WmModel.TYPE.RESERVED);
-                    wmModel.setUser(reservation.getUser());
+                    wmModel.setUser(currentReservation.getUser());
                 }
             }
 
