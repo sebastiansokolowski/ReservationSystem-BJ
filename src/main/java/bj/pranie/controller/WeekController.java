@@ -3,7 +3,9 @@ package bj.pranie.controller;
 import bj.pranie.dao.ReservationDao;
 import bj.pranie.dao.WashTimeDao;
 import bj.pranie.entity.Reservation;
+import bj.pranie.entity.User;
 import bj.pranie.entity.WashTime;
+import bj.pranie.entity.myEnum.UserRole;
 import bj.pranie.model.TimeWeekModel;
 import bj.pranie.util.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,8 +57,12 @@ public class WeekController {
     }
 
     private void setModel(String weekId, Model model) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
         model.addAttribute("weekId", weekId);
-        model.addAttribute("nextWeekId", getSpecificWeekId(weekId, WEEK_TYPE.NEXT));
+        if (user.getRole() == UserRole.ADMIN || isBeforeCurrentWeekId(weekId)) {
+            model.addAttribute("nextWeekId", getSpecificWeekId(weekId, WEEK_TYPE.NEXT));
+        }
         model.addAttribute("prevWeekId", getSpecificWeekId(weekId, WEEK_TYPE.PREV));
         model.addAttribute("weekFrame", getWeekFrame(weekId));
         model.addAttribute("wmFree", getWmFree(weekId));
@@ -81,6 +87,27 @@ public class WeekController {
         }
 
         return calendar.get(Calendar.YEAR) + "-" + calendar.get(Calendar.WEEK_OF_YEAR);
+    }
+
+    private boolean isBeforeCurrentWeekId(String weekId) {
+        try {
+            int year = Integer.parseInt(weekId.split("-")[0]);
+            int week = Integer.parseInt(weekId.split("-")[1]);
+            Calendar calendar = TimeUtil.getCalendar();
+            calendar.set(Calendar.YEAR, year);
+            calendar.set(Calendar.WEEK_OF_YEAR, week);
+
+            String currentWeekId = getCurrentWeekId();
+            int currentYear = Integer.parseInt(currentWeekId.split("-")[0]);
+            int currentWeek = Integer.parseInt(currentWeekId.split("-")[1]);
+            Calendar currentCalendar = TimeUtil.getCalendar();
+            currentCalendar.set(Calendar.YEAR, currentYear);
+            currentCalendar.set(Calendar.WEEK_OF_YEAR, currentWeek);
+
+            return calendar.before(currentCalendar);
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     private String getSpecificWeekId(String weekId, WEEK_TYPE week_type) {

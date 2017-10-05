@@ -19,7 +19,8 @@
             <form th:action="@{/week/} + ${prevWeekId}" class="alignleft" style="margin-left:50px">
                 <input type="submit" value="Poprzedni tydzień"/>
             </form>
-            <form th:action="@{/week/} + ${nextWeekId}" class="alignright" style="margin-right:50px">
+            <form th:if="${nextWeekId != null}" th:action="@{/week/} + ${nextWeekId}" class="alignright"
+                  style="margin-right:50px">
                 <input type="submit" value="Następny tydzień"/>
             </form>
             <table width="100%">
