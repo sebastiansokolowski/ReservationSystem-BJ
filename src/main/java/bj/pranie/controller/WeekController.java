@@ -9,6 +9,7 @@ import bj.pranie.entity.myEnum.UserRole;
 import bj.pranie.model.TimeWeekModel;
 import bj.pranie.util.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -57,10 +58,8 @@ public class WeekController {
     }
 
     private void setModel(String weekId, Model model) {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
         model.addAttribute("weekId", weekId);
-        if (user.getRole() == UserRole.ADMIN || isBeforeCurrentWeekId(weekId)) {
+        if (isAuthAdmin() || isBeforeCurrentWeekId(weekId)) {
             model.addAttribute("nextWeekId", getSpecificWeekId(weekId, WEEK_TYPE.NEXT));
         }
         model.addAttribute("prevWeekId", getSpecificWeekId(weekId, WEEK_TYPE.PREV));
@@ -68,6 +67,20 @@ public class WeekController {
         model.addAttribute("wmFree", getWmFree(weekId));
         model.addAttribute("timesWeek", getWeekReservations(weekId));
         model.addAttribute("user", SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+    }
+
+    private boolean isAuthAdmin() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth instanceof User) {
+            User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            if (user.getRole() == UserRole.ADMIN) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
     }
 
     /*
