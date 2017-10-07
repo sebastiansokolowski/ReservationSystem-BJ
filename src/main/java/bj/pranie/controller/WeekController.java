@@ -19,7 +19,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Created by Sebastian Sokolowski on 07.09.17.
@@ -89,14 +92,11 @@ public class WeekController {
     private String getCurrentWeekId() {
         Calendar calendar = TimeUtil.getCalendar();
 
-        calendar.setFirstDayOfWeek(Calendar.MONDAY);
-        calendar.setTime(new Date());
+        System.out.println(calendar.getFirstDayOfWeek());
         int time = calendar.get(Calendar.HOUR_OF_DAY);
         int today = calendar.get(Calendar.DAY_OF_WEEK);
         if (today == Calendar.SUNDAY && time > RESET_TIME) {
-            calendar.add(Calendar.DAY_OF_WEEK, 1);
-        } else {
-            calendar.add(Calendar.DAY_OF_WEEK, -today + Calendar.MONDAY);
+            calendar.add(Calendar.DAY_OF_MONTH, 1);
         }
 
         return calendar.get(Calendar.YEAR) + "-" + calendar.get(Calendar.WEEK_OF_YEAR);
