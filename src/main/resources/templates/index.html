@@ -20,8 +20,8 @@
                             <input type="submit" value="Zaloguj się"/>
                         </form>
                     </div>
-                    <div th:if="${param.error}">
-                        Invalid username and password.
+                    <div th:if="${param.error}" style="color:red;font-size:15px">
+                        Zła nazwa użytkownika albo hasło.
                     </div>
                     <br/>
                     <a href="/user/restore">Nie pamiętasz hasła?</a><br/>
