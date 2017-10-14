@@ -92,7 +92,6 @@ public class WeekController {
     private String getCurrentWeekId() {
         Calendar calendar = TimeUtil.getCalendar();
 
-        System.out.println(calendar.getFirstDayOfWeek());
         int time = calendar.get(Calendar.HOUR_OF_DAY);
         int today = calendar.get(Calendar.DAY_OF_WEEK);
         if (today == Calendar.SUNDAY && time > RESET_TIME) {
