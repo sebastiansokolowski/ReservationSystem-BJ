@@ -85,7 +85,12 @@ public class WmController {
                            @PathVariable int day,
                            @PathVariable long washTimeId,
                            @RequestParam long reservationId) {
+        Reservation reservation = reservationDao.findOne(reservationId);
         reservationDao.delete(reservationId);
+
+        User user = reservation.getUser();
+        user.setTokens(user.getTokens() + 1);
+        userDao.save(user);
 
         return "redirect:/wm/" + year + "/" + month + "/" + day + "/" + washTimeId;
     }
