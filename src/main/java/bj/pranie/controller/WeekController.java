@@ -60,6 +60,22 @@ public class WeekController {
         return "wm/week";
     }
 
+    @RequestMapping(path = "/{weekId}/unblock", method = RequestMethod.POST)
+    public String unblockDay(@PathVariable String weekId,
+                             @RequestParam String date,
+                             Model model) throws ParseException {
+        java.sql.Date sqlDate = new java.sql.Date(dateFormat.parse(date).getTime());
+        List<Reservation> reservations = reservationDao.findByDate(sqlDate);
+        for (Reservation reservation : reservations) {
+            if (reservation.getType() == ReservationType.BLOCKED) {
+                reservationDao.delete(reservation.getId());
+            }
+        }
+
+        setModel(weekId, model);
+        return "wm/week";
+    }
+
     @RequestMapping(path = "/{weekId}/block", method = RequestMethod.POST)
     public String blockDay(@PathVariable String weekId,
                            @RequestParam String date,

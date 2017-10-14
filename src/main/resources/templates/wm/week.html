@@ -41,6 +41,10 @@
                                     <input type="text" name="date" th:value="${dayDate.date}" hidden="hidden"/>
                                     <input type="submit" value="Blokada"/>
                                 </form>
+                                <form th:action="@{/week/}+${weekId}+@{/unblock}" method="post">
+                                    <input type="text" name="date" th:value="${dayDate.date}" hidden="hidden"/>
+                                    <input type="submit" value="Odblokowanie"/>
+                                </form>
                             </div>
                         </th>
                     </tr>
