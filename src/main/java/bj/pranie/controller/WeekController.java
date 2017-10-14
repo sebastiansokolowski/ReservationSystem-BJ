@@ -1,10 +1,12 @@
 package bj.pranie.controller;
 
 import bj.pranie.dao.ReservationDao;
+import bj.pranie.dao.UserDao;
 import bj.pranie.dao.WashTimeDao;
 import bj.pranie.entity.Reservation;
 import bj.pranie.entity.User;
 import bj.pranie.entity.WashTime;
+import bj.pranie.entity.myEnum.ReservationType;
 import bj.pranie.entity.myEnum.UserRole;
 import bj.pranie.model.TimeWeekModel;
 import bj.pranie.util.TimeUtil;
@@ -16,6 +18,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -40,6 +43,9 @@ public class WeekController {
     @Autowired
     private WashTimeDao washTimeDao;
 
+    @Autowired
+    private UserDao userDao;
+
     @RequestMapping(method = RequestMethod.GET)
     public String week(Model model) throws ParseException {
         String weekId = getCurrentWeekId();
@@ -54,7 +60,46 @@ public class WeekController {
         return "wm/week";
     }
 
+    @RequestMapping(path = "/{weekId}/block", method = RequestMethod.POST)
+    public String blockDay(@PathVariable String weekId,
+                           @RequestParam String date,
+                           Model model) throws ParseException {
+        User admin = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        java.sql.Date sqlDate = new java.sql.Date(dateFormat.parse(date).getTime());
+        List<Reservation> reservations = reservationDao.findByDate(sqlDate);
+        for (Reservation reservation : reservations) {
+            reservationDao.delete(reservation.getId());
+
+            User user = reservation.getUser();
+            user.setTokens(user.getTokens() + 1);
+            userDao.save(user);
+        }
+
+        Iterator<WashTime> washTimes = washTimeDao.findAll().iterator();
+        while (washTimes.hasNext()) {
+            WashTime washTime = washTimes.next();
+            for (int i = 0; i != 3; i++) {
+                makeReservation(admin, sqlDate, washTime.getId(), i, ReservationType.BLOCKED);
+            }
+        }
+
+        setModel(weekId, model);
+        return "wm/week";
+    }
+
     // private
+
+    private void makeReservation(User user, java.sql.Date date, long washTimeId, int wmNumber, ReservationType reservationType) {
+        Reservation reservation = new Reservation();
+        reservation.setDate(date);
+        reservation.setUser(user);
+        reservation.setWashTime(washTimeDao.findOne(washTimeId));
+        reservation.setWm(wmNumber);
+        reservation.setType(reservationType);
+
+        reservationDao.save(reservation);
+    }
 
     private enum WEEK_TYPE {
         PREV, NEXT

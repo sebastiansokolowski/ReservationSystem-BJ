@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.w3.org/1999/xhtml">
     <head>
         <link rel="stylesheet"
               href="//code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css"/>
@@ -36,6 +36,12 @@
                     <tr>
                         <th th:each="dayDate : ${timesWeek[0].dates}">
                             <span th:text="${dayDate.date}"/>
+                            <div sec:authorize="hasAuthority('ADMIN')">
+                                <form th:action="@{/week/}+${weekId}+@{/block}" method="post">
+                                    <input type="text" name="date" th:value="${dayDate.date}" hidden="hidden"/>
+                                    <input type="submit" value="Blokada"/>
+                                </form>
+                            </div>
                         </th>
                     </tr>
                     <tr th:each="timeWeek,i : ${timesWeek}">

@@ -18,4 +18,6 @@ public interface ReservationDao extends CrudRepository<Reservation, Long> {
     Long countByDatesBetween(Date fromDate, Date toDate);
 
     List<Reservation> findByWashTimeIdAndDate(long washTimeId, Date date);
+
+    List<Reservation> findByDate(Date date);
 }
