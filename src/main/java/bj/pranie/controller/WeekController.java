@@ -214,8 +214,16 @@ public class WeekController {
         return washTimes;
     }
 
-    boolean isMyReservation(List<Reservation> reservations) {
-        //TODO:
+    private boolean isMyReservation(List<Reservation> reservationUser) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication.getPrincipal() instanceof User) {
+            User currentUser = (User) authentication.getPrincipal();
+            for (Reservation reservation : reservationUser) {
+                if (currentUser.getId() == reservation.getUser().getId()) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 

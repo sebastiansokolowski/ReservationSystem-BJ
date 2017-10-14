@@ -10,6 +10,7 @@ import bj.pranie.entity.myEnum.ReservationType;
 import bj.pranie.model.WmModel;
 import bj.pranie.util.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -162,7 +163,10 @@ public class WmController {
             }
 
             if (currentReservation == null) {
-                if (isPast || brokenWm.contains(i)) {
+                if (isPast) {
+                    wmModel.setType(WmModel.TYPE.PAST);
+                    wmModel.setColor("#FF0000");
+                } else if (brokenWm.contains(i)) {
                     wmModel.setType(WmModel.TYPE.UNAVAILABLE);
                     wmModel.setColor("#FF0000");
                 } else {
@@ -174,8 +178,10 @@ public class WmController {
                 if (currentReservation.getType() == ReservationType.BLOCKED) {
                     wmModel.setColor("#FF0000");
                     wmModel.setType(WmModel.TYPE.UNAVAILABLE);
-                } else if (isMyReservation()) {
+                } else if (isMyReservation(currentReservation.getUser())) {
+                    wmModel.setType(WmModel.TYPE.MY);
                     wmModel.setColor("#FFF200");
+                    wmModel.setUser(currentReservation.getUser());
                 } else {
                     wmModel.setColor("#FF0000");
                     wmModel.setType(WmModel.TYPE.RESERVED);
@@ -189,7 +195,14 @@ public class WmController {
         return wmModels;
     }
 
-    private boolean isMyReservation() {
+    private boolean isMyReservation(User reservationUser) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication.getPrincipal() instanceof User) {
+            User currentUser = (User) authentication.getPrincipal();
+            if (currentUser.getId() == reservationUser.getId()) {
+                return true;
+            }
+        }
         return false;
     }
 
