@@ -25,7 +25,6 @@ public class TimeUtil {
 
     public static boolean isPast(String time, String date) {
         Calendar now = TimeUtil.getCalendar();
-        now.setTime(new Date());
 
         Calendar calendar = TimeUtil.getCalendar();
         try {
