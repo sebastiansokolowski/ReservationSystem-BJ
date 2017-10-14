@@ -41,7 +41,7 @@
                                     <span>-<br/>-</span>
                                 </p>
                                 <p th:case="UNAVAILABLE">
-                                    <span><br/>BLOKADA<br/></span>
+                                    <span>BLOKADA<br/><br/></span>
                                 </p>
                             </div>
                             <div th:switch="${reservation.type.name()}">
@@ -64,6 +64,15 @@
                                 <p th:case="MY">
                                 <div sec:authorize="hasAuthority('USER')">
                                     <form th:action="${washTimeId}+@{/unregister}" method="post">
+                                        <input type="text" name="reservationId" th:value="${reservation.reservationId}"
+                                               hidden="hidden"/>
+                                        <input type="submit" value="Usuń"/>
+                                    </form>
+                                </div>
+                                </p>
+                                <p th:case="UNAVAILABLE">
+                                <div sec:authorize="hasAuthority('ADMIN')">
+                                    <form th:action="${washTimeId}+@{/remove}" method="post">
                                         <input type="text" name="reservationId" th:value="${reservation.reservationId}"
                                                hidden="hidden"/>
                                         <input type="submit" value="Usuń"/>
