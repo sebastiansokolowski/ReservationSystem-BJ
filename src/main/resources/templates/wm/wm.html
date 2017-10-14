@@ -34,24 +34,25 @@
                                     <br/>
                                     <span th:text="${reservation.user.room.room}+${reservation.user.room.type}"/>
                                 </p>
-                                <p th:case="UNAVAILABLE">
-                                    <br/>
-                                    <span th:text="BLOKADA"/>
-                                    <br/>
-                                <div sec:authorize="hasAuthority('ADMIN')">
-                                    <form th:action="${washTimeId}+@{/remove}" method="post">
-                                        <input type="text" name="reservationId" th:value="${reservation.reservationId}"
-                                               hidden="hidden"/>
-                                        <input type="submit" value="Usuń"/>
-                                    </form>
-                                </div>
+                                <p th:case="PAST">
+                                    <span>-<br/>-</span>
                                 </p>
                                 <p th:case="FREE">
+                                    <span>-<br/>-</span>
+                                </p>
+                                <p th:case="UNAVAILABLE">
+                                    <span><br/>BLOKADA<br/></span>
+                                </p>
+                            </div>
+                            <div th:switch="${reservation.type.name()}">
+                                <p th:case="FREE">
                                 <div sec:authorize="hasAuthority('USER')">
-                                    <form th:action="${washTimeId}+@{/register}" method="post">
-                                        <input type="text" name="wmNumber" th:value="${i.index}" hidden="hidden"/>
-                                        <input type="submit" value="Zarezerwuj"/>
-                                    </form>
+                                    <div th:if="${user.tokens &gt; 0}">
+                                        <form th:action="${washTimeId}+@{/register}" method="post">
+                                            <input type="text" name="wmNumber" th:value="${i.index}" hidden="hidden"/>
+                                            <input type="submit" value="Zarezerwuj"/>
+                                        </form>
+                                    </div>
                                 </div>
                                 <div sec:authorize="hasAuthority('ADMIN')">
                                     <form th:action="${washTimeId}+@{/block}" method="post">
@@ -60,8 +61,6 @@
                                     </form>
                                 </div>
                                 </p>
-                            </div>
-                            <div th:switch="${reservation.type.name()}">
                                 <p th:case="MY">
                                 <div sec:authorize="hasAuthority('USER')">
                                     <form th:action="${washTimeId}+@{/unregister}" method="post">
