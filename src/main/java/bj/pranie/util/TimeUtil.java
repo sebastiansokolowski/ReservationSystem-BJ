@@ -7,7 +7,7 @@ import java.util.Date;
 import java.util.TimeZone;
 
 /**
- * Created by noon on 03.02.17.
+ * Created by Sebastian Sokolowski on 03.02.17.
  */
 public class TimeUtil {
     private static final SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm");

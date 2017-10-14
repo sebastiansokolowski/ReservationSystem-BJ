@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 /**
- * Created by noon on 10.08.16.
+ * Created by Sebastian Sokolowski on 10.08.16.
  */
 @Transactional
 public interface UserDao extends CrudRepository<User, Long> {

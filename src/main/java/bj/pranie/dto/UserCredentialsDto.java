@@ -1,7 +1,7 @@
 package bj.pranie.dto;
 
 /**
- * Created by noon on 19.10.16.
+ * Created by Sebastian Sokolowski on 19.10.16.
  */
 public class UserCredentialsDto {
     private String login;

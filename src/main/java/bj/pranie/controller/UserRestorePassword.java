@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
- * Created by noon on 10.08.16.
+ * Created by Sebastian Sokolowski on 10.08.16.
  */
 @Controller
 @RequestMapping("/user")

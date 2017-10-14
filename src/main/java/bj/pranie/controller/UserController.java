@@ -20,7 +20,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.validation.Valid;
 
 /**
- * Created by noon on 10.08.16.
+ * Created by Sebastian Sokolowski on 10.08.16.
  */
 @Controller
 @RequestMapping("/user")

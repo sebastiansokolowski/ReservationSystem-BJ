@@ -5,7 +5,7 @@ import org.apache.log4j.Logger;
 import java.security.MessageDigest;
 
 /**
- * Created by noon on 18.10.16.
+ * Created by Sebastian Sokolowski on 18.10.16.
  */
 public class HashUtil {
     private static final String TAG = HashUtil.class.getSimpleName();

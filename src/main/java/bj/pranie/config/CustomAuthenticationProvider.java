@@ -18,7 +18,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Created by noon on 24.10.16.
+ * Created by Sebastian Sokolowski on 24.10.16.
  */
 @Component
 public class CustomAuthenticationProvider implements AuthenticationProvider {

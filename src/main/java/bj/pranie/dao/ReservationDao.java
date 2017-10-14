@@ -10,7 +10,7 @@ import java.util.List;
 
 
 /**
- * Created by noon on 10.08.16.
+ * Created by Sebastian Sokolowski on 10.08.16.
  */
 @Transactional
 public interface ReservationDao extends CrudRepository<Reservation, Long> {

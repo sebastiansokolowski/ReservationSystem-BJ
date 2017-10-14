@@ -8,7 +8,7 @@ import javax.validation.constraints.NotNull;
 import java.sql.Date;
 
 /**
- * Created by noon on 15.10.16.
+ * Created by Sebastian Sokolowski on 15.10.16.
  */
 @Entity
 @Table(name = "reservations")

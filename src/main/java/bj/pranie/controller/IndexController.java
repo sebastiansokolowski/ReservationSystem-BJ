@@ -12,7 +12,7 @@ import org.springframework.web.servlet.ModelAndView;
 import java.util.Calendar;
 
 /**
- * Created by noon on 12.10.16.
+ * Created by Sebastian Sokolowski on 12.10.16.
  */
 
 @Controller

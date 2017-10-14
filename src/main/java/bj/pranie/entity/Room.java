@@ -6,7 +6,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 /**
- * Created by noon on 15.10.16.
+ * Created by Sebastian Sokolowski on 15.10.16.
  */
 @Entity
 @Table(name = "rooms")
