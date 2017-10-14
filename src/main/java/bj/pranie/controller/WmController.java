@@ -112,6 +112,9 @@ public class WmController {
 
         makeReservation(user, year, month, day, washTimeId, wmNumber, ReservationType.USER);
 
+        user.setTokens(user.getTokens() - 1);
+        userDao.save(user);
+
         return "redirect:/wm/" + year + "/" + month + "/" + day + "/" + washTimeId;
     }
 
