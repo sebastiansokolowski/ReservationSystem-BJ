@@ -23,10 +23,9 @@
                     <div th:if="${param.error}" style="color:red;font-size:15px">
                         Zła nazwa użytkownika albo hasło.
                     </div>
+                    <br/>
                     <!--<a href="/user/restore">Nie pamiętasz hasła?</a><br/>-->
-                    <form action="/user/registration">
-                        <input class="btn" type="submit" value="Utwórz konto" />
-                    </form>
+                    <a href="/user/registration">Utwórz konto</a><br/>
                 </fieldset>
             </div>
         </center>

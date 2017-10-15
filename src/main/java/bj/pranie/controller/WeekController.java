@@ -9,6 +9,7 @@ import bj.pranie.entity.WashTime;
 import bj.pranie.entity.myEnum.ReservationType;
 import bj.pranie.entity.myEnum.UserRole;
 import bj.pranie.model.TimeWeekModel;
+import bj.pranie.util.ColorUtil;
 import bj.pranie.util.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -333,20 +334,20 @@ public class WeekController {
 
     private String getCellColor(int freeSpace, boolean past, boolean myReservation) {
         if (past) {
-            return "#FF0000";
+            return ColorUtil.RESERVATION_UNAVAILABLE_COLOR;
         } else if (myReservation) {
-            return "#FFF200";
+            return ColorUtil.RESERVATION_MY_COLOR;
         }
 
         switch (freeSpace) {
             case 3:
-                return "#1E9600";
+                return ColorUtil.RESERVATION_FREE_COLOR;
             case 2:
-                return "#408000";
+                return ColorUtil.RESERVATION_TWO_FREE_COLOR;
             case 1:
-                return "#2C5900";
+                return ColorUtil.RESERVATION_ONE_FREE_COLOR;
             default:
-                return "#FF0000";
+                return ColorUtil.RESERVATION_UNAVAILABLE_COLOR;
         }
     }
 }

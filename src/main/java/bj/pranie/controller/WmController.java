@@ -8,6 +8,7 @@ import bj.pranie.entity.User;
 import bj.pranie.entity.WashTime;
 import bj.pranie.entity.myEnum.ReservationType;
 import bj.pranie.model.WmModel;
+import bj.pranie.util.ColorUtil;
 import bj.pranie.util.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -170,25 +171,25 @@ public class WmController {
             if (currentReservation == null) {
                 if (isPast) {
                     wmModel.setType(WmModel.TYPE.PAST);
-                    wmModel.setColor("#FF0000");
+                    wmModel.setColor(ColorUtil.RESERVATION_UNAVAILABLE_COLOR);
                 } else if (brokenWm.contains(i)) {
                     wmModel.setType(WmModel.TYPE.UNAVAILABLE);
-                    wmModel.setColor("#FF0000");
+                    wmModel.setColor(ColorUtil.RESERVATION_UNAVAILABLE_COLOR);
                 } else {
                     wmModel.setType(WmModel.TYPE.FREE);
-                    wmModel.setColor("#1E9600");
+                    wmModel.setColor(ColorUtil.RESERVATION_FREE_COLOR);
                 }
             } else {
                 wmModel.setReservationId(currentReservation.getId());
                 if (currentReservation.getType() == ReservationType.BLOCKED) {
-                    wmModel.setColor("#FF0000");
+                    wmModel.setColor(ColorUtil.RESERVATION_UNAVAILABLE_COLOR);
                     wmModel.setType(WmModel.TYPE.UNAVAILABLE);
                 } else if (isMyReservation(currentReservation.getUser())) {
                     wmModel.setType(WmModel.TYPE.MY);
-                    wmModel.setColor("#FFF200");
+                    wmModel.setColor(ColorUtil.RESERVATION_MY_COLOR);
                     wmModel.setUser(currentReservation.getUser());
                 } else {
-                    wmModel.setColor("#FF0000");
+                    wmModel.setColor(ColorUtil.RESERVATION_UNAVAILABLE_COLOR);
                     wmModel.setType(WmModel.TYPE.RESERVED);
                     wmModel.setUser(currentReservation.getUser());
                 }
