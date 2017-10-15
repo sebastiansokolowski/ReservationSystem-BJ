@@ -50,10 +50,10 @@
                     </tr>
                     <tr th:each="timeWeek,i : ${timesWeek}">
                         <th th:each="wmDate : ${timeWeek.dates}" class="time" th:bgcolor="${wmDate.color}"
-                            style="border-radius: 7px; cursor: pointer; text-align: center; opacity: 1;">
+                            style="border-radius: 10px; cursor: pointer; text-align: center; opacity: 1;">
                             <form action="#" th:action="@{/wm/} + ${wmDate.date} + @{/} + ${i.count}" method="get">
-                                <button width="100%" type="submit"
-                                        style="border:none; background-color: transparent; cursor:pointer;">
+                                <button type="submit"
+                                        style="width: 100%; outline: none; border:none; background-color: transparent; cursor:pointer;">
                                     <span th:text="${timeWeek.time}"/>
                                     <br/>
                                     <br/>
