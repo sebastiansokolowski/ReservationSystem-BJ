@@ -19,6 +19,22 @@
     padding-top: 20px;
     padding-bottom: 20px;
     width: 100%;
+                }
+.btn {
+  -webkit-border-radius: 10;
+  -moz-border-radius: 10;
+  border-radius: 10px;
+  font-family: Arial;
+  color: #ffffff;
+  background: #1f56b0;
+  padding: 5px 10px 5px 10px;
+  text-decoration: none;
+}
+
+.btn:hover {
+  background: #0388fc;
+  text-decoration: none;
+}
 }
             </style>
         </div>
@@ -28,7 +44,7 @@
             <span th:text="${user.name}"/>
             <a href="javascript: document.logoutForm.submit()">Wyloguj</a>
             <form name="logoutForm" th:action="@{/logout}" method="post" th:hidden="true">
-                <input hidden="true" type="submit" value="Logout"/>
+                <input hidden="true" class="btn" type="submit" value="Logout"/>
             </form>
             <br/>
             Tokeny: <span th:text="${user.tokens}"/>

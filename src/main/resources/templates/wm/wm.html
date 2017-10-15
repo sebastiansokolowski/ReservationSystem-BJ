@@ -50,14 +50,14 @@
                                     <div th:if="${user.tokens &gt; 0}">
                                         <form th:action="${washTimeId}+@{/register}" method="post">
                                             <input type="text" name="wmNumber" th:value="${i.index}" hidden="hidden"/>
-                                            <input type="submit" value="Zarezerwuj"/>
+                                            <input class="btn" type="submit" value="Zarezerwuj"/>
                                         </form>
                                     </div>
                                 </div>
                                 <div sec:authorize="hasAuthority('ADMIN')">
                                     <form th:action="${washTimeId}+@{/block}" method="post">
                                         <input type="text" name="wmNumber" th:value="${i.index}" hidden="hidden"/>
-                                        <input type="submit" value="Blokada"/>
+                                        <input class="btn" type="submit" value="Blokada"/>
                                     </form>
                                 </div>
                                 </p>
@@ -66,7 +66,7 @@
                                     <form th:action="${washTimeId}+@{/unregister}" method="post">
                                         <input type="text" name="reservationId" th:value="${reservation.reservationId}"
                                                hidden="hidden"/>
-                                        <input type="submit" value="Usuń"/>
+                                        <input class="btn" type="submit" value="Usuń"/>
                                     </form>
                                 </div>
                                 </p>
@@ -75,7 +75,7 @@
                                     <form th:action="${washTimeId}+@{/remove}" method="post">
                                         <input type="text" name="reservationId" th:value="${reservation.reservationId}"
                                                hidden="hidden"/>
-                                        <input type="submit" value="Usuń"/>
+                                        <input class="btn" type="submit" value="Usuń"/>
                                     </form>
                                 </div>
                                 </p>
@@ -84,7 +84,7 @@
                                     <form th:action="${washTimeId}+@{/remove}" method="post">
                                         <input type="text" name="reservationId" th:value="${reservation.reservationId}"
                                                hidden="hidden"/>
-                                        <input type="submit" value="Usuń"/>
+                                        <input class="btn" type="submit" value="Usuń"/>
                                     </form>
                                 </div>
                                 </p>

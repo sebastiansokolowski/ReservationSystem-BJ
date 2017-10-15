@@ -17,11 +17,11 @@
                 Liczba wolnych miejsc: <span th:text="${wmFree}"/>
             </p>
             <form th:action="@{/week/} + ${prevWeekId}" class="alignleft" style="margin-left:50px">
-                <input type="submit" value="Poprzedni tydzień"/>
+                <input class="btn" type="submit" value="Poprzedni tydzień"/>
             </form>
             <form th:if="${nextWeekId != null}" th:action="@{/week/} + ${nextWeekId}" class="alignright"
                   style="margin-right:50px">
-                <input type="submit" value="Następny tydzień"/>
+                <input class="btn" type="submit" value="Następny tydzień"/>
             </form>
             <table width="100%">
                 <tbody>
@@ -39,11 +39,11 @@
                             <div sec:authorize="hasAuthority('ADMIN')">
                                 <form th:action="@{/week/}+${weekId}+@{/block}" method="post">
                                     <input type="text" name="date" th:value="${dayDate.date}" hidden="hidden"/>
-                                    <input type="submit" value="Blokada"/>
+                                    <input class="btn" type="submit" value="Blokada"/>
                                 </form>
                                 <form th:action="@{/week/}+${weekId}+@{/unblock}" method="post">
                                     <input type="text" name="date" th:value="${dayDate.date}" hidden="hidden"/>
-                                    <input type="submit" value="Odblokowanie"/>
+                                    <input class="btn" type="submit" value="Odblokowanie"/>
                                 </form>
                             </div>
                         </th>
