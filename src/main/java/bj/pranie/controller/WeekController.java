@@ -128,8 +128,11 @@ public class WeekController {
         }
         model.addAttribute("prevWeekId", getSpecificWeekId(weekId, WEEK_TYPE.PREV));
         model.addAttribute("weekFrame", getWeekFrame(weekId));
-        model.addAttribute("wmFree", getWmFree(weekId));
-        model.addAttribute("timesWeek", getWeekReservations(weekId));
+
+        List<TimeWeekModel> timeWeekModels = getWeekReservations(weekId);
+        model.addAttribute("wmFree", getWmFree(timeWeekModels));
+        model.addAttribute("timesWeek", timeWeekModels);
+
         model.addAttribute("user", SecurityContextHolder.getContext().getAuthentication().getPrincipal());
     }
 
@@ -318,20 +321,14 @@ public class WeekController {
         return reservationDao.findByWashTimeIdAndDate(washTimeId, sqlDate);
     }
 
-    private Long getWmFree(String weekId) {
-        Long wmFree = washTimeDao.count() * 6 * 3;
-        String weekFrame = getWeekFrame(weekId);
-        java.sql.Date fromDate = new java.sql.Date(TimeUtil.getCalendar().getTime().getTime());
-        java.sql.Date toDate = null;
-        try {
-            toDate = new java.sql.Date(dateFormat.parse(weekFrame.split("-")[1]).getTime());
-        } catch (ParseException e) {
-            e.printStackTrace();
+    private int getWmFree(List<TimeWeekModel> timeWeekModels) {
+        int freeWm = 0;
+        for (TimeWeekModel timeWeekModel : timeWeekModels) {
+            for (TimeWeekModel.WmDate wmDate : timeWeekModel.getDates()) {
+                freeWm += wmDate.getWmFree();
+            }
         }
-
-        wmFree -= reservationDao.countByDatesBetween(fromDate, toDate);
-
-        return wmFree;
+        return freeWm;
     }
 
     private String getCellColor(int freeSpace, boolean past, boolean myReservation) {
