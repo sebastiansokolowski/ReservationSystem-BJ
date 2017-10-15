@@ -134,9 +134,9 @@ public class WeekController {
     }
 
     private boolean isAuthAdmin() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth instanceof User) {
-            User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication.getPrincipal() instanceof User) {
+            User user = (User) authentication.getPrincipal();
             if (user.getRole() == UserRole.ADMIN) {
                 return true;
             } else {
