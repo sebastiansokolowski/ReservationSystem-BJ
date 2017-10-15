@@ -12,10 +12,7 @@ import bj.pranie.model.TimeWeekModel;
 import bj.pranie.util.ColorUtil;
 import bj.pranie.util.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -61,7 +58,12 @@ public class WeekController {
 
     @RequestMapping(path = "/{weekId}", method = RequestMethod.GET)
     public String week(@PathVariable String weekId, Model model) throws ParseException {
-        setModel(weekId, model);
+        if (!isUserAuthorizedToLook(weekId) && !isAdminAuthenticated()) {
+            return "redirect:/week/";
+        } else {
+            setModel(weekId, model);
+        }
+
         return "wm/week";
     }
 
@@ -130,9 +132,12 @@ public class WeekController {
 
     private void setModel(String weekId, Model model) {
         model.addAttribute("weekId", weekId);
-        if (isAuthAdmin() || isBeforeCurrentWeekId(weekId)) {
-            model.addAttribute("nextWeekId", getSpecificWeekId(weekId, WEEK_TYPE.NEXT));
+
+        String nextWeekId = getSpecificWeekId(weekId, WEEK_TYPE.NEXT);
+        if (isUserAuthorizedToLook(nextWeekId) || isAdminAuthenticated()) {
+            model.addAttribute("nextWeekId", nextWeekId);
         }
+
         model.addAttribute("prevWeekId", getSpecificWeekId(weekId, WEEK_TYPE.PREV));
         model.addAttribute("weekFrame", getWeekFrame(weekId));
 
@@ -141,20 +146,6 @@ public class WeekController {
         model.addAttribute("timesWeek", timeWeekModels);
 
         model.addAttribute("user", SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-    }
-
-    private boolean isAuthAdmin() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication.getPrincipal() instanceof User) {
-            User user = (User) authentication.getPrincipal();
-            if (user.getRole() == UserRole.ADMIN) {
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            return false;
-        }
     }
 
     /*
@@ -172,25 +163,21 @@ public class WeekController {
         return calendar.get(Calendar.YEAR) + "-" + calendar.get(Calendar.WEEK_OF_YEAR);
     }
 
-    private boolean isBeforeCurrentWeekId(String weekId) {
-        try {
-            int year = Integer.parseInt(weekId.split("-")[0]);
-            int week = Integer.parseInt(weekId.split("-")[1]);
-            Calendar calendar = TimeUtil.getCalendar();
-            calendar.set(Calendar.YEAR, year);
-            calendar.set(Calendar.WEEK_OF_YEAR, week);
+    private boolean isUserAuthorizedToLook(String weekId) {
+        int year = Integer.parseInt(weekId.split("-")[0]);
+        int week = Integer.parseInt(weekId.split("-")[1]);
 
-            String currentWeekId = getCurrentWeekId();
-            int currentYear = Integer.parseInt(currentWeekId.split("-")[0]);
-            int currentWeek = Integer.parseInt(currentWeekId.split("-")[1]);
-            Calendar currentCalendar = TimeUtil.getCalendar();
-            currentCalendar.set(Calendar.YEAR, currentYear);
-            currentCalendar.set(Calendar.WEEK_OF_YEAR, currentWeek);
-
-            return calendar.before(currentCalendar);
-        } catch (Exception e) {
-            return false;
+        String currentWeekId = getCurrentWeekId();
+        int currentYear = Integer.parseInt(currentWeekId.split("-")[0]);
+        int currentWeek = Integer.parseInt(currentWeekId.split("-")[1]);
+        if (currentYear > year) {
+            return true;
+        } else if (currentYear == year) {
+            if (currentWeek >= week) {
+                return true;
+            }
         }
+        return false;
     }
 
     private String getSpecificWeekId(String weekId, WEEK_TYPE week_type) {
@@ -283,6 +270,17 @@ public class WeekController {
             washTimes.add(washTimeIterator.next());
 
         return washTimes;
+    }
+
+    private boolean isAdminAuthenticated() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication.getPrincipal() instanceof User) {
+            User currentUser = (User) authentication.getPrincipal();
+            if (currentUser.getRole() == UserRole.ADMIN) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean isMyReservation(List<Reservation> reservationUser) {
