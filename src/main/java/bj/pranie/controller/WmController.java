@@ -11,6 +11,7 @@ import bj.pranie.model.WmModel;
 import bj.pranie.util.ColorUtil;
 import bj.pranie.util.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -80,6 +81,7 @@ public class WmController {
         return "redirect:/wm/" + year + "/" + month + "/" + day + "/" + washTimeId;
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(path = "/{year}/{month}/{day}/{washTimeId}/remove", method = RequestMethod.POST)
     public String removeWm(@PathVariable int year,
                            @PathVariable int month,
@@ -96,6 +98,7 @@ public class WmController {
         return "redirect:/wm/" + year + "/" + month + "/" + day + "/" + washTimeId;
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(path = "/{year}/{month}/{day}/{washTimeId}/block", method = RequestMethod.POST)
     public String blockWm(@PathVariable int year,
                           @PathVariable int month,
@@ -214,14 +217,6 @@ public class WmController {
 
     private List<Integer> getBrokenWm() {
         return new ArrayList<>();
-    }
-
-    private boolean isRegistrationAvailable() {
-        return false;
-    }
-
-    private boolean isPast() {
-        return false;
     }
 
     private String getDayName(Date date) {

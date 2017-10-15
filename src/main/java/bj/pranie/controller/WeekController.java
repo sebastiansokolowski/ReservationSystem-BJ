@@ -12,6 +12,10 @@ import bj.pranie.model.TimeWeekModel;
 import bj.pranie.util.ColorUtil;
 import bj.pranie.util.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -61,6 +65,7 @@ public class WeekController {
         return "wm/week";
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(path = "/{weekId}/unblock", method = RequestMethod.POST)
     public String unblockDay(@PathVariable String weekId,
                              @RequestParam String date,
@@ -77,6 +82,7 @@ public class WeekController {
         return "wm/week";
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(path = "/{weekId}/block", method = RequestMethod.POST)
     public String blockDay(@PathVariable String weekId,
                            @RequestParam String date,
