@@ -33,6 +33,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/images/*",
                         "/favicon.ico",
                         "/js/*").permitAll()
+                .antMatchers("/admin").hasAuthority("ADMIN")
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()

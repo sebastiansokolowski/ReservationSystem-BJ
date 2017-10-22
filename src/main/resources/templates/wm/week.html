@@ -16,13 +16,26 @@
             <p>
                 Liczba wolnych miejsc: <span th:text="${wmFree}"/>
             </p>
-            <form th:action="@{/week/} + ${prevWeekId}" class="alignleft" style="margin-left:50px">
-                <input class="btn" type="submit" value="Poprzedni tydzień"/>
-            </form>
-            <form th:if="${nextWeekId != null}" th:action="@{/week/} + ${nextWeekId}" class="alignright"
-                  style="margin-right:50px">
-                <input class="btn" type="submit" value="Następny tydzień"/>
-            </form>
+
+            <div sec:authorize="hasAuthority('ADMIN')">
+                <form th:action="@{/admin/week/} + ${prevWeekId}" class="alignleft" style="margin-left:50px">
+                    <input class="btn" type="submit" value="Poprzedni tydzień"/>
+                </form>
+                <form th:action="@{/admin/week/} + ${nextWeekId}" class="alignright"
+                      style="margin-right:50px">
+                    <input class="btn" type="submit" value="Następny tydzień"/>
+                </form>
+            </div>
+            <div sec:authorize="!hasAuthority('ADMIN')">
+                <form th:if="${prevWeekButton}" th:action="@{/week/last}" class="alignleft" style="margin-left:50px">
+                    <input class="btn" type="submit" value="Poprzedni tydzień"/>
+                </form>
+                <form th:if="${nextWeekButton}" th:action="@{/week/}" class="alignright"
+                      style="margin-right:50px">
+                    <input class="btn" type="submit" value="Następny tydzień"/>
+                </form>
+            </div>
+
             <table width="100%">
                 <tbody>
                     <tr>
@@ -37,11 +50,11 @@
                         <th th:each="dayDate : ${timesWeek[0].dates}">
                             <span th:text="${dayDate.date}"/>
                             <div sec:authorize="hasAuthority('ADMIN')">
-                                <form th:action="@{/week/}+${weekId}+@{/block}" method="post">
+                                <form th:action="@{/admin/week/}+${weekId}+@{/block}" method="post">
                                     <input type="text" name="date" th:value="${dayDate.date}" hidden="hidden"/>
                                     <input class="btn" type="submit" value="Blokada"/>
                                 </form>
-                                <form th:action="@{/week/}+${weekId}+@{/unblock}" method="post">
+                                <form th:action="@{/admin/week/}+${weekId}+@{/unblock}" method="post">
                                     <input type="text" name="date" th:value="${dayDate.date}" hidden="hidden"/>
                                     <input class="btn" type="submit" value="Odblokowanie"/>
                                 </form>
