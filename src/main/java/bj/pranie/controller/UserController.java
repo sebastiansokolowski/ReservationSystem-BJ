@@ -9,6 +9,7 @@ import bj.pranie.model.UserSettingsModel;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -31,6 +32,9 @@ public class UserController {
 
     @Autowired
     private RoomDao roomDao;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @RequestMapping(value = "/settings", method = RequestMethod.GET)
     public String userSettings(Model model) {
@@ -79,7 +83,8 @@ public class UserController {
                 user.setName(userSettingsModel.getNewName());
             }
             if (userSettingsModel.isSetNewPassword()) {
-                user.setPassword(userSettingsModel.getNewPassword());
+                String newPasswordEnc = passwordEncoder.encode(userSettingsModel.getNewPassword());
+                user.setPassword(newPasswordEnc);
             }
 
             userDao.save(user);
@@ -124,6 +129,9 @@ public class UserController {
         if (!bindingResult.hasErrors()) {
             ModelMapper modelMapper = new ModelMapper();
             User user = modelMapper.map(userRegistrationModel, User.class);
+
+            String passwordEnc = passwordEncoder.encode(user.getPassword());
+            user.setPassword(passwordEnc);
 
             userDao.save(user);
 
