@@ -20,7 +20,7 @@ public class Reservation {
     @NotNull
     private int wm;
 
-    @OneToOne(fetch=FetchType.EAGER)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     @NotNull
     private User user;
@@ -33,10 +33,10 @@ public class Reservation {
     @NotNull
     private Date date;
 
-    @OneToOne(fetch=FetchType.EAGER)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "wash_time_id")
     @NotNull
-    private WashTime washTime ;
+    private WashTime washTime;
 
     public long getId() {
         return id;

@@ -14,8 +14,6 @@ import java.util.List;
  */
 @Transactional
 public interface ReservationDao extends CrudRepository<Reservation, Long> {
-    @Query("select count(b) from Reservation b where b.date between ?1 and ?2 and b.date between ?1 and ?2")
-    Long countByDatesBetween(Date fromDate, Date toDate);
 
     List<Reservation> findByWashTimeIdAndDate(long washTimeId, Date date);
 

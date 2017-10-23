@@ -7,8 +7,8 @@ import java.util.List;
  */
 public class TimeWeekModel {
 
-    String time;
-    List<WmDate> dates;
+    private String time;
+    private List<WmDate> dates;
 
     public String getTime() {
         return time;

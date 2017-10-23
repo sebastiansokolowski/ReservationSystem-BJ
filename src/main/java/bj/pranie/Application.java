@@ -30,10 +30,10 @@ public class Application {
 
     @PostConstruct
     public void init() {
-        startTimerToReserUsersTokens();
+        startTimerToResetUsersTokens();
     }
 
-    private void startTimerToReserUsersTokens() {
+    private void startTimerToResetUsersTokens() {
         Calendar nowCalendar = TimeUtil.getCalendar();
 
         Calendar nextReset = TimeUtil.getCalendar();
