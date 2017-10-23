@@ -1,13 +1,25 @@
 package bj.pranie.controller;
 
 import bj.pranie.dao.UserDao;
-import bj.pranie.dto.RestorePasswordDto;
+import bj.pranie.entity.User;
+import bj.pranie.model.RestorePasswordModel;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
+
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+import javax.validation.Valid;
 
 /**
  * Created by Sebastian Sokolowski on 10.08.16.
@@ -15,62 +27,60 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 @RequestMapping("/user")
 public class UserRestorePassword {
-    private final static String TAG = UserRestorePassword.class.getSimpleName();
 
     @Autowired
     private UserDao userDao;
 
+    @Autowired
+    private JavaMailSender emailSender;
+
+    @Autowired
+    private TemplateEngine templateEngine;
+
     @RequestMapping(value = "/restore", method = RequestMethod.GET)
     public String restoreForm(Model model) {
-        model.addAttribute("restore", new RestorePasswordDto());
+        model.addAttribute("restorePasswordModel", new RestorePasswordModel());
         return "user/restore";
     }
 
     @RequestMapping(value = "/restore", method = RequestMethod.POST)
-    public String restorePassword(@ModelAttribute RestorePasswordDto restorePasswordDto, Model model) {
-        //User user = userDao.findByEmail(restorePasswordDto.getEmail());
+    public ModelAndView restorePassword(@ModelAttribute("restorePasswordModel") @Valid RestorePasswordModel restorePasswordModel,
+                                        BindingResult bindingResult) throws MessagingException {
+        ModelAndView modelAndView = new ModelAndView();
 
-        if (true) {
-            model.addAttribute("error", "The id selected is out of Range, please select another id within range");
+        User user = userDao.findByEmail(restorePasswordModel.getEmail());
+
+        if (!bindingResult.hasErrors()) {
+            if (user != null) {
+                String newPassword = RandomStringUtils.randomAlphanumeric(10);
+                //TODO: save password
+                sendMail(user, newPassword);
+                modelAndView.addObject("successMessage", "Hasło tymczasowe zostało wysłane na podany adres email.");
+            } else {
+                bindingResult.rejectValue("email", "error.restorePasswordDto", "Podany adres email nie istnieje w bazie.");
+            }
         }
-        return "user/restore";
-//
-//        //generate new password
-//        String newPassword = randomString(10);
-//        user.setPassword(newPassword);
-//        userDao.save(user);
-//
-//        //send email with new password
-//        sendEmail(user);
-//
-//        return model;
+
+        modelAndView.setViewName("user/restore");
+        return modelAndView;
     }
 
-//    private void sendEmail(User user) {
-//        try {
-//            SendGrid grid = new SendGrid(System.getenv("SENDGRID_USERNAME"), System.getenv("SENDGRID_PASSWORD"));
-//            SendGrid.Email email = new SendGrid.Email();
-//
-//            String message = "Witaj!\nPoniżej znajduje się nowe hasło do serwisu www.bjpranie.pl, niezwłocznie po zalogowaniu zmień hasło na nowe!\nHasło:" + user.getPassword();
-//
-//            email.addTo(user.getEmail());
-//            email.setFrom("bursa.jagiellonska@gmail.com");
-//            email.setSubject("Nowe hasło do zapisów na pranie w D.S. Bursa Jagiellońska");
-//            email.setHtml(message);
-//
-//            grid.send(email);
-//        } catch (SendGridException ex) {
-//            Logger.getLogger(TAG).log(null, ex);
-//        }
-//    }
+    private void sendMail(User user, String newPassword) throws MessagingException {
+        MimeMessage mail = emailSender.createMimeMessage();
 
-    public static String randomString(int len) {
-        char[] str = new char[100];
+        Context context = new Context();
+        context.setVariable("name", user.getName());
+        context.setVariable("newPassword", newPassword);
 
-        for (int i = 0; i < len; i++) {
-            str[i] = (char) (((int) (Math.random() * 26)) + (int) 'A');
-        }
+        String body = templateEngine.process("email/restorePassword", context);
 
-        return (new String(str, 0, len));
+        MimeMessageHelper helper = new MimeMessageHelper(mail, true);
+        helper.setTo(user.getEmail());
+        helper.setReplyTo("bursa.jagiellonska@gmail.com");
+        helper.setFrom("bursa.jagiellonska@gmail.com");
+        helper.setSubject("Resetowanie hasła www.bj-pranie.pl");
+        helper.setText(body, true);
+
+        emailSender.send(mail);
     }
 }
