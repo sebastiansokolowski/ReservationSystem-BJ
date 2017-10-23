@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
     <head>
         <div th:include="fragments/header :: header-css"/>
     </head>
@@ -9,24 +9,22 @@
             <img src="/images/logo.jpg"/>
             <div style="margin-left:35%;margin-right:35%;">
                 <fieldset>
-                    <form method="post" action="/user/restore">
+                    <form th:object="${restorePasswordModel}" th:action="@{/user/restore}" method="post">
                         <div align="center">
-                            <p>Adres email:
-                                <input maxlength="30" name="email" type="text" required="true"/>
+                            <p>
+                                Email: <input type="text" th:field="*{email}" maxlength="30" required="true"/>
+                            <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}"
+                               style="color:red;font-size:15px"
+                               class="validation-message"/>
                             </p>
                         </div>
-                        <div th:if="${param.successful}">
-                            Hasło zostało wyslane na podany adres email.
-                        </div>
-                        <div th:if="${param.error}">
-                            Brak użytkownika z danym adresem email.
-                        </div>
+                        <p style="color:green;font-size:15px">
+                            <span th:text="${successMessage}"/>
+                        </p>
+                        <input class="btn" type="submit" value="Wyślij nowe hasło"/>
                     </form>
                 </fieldset>
             </div>
-            <p>
-                <input class="btn" type="submit" value="Wyślij nowe hasło"/>
-            </p>
         </center>
     </body>
     <footer>
