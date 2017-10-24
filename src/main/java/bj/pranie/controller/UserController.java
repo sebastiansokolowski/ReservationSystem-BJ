@@ -35,6 +35,10 @@ public class UserController {
 
     private PasswordEncoder passwordEncoder;
 
+    public UserController(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
+
     @RequestMapping(value = "/settings", method = RequestMethod.GET)
     public String userSettings(Model model) {
         model.addAttribute("userSettingsModel", new UserSettingsModel());
