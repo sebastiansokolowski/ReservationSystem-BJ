@@ -1,4 +1,4 @@
-package bj.pranie.dao.service;
+package bj.pranie.service;
 
 import bj.pranie.dao.UserDao;
 import bj.pranie.entity.Room;
@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Iterator;
 import java.util.List;
 
 /**
