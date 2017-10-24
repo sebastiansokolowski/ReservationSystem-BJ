@@ -33,7 +33,7 @@ public class UserServiceImpl implements UserDao {
 
     @Override
     public List<User> findByRoom(Room room) {
-        return findByRoom(room);
+        return userDao.findByRoom(room);
     }
 
     @Override
