@@ -34,7 +34,7 @@ public class UserController {
     private RoomDao roomDao;
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    PasswordEncoder passwordEncoder;
 
     @RequestMapping(value = "/settings", method = RequestMethod.GET)
     public String userSettings(Model model) {

@@ -28,7 +28,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     private UserDao userDao;
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    PasswordEncoder passwordEncoder;
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
