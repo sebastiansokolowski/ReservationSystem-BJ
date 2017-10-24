@@ -1,6 +1,6 @@
 package bj.pranie.controller;
 
-import bj.pranie.dao.UserDao;
+import bj.pranie.service.UserServiceImpl;
 import bj.pranie.entity.User;
 import bj.pranie.model.RestorePasswordModel;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -29,7 +29,7 @@ import javax.validation.Valid;
 public class UserRestorePassword {
 
     @Autowired
-    private UserDao userDao;
+    private UserServiceImpl userService;
 
     @Autowired
     private JavaMailSender emailSender;
@@ -48,7 +48,7 @@ public class UserRestorePassword {
                                         BindingResult bindingResult) throws MessagingException {
         ModelAndView modelAndView = new ModelAndView();
 
-        User user = userDao.findByEmail(restorePasswordModel.getEmail());
+        User user = userService.findByEmail(restorePasswordModel.getEmail());
 
         if (!bindingResult.hasErrors()) {
             if (user != null) {
