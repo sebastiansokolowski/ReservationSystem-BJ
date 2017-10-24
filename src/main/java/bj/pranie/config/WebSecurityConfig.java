@@ -18,6 +18,7 @@ import javax.sql.DataSource;
  * Created by Sebastian Sokolowski on 13.10.16.
  */
 @Configuration
+@ComponentScan
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
