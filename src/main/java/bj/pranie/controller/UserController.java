@@ -116,9 +116,9 @@ public class UserController {
         }
         Room room = roomDao.findOne(userRegistrationModel.getRoomId());
         if (room == null) {
-            bindingResult.rejectValue("room", "error.userRegistrationModel", "Wybierz pokój z listy.");
+            bindingResult.rejectValue("roomId", "error.userRegistrationModel", "Wybierz pokój z listy.");
         } else if (userService.findByRoom(room).size() >= room.getPeoples()) {
-            bindingResult.rejectValue("room", "error.userRegistrationModel", "Brak miejsca w wybranym pokoju.");
+            bindingResult.rejectValue("roomId", "error.userRegistrationModel", "Brak miejsca w wybranym pokoju.");
         }
 
         if (!bindingResult.hasErrors()) {
