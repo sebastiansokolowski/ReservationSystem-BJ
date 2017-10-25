@@ -13,14 +13,13 @@ public class TimeUtil {
     private static final SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm");
 
     private static TimeZone timeZone = TimeZone.getTimeZone("Europe/Warsaw");
-    private static Calendar calendar = Calendar.getInstance(timeZone);
 
     public static String getTime() {
         return calendar.get(Calendar.HOUR_OF_DAY) + ":"+ calendar.get(Calendar.MINUTE);
     }
 
     public static Calendar getCalendar(){
-        return (Calendar) calendar.clone();
+        return Calendar.getInstance(timeZone);
     }
 
     public static boolean isPast(String time, String date) {
