@@ -1,6 +1,5 @@
 package bj.pranie;
 
-import bj.pranie.dao.ReservationDao;
 import bj.pranie.entity.User;
 import bj.pranie.entity.myEnum.UserRole;
 import bj.pranie.service.UserServiceImpl;
@@ -45,9 +44,10 @@ public class Application {
         nextReset.set(Calendar.MINUTE, 0);
         nextReset.set(Calendar.SECOND, 0);
 
-        while (nextReset.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) {
+        do {
             nextReset.add(Calendar.DAY_OF_WEEK, 1);
-        }
+        } while (nextReset.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY);
+
         long delay = nextReset.getTimeInMillis() - nowCalendar.getTimeInMillis();
 
         float hourDelay = (delay / (float) (1000 * 60 * 60 * 24));
