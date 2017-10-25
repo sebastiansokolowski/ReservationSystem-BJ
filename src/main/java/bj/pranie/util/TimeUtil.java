@@ -14,12 +14,9 @@ public class TimeUtil {
 
     private static TimeZone timeZone = TimeZone.getTimeZone("Europe/Warsaw");
 
-    public static String getTime() {
-        return calendar.get(Calendar.HOUR_OF_DAY) + ":"+ calendar.get(Calendar.MINUTE);
-    }
-
     public static Calendar getCalendar(){
-        return Calendar.getInstance(timeZone);
+        Calendar calendar = Calendar.getInstance(timeZone);
+        return calendar;
     }
 
     public static boolean isPast(String time, String date) {
