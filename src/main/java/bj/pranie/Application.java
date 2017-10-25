@@ -38,15 +38,7 @@ public class Application {
 
     private void startTimerToResetUsersTokens() {
         Calendar nowCalendar = TimeUtil.getCalendar();
-
-        Calendar nextReset = TimeUtil.getCalendar();
-        nextReset.set(Calendar.HOUR_OF_DAY, RESET_TIME);
-        nextReset.set(Calendar.MINUTE, 0);
-        nextReset.set(Calendar.SECOND, 0);
-
-        do {
-            nextReset.add(Calendar.DAY_OF_WEEK, 1);
-        } while (nextReset.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY);
+        Calendar nextReset = getNextResetTime();
 
         long delay = nextReset.getTimeInMillis() - nowCalendar.getTimeInMillis();
 
@@ -57,8 +49,30 @@ public class Application {
             @Override
             public void run() {
                 resetUsersTokens();
+
+                startTimerToResetUsersTokens();
             }
         }, delay);
+    }
+
+    private Calendar getNextResetTime() {
+        Calendar nowCalendar = TimeUtil.getCalendar();
+
+        Calendar nextReset = TimeUtil.getCalendar();
+        nextReset.set(Calendar.HOUR_OF_DAY, RESET_TIME);
+        nextReset.set(Calendar.MINUTE, 0);
+        nextReset.set(Calendar.SECOND, 0);
+
+
+        if (nowCalendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY &&
+                nowCalendar.get(Calendar.HOUR_OF_DAY) >= RESET_TIME ||
+                nowCalendar.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) {
+            do {
+                nextReset.add(Calendar.DAY_OF_WEEK, 1);
+            } while (nextReset.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY);
+        }
+
+        return nextReset;
     }
 
     private void resetUsersTokens() {
