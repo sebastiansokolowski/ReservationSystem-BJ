@@ -1,15 +1,19 @@
 package bj.pranie;
 
-import bj.pranie.dao.UserDao;
+import bj.pranie.dao.ReservationDao;
 import bj.pranie.entity.User;
 import bj.pranie.entity.myEnum.UserRole;
+import bj.pranie.service.UserServiceImpl;
 import bj.pranie.util.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import javax.annotation.PostConstruct;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Iterator;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.logging.Logger;
 
 /**
@@ -22,7 +26,7 @@ public class Application {
     private final static int RESET_TIME = 10;
 
     @Autowired
-    private UserDao userDao;
+    private UserServiceImpl userService;
 
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
@@ -58,7 +62,7 @@ public class Application {
     }
 
     private void resetUsersTokens() {
-        Iterable<User> iterable = userDao.findAll();
+        Iterable<User> iterable = userService.findAll();
         Iterator<User> iterator = iterable.iterator();
         while (iterator.hasNext()) {
             User user = iterator.next();
@@ -67,6 +71,6 @@ public class Application {
             }
         }
 
-        userDao.save(iterable);
+        userService.save(iterable);
     }
 }
