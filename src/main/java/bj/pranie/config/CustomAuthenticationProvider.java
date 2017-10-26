@@ -38,11 +38,15 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         User user = userDao.findByUsername(username);
 
         if (user == null || !user.getUsername().equalsIgnoreCase(username)) {
-            throw new BadCredentialsException("Username not found.");
+            throw new BadCredentialsException("Nieprawidłowa nazwa użytkownika");
         }
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new BadCredentialsException("Wrong password.");
+            throw new BadCredentialsException("Nieprawidłowe hasło");
+        }
+
+        if (user.isBlocked()) {
+            throw new UserBlockedException("Konto zostało zablokowane.");
         }
 
         return new UsernamePasswordAuthenticationToken(user, password, getUserGrantedAuthority(user));

@@ -20,8 +20,12 @@
                             <input class="btn" type="submit" value="Zaloguj się"/>
                         </form>
                     </div>
-                    <div th:if="${param.error}" style="color:red;font-size:15px">
-                        Zła nazwa użytkownika albo hasło.
+                    <div class="error"
+                         th:if="${param.error}"
+                         th:with="errorMsg=${session[SPRING_SECURITY_LAST_EXCEPTION].message}">
+                        <p style="color:red">
+                            <span th:text="${errorMsg}"/>
+                        </p>
                     </div>
                     <br/>
                     <a href="/user/restore">Nie pamiętasz hasła?</a><br/>
