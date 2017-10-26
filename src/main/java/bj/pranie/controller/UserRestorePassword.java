@@ -37,13 +37,13 @@ public class UserRestorePassword {
     @Autowired
     private TemplateEngine templateEngine;
 
-    @RequestMapping(value = "/restore", method = RequestMethod.GET)
+    @RequestMapping(value = "/restorePassword", method = RequestMethod.GET)
     public String restoreForm(Model model) {
         model.addAttribute("restorePasswordModel", new RestorePasswordModel());
-        return "user/restore";
+        return "user/restorePassword";
     }
 
-    @RequestMapping(value = "/restore", method = RequestMethod.POST)
+    @RequestMapping(value = "/restorePassword", method = RequestMethod.POST)
     public ModelAndView restorePassword(@ModelAttribute("restorePasswordModel") @Valid RestorePasswordModel restorePasswordModel,
                                         BindingResult bindingResult) throws MessagingException {
         ModelAndView modelAndView = new ModelAndView();
@@ -61,7 +61,7 @@ public class UserRestorePassword {
             }
         }
 
-        modelAndView.setViewName("user/restore");
+        modelAndView.setViewName("user/restorePassword");
         return modelAndView;
     }
 
