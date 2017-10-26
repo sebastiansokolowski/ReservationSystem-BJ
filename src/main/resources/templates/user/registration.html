@@ -6,15 +6,13 @@
     <body>
         <center>
             <h2>Rejestracja konta</h2>
-            <fieldset class="fieldset">
+            <img src="/images/logo.jpg"/>
+            <fieldset class="fieldset" style="margin-left: 35%; margin-right: 35%;">
                 <form:select path="room">
                     <form:option value="" label="...."/>
                     <form:options items="${rooms}"/>
                 </form:select>
-                <img width="600" height="900" alt="" src="/images/regulamin1.jpg"/>
-                <br/>
-                <img width="600" height="900" alt="" src="/images/regulamin2.jpg"/>
-                <div style="margin-left: 35%; margin-right: 35%;">
+                <div >
                     <form th:object="${userRegistrationModel}" th:action="@{/user/registration}" method="post">
                         <div align="right">
                             <p>
@@ -62,9 +60,6 @@
                             </p>
                             <p style="color:green;font-size:15px">
                                 <span th:text="${successMessage}"/>
-                            </p>
-                            <p align="center">
-                                <input type="checkbox" name="accept" value="accept" required="true"/>Akceptuje regulamin
                             </p>
                         </div>
                         <input class="btn" type="submit" value="Rejestracja" style="margin-bottom: 20px;"/>

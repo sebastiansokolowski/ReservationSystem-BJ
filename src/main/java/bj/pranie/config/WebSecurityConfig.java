@@ -28,7 +28,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/logout",
                         "/week", "/week/*",
                         "/wm/*/*/*/*",
-                        "/user/registration", "/user/restore",
+                        "/user/regulations", "/user/registration", "/user/restorePassword",
                         "/images/*",
                         "/favicon.ico",
                         "/js/*").permitAll()

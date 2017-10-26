@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:form="http://www.w3.org/1999/xhtml">
+    <head>
+        <div th:include="fragments/header :: header-css"/>
+    </head>
+    <body>
+        <center>
+            <h2>Rejestracja konta</h2>
+            <fieldset class="fieldset">
+                <form:select path="room">
+                    <form:option value="" label="...."/>
+                    <form:options items="${rooms}"/>
+                </form:select>
+                <img width="600" height="900" alt="" src="/images/regulamin1.jpg"/>
+                <br/>
+                <img width="600" height="900" alt="" src="/images/regulamin2.jpg"/>
+                <div style="margin-left: 35%; margin-right: 35%;">
+                    <form th:action="@{/user/registration}" method="get">
+                        <div align="right">
+                            <p align="center">
+                                <input type="checkbox" name="accept" value="accept" required="true"/>Akceptuje regulamin
+                            </p>
+                        </div>
+                        <input class="btn" type="submit" value="Dalej" style="margin-bottom: 20px;"/>
+                    </form>
+                </div>
+            </fieldset>
+        </center>
+    </body>
+    <footer>
+        <div th:replace="fragments/footer :: footer"/>
+    </footer>
+</html>
