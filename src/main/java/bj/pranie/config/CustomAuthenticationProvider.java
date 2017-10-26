@@ -1,5 +1,6 @@
 package bj.pranie.config;
 
+import bj.pranie.config.exception.UserBlockedException;
 import bj.pranie.dao.UserDao;
 import bj.pranie.entity.User;
 import bj.pranie.entity.myEnum.UserRole;
@@ -46,7 +47,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         }
 
         if (user.isBlocked()) {
-            throw new UserBlockedException("Konto zostało zablokowane.");
+            throw new UserBlockedException("Konto zostało zablokowane");
         }
 
         return new UsernamePasswordAuthenticationToken(user, password, getUserGrantedAuthority(user));
