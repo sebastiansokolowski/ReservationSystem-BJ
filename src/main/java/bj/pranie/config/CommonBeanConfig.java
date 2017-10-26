@@ -15,9 +15,4 @@ public class CommonBeanConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
-    @Bean
-    CustomAuthenticationFailureHandler authenticationHandler() {
-        return new CustomAuthenticationFailureHandler();
-    }
 }
