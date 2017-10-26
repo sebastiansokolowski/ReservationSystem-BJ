@@ -38,6 +38,9 @@ public class User {
     @JoinColumn(name = "room_id")
     private Room room;
 
+    @NotNull
+    private boolean blocked;
+
     public long getId() {
         return id;
     }
@@ -100,5 +103,13 @@ public class User {
 
     public void setRole(UserRole role) {
         this.role = role;
+    }
+
+    public boolean isBlocked() {
+        return blocked;
+    }
+
+    public void setBlocked(boolean blocked) {
+        this.blocked = blocked;
     }
 }
