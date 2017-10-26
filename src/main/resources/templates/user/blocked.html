@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <div th:include="fragments/header :: header-css"/>
+    </head>
+    <body>
+        <div th:include="fragments/header :: menu"/>
+        <center>
+            <img src="/images/logo.jpg"/>
+            <div style="margin-left:35%;margin-right:35%;">
+                <fieldset class="fieldset">
+                    <div align="center">
+                        <p style="color:red">
+                            Twoje konto zostało zablokowane.
+                        </p>
+                        <p>
+                            Po więcej informacji proszę się zgłosić do rady mieszkańców.
+                        </p>
+                    </div>
+                </fieldset>
+            </div>
+        </center>
+    </body>
+    <footer>
+        <div th:replace="fragments/footer :: footer"/>
+    </footer>
+</html>
