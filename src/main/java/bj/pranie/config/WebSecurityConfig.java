@@ -21,9 +21,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private CustomAuthenticationProvider customAuthenticationProvider;
 
-    @Autowired
-    private CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
@@ -31,7 +28,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/logout",
                         "/week", "/week/*",
                         "/wm/*/*/*/*",
-                        "/user/registration", "/user/restore", "/user/blocked",
+                        "/user/registration", "/user/restore",
                         "/images/*",
                         "/favicon.ico",
                         "/js/*").permitAll()
@@ -41,7 +38,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .formLogin()
                 .loginPage("/login")
                 .defaultSuccessUrl("/week")
-                .failureHandler(customAuthenticationFailureHandler)
                 .permitAll()
                 .and()
                 .logout()
