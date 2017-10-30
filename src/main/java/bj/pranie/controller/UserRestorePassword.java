@@ -13,6 +13,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
@@ -52,10 +53,13 @@ public class UserRestorePassword {
 
         if (!bindingResult.hasErrors()) {
             if (user != null) {
-                String newPassword = RandomStringUtils.randomAlphanumeric(10);
-                //TODO: save password
-                sendMail(user, newPassword);
-                modelAndView.addObject("successMessage", "Hasło tymczasowe zostało wysłane na podany adres email.");
+                String resetPasswordKey = RandomStringUtils.randomAlphanumeric(20);
+
+                user.setResetPasswordKey(resetPasswordKey);
+                userService.save(user);
+
+                sendMail(user, resetPasswordKey);
+                modelAndView.addObject("successMessage", "Link do resetowania hasła został wysłany na podany adres email.");
             } else {
                 bindingResult.rejectValue("email", "error.restorePasswordDto", "Podany adres email nie istnieje w bazie.");
             }
@@ -65,12 +69,12 @@ public class UserRestorePassword {
         return modelAndView;
     }
 
-    private void sendMail(User user, String newPassword) throws MessagingException {
+    private void sendMail(User user, String resetPasswordKey) throws MessagingException {
         MimeMessage mail = emailSender.createMimeMessage();
 
         Context context = new Context();
         context.setVariable("name", user.getName());
-        context.setVariable("newPassword", newPassword);
+        context.setVariable("resetPasswordKey", resetPasswordKey);
 
         String body = templateEngine.process("email/restorePassword", context);
 

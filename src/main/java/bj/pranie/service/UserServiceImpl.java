@@ -37,6 +37,11 @@ public class UserServiceImpl implements UserDao {
     }
 
     @Override
+    public User findByResetPasswordKey(String resetPasswordKey) {
+        return userDao.findByResetPasswordKey(resetPasswordKey);
+    }
+
+    @Override
     public User save(User entity) {
         hashPassword(entity);
         return userDao.save(entity);

@@ -21,6 +21,8 @@ public class User {
     @NotNull
     private String password;
 
+    private String resetPasswordKey;
+
     @NotNull
     private String name;
 
@@ -63,6 +65,14 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getResetPasswordKey() {
+        return resetPasswordKey;
+    }
+
+    public void setResetPasswordKey(String resetPasswordKey) {
+        this.resetPasswordKey = resetPasswordKey;
     }
 
     public String getEmail() {
