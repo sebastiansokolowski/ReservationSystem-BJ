@@ -27,6 +27,8 @@ import javax.validation.Valid;
 @RequestMapping("/user")
 public class UserController {
 
+    private final static int TOKENS_AT_START = 2;
+
     @Autowired
     private RoomDao roomDao;
 
@@ -129,6 +131,7 @@ public class UserController {
             ModelMapper modelMapper = new ModelMapper();
             User user = modelMapper.map(userRegistrationModel, User.class);
 
+            user.setTokens(TOKENS_AT_START);
             userService.save(user);
 
             modelAndView.addObject("successMessage", "Rejestracja przebiegła pomyślnie.");
