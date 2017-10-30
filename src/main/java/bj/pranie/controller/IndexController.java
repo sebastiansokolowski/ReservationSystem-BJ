@@ -1,8 +1,7 @@
 package bj.pranie.controller;
 
-import bj.pranie.entity.User;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import bj.pranie.service.UserAuthenticatedService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -14,19 +13,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 public class IndexController {
 
+    @Autowired
+    private UserAuthenticatedService userAuthenticatedService;
+
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String index() {
-        if (isAuthenticatedUser()) {
+        if (userAuthenticatedService.isAuthenticatedUser()) {
             return "redirect:/week";
         }
         return "index";
-    }
-
-    private boolean isAuthenticatedUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication.getPrincipal() instanceof User) {
-            return true;
-        }
-        return false;
     }
 }

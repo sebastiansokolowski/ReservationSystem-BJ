@@ -5,6 +5,7 @@ import bj.pranie.entity.Reservation;
 import bj.pranie.entity.User;
 import bj.pranie.entity.WashTime;
 import bj.pranie.entity.myEnum.ReservationType;
+import bj.pranie.service.UserAuthenticatedService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -28,6 +29,9 @@ public class AdminWeekController extends BaseWeekController {
 
     @Autowired
     private UserDao userDao;
+
+    @Autowired
+    private UserAuthenticatedService userAuthenticatedService;
 
     @RequestMapping(method = RequestMethod.GET)
     public String week(Model model) throws ParseException {
@@ -99,7 +103,7 @@ public class AdminWeekController extends BaseWeekController {
     }
 
     private void makeReservations(Date sqlDate) {
-        User admin = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User admin = userAuthenticatedService.getAuthenticatedUser();
 
         Iterator<WashTime> washTimes = washTimeDao.findAll().iterator();
         while (washTimes.hasNext()) {

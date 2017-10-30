@@ -1,6 +1,7 @@
 package bj.pranie.controller;
 
 import bj.pranie.dao.RoomDao;
+import bj.pranie.service.UserAuthenticatedService;
 import bj.pranie.service.UserServiceImpl;
 import bj.pranie.entity.Room;
 import bj.pranie.entity.User;
@@ -32,10 +33,13 @@ public class UserController {
     @Autowired
     private UserServiceImpl userService;
 
+    @Autowired
+    private UserAuthenticatedService userAuthenticatedService;
+
     @RequestMapping(value = "/settings", method = RequestMethod.GET)
     public String userSettings(Model model) {
         model.addAttribute("userSettingsModel", new UserSettingsModel());
-        model.addAttribute("user", SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        model.addAttribute("user", userAuthenticatedService.getAuthenticatedUser());
         return "user/settings";
     }
 
@@ -43,7 +47,7 @@ public class UserController {
     public ModelAndView saveUserSettings(@ModelAttribute("userSettingsModel") @Valid UserSettingsModel userSettingsModel, BindingResult bindingResult) {
         ModelAndView modelAndView = new ModelAndView();
 
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = (User) userAuthenticatedService.getAuthenticatedUser();
 
         if (!userSettingsModel.getPassword().equals(user.getPassword())) {
             bindingResult.rejectValue("password", "error.userRegistrationModel", "Podane hasło jest nieprawidłowe.");
@@ -87,7 +91,7 @@ public class UserController {
             modelAndView.addObject("successMessage", "Zmiany zostały zachowane pomyślnie.");
         }
 
-        modelAndView.addObject("user", SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        modelAndView.addObject("user", userAuthenticatedService.getAuthenticatedUser());
         modelAndView.setViewName("user/settings");
         return modelAndView;
     }

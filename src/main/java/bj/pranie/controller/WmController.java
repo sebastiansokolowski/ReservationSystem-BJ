@@ -8,6 +8,7 @@ import bj.pranie.entity.User;
 import bj.pranie.entity.WashTime;
 import bj.pranie.entity.myEnum.ReservationType;
 import bj.pranie.model.WmModel;
+import bj.pranie.service.UserAuthenticatedService;
 import bj.pranie.util.ColorUtil;
 import bj.pranie.util.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +45,9 @@ public class WmController {
     @Autowired
     private UserDao userDao;
 
+    @Autowired
+    private UserAuthenticatedService userAuthenticatedService;
+
     @RequestMapping(path = "/{year}/{month}/{day}/{washTimeId}", method = RequestMethod.GET)
     public String wm(@PathVariable int year,
                      @PathVariable int month,
@@ -62,7 +66,7 @@ public class WmController {
         model.addAttribute("time", getWashTime(washTime));
         model.addAttribute("wmFree", wmFree);
         model.addAttribute("reservations", getWmModels(reservationList, date, washTime));
-        model.addAttribute("user", SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        model.addAttribute("user", userAuthenticatedService.getAuthenticatedUser());
         return "wm/wm";
     }
 
@@ -74,7 +78,7 @@ public class WmController {
                                @RequestParam long reservationId) {
         reservationDao.delete(reservationId);
 
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userAuthenticatedService.getAuthenticatedUser();
         user.setTokens(user.getTokens() + 1);
         userDao.save(user);
 
@@ -105,7 +109,7 @@ public class WmController {
                           @PathVariable int day,
                           @PathVariable long washTimeId,
                           @RequestParam int wmNumber) {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userAuthenticatedService.getAuthenticatedUser();
 
         makeReservation(user, year, month, day, washTimeId, wmNumber, ReservationType.BLOCKED);
 
@@ -118,7 +122,7 @@ public class WmController {
                              @PathVariable int day,
                              @PathVariable long washTimeId,
                              @RequestParam int wmNumber) {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userAuthenticatedService.getAuthenticatedUser();
 
         makeReservation(user, year, month, day, washTimeId, wmNumber, ReservationType.USER);
 

@@ -6,6 +6,7 @@ import bj.pranie.entity.Reservation;
 import bj.pranie.entity.User;
 import bj.pranie.entity.WashTime;
 import bj.pranie.model.TimeWeekModel;
+import bj.pranie.service.UserAuthenticatedService;
 import bj.pranie.util.ColorUtil;
 import bj.pranie.util.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,9 @@ public class BaseWeekController {
     @Autowired
     WashTimeDao washTimeDao;
 
+    @Autowired
+    private UserAuthenticatedService userAuthenticatedService;
+
     void setModel(String weekId, Model model) throws ParseException {
         model.addAttribute("weekId", weekId);
         model.addAttribute("weekFrame", getWeekFrame(weekId));
@@ -42,7 +46,7 @@ public class BaseWeekController {
         List<TimeWeekModel> timeWeekModels = getTimeWeekModels(weekId);
         model.addAttribute("wmFree", getWmFree(timeWeekModels));
         model.addAttribute("timesWeek", timeWeekModels);
-        model.addAttribute("user", SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        model.addAttribute("user", userAuthenticatedService.getAuthenticatedUser());
     }
 
     /*
