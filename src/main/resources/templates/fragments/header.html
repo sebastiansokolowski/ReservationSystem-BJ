@@ -34,7 +34,7 @@
     </head>
     <div th:fragment="menu" class="alignleft">
         <div sec:authorize="isAuthenticated()">
-            <span th:text="${user.name}"/>
+            <span th:text="${user.name}"/> <span th:text="${user.surname}"/>
             <a href="javascript: document.logoutForm.submit()">Wyloguj</a>
             <form name="logoutForm" th:action="@{/logout}" method="post" th:hidden="true">
                 <input hidden="true" class="btn" type="submit" value="Logout"/>

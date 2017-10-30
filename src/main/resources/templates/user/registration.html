@@ -34,6 +34,11 @@
                                class="validation-message"/>
                             </p>
                             <p>
+                                Nazwisko: <input type="text" th:field="*{surname}" maxlength="30" required="true"/>
+                            <p th:if="${#fields.hasErrors('surname')}" th:errors="*{surname}" style="color:red;font-size:15px"
+                               class="validation-message"/>
+                            </p>
+                            <p>
                                 Email: <input type="text" th:field="*{email}" maxlength="30" required="true"/>
                             <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}"
                                style="color:red;font-size:15px"
