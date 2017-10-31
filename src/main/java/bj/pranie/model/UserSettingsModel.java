@@ -17,12 +17,6 @@ public class UserSettingsModel {
     private String newUsername;
 
     @NotNull
-    private boolean setNewName;
-
-    @Length(min = 3, max = 30, message = "Imię musi być dłuższe niż 3 znaki i krótsze niż 30.")
-    private String newName;
-
-    @NotNull
     private boolean setNewEmail;
 
     @Email(message = "Błędny adres email.")
@@ -53,22 +47,6 @@ public class UserSettingsModel {
 
     public void setNewUsername(String newUsername) {
         this.newUsername = newUsername;
-    }
-
-    public boolean isSetNewName() {
-        return setNewName;
-    }
-
-    public void setSetNewName(boolean setNewName) {
-        this.setNewName = setNewName;
-    }
-
-    public String getNewName() {
-        return newName;
-    }
-
-    public void setNewName(String newName) {
-        this.newName = newName;
     }
 
     public boolean isSetNewEmail() {

@@ -36,17 +36,6 @@
                                class="validation-message"/>
                             </p>
 
-                            <input type="checkbox" th:field="*{setNewName}"/>
-                            Zmień imię
-                            <p>
-                                Podaj nowe imię: <input type="text" th:field="*{newName}"
-                                                        maxlength="30"
-                                                        disabled="disabled" required="true"/>
-                            <p th:if="${#fields.hasErrors('newName')}" th:errors="*{newName}"
-                               style="color:red;font-size:15px"
-                               class="validation-message"/>
-                            </p>
-
                             <input type="checkbox" th:field="*{setNewPassword}"/>
                             Zmień hasło
                             <p>
@@ -94,9 +83,6 @@
             });
             $("input:checkbox[name=setNewEmail]").click(function () {
                 $("input:text[name=newEmail]").attr("disabled", !this.checked);
-            });
-            $("input:checkbox[name=setNewName]").click(function () {
-                $("input:text[name=newName]").attr("disabled", !this.checked);
             });
             $("input:checkbox[name=setNewPassword]").click(function () {
                 $("input:password[name=newPassword]").attr("disabled", !this.checked);

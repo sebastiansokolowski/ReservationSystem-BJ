@@ -81,9 +81,6 @@ public class UserController {
             if (userSettingsModel.isSetNewEmail()) {
                 user.setEmail(userSettingsModel.getNewEmail());
             }
-            if (userSettingsModel.isSetNewName()) {
-                user.setName(userSettingsModel.getNewName());
-            }
             if (userSettingsModel.isSetNewPassword()) {
                 user.setPassword(userSettingsModel.getNewPassword());
             }
