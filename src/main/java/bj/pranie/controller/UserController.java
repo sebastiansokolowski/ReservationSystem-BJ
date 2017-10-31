@@ -1,15 +1,15 @@
 package bj.pranie.controller;
 
 import bj.pranie.dao.RoomDao;
-import bj.pranie.service.UserAuthenticatedService;
-import bj.pranie.service.UserServiceImpl;
 import bj.pranie.entity.Room;
 import bj.pranie.entity.User;
 import bj.pranie.model.UserRegistrationModel;
 import bj.pranie.model.UserSettingsModel;
+import bj.pranie.service.UserAuthenticatedService;
+import bj.pranie.service.UserServiceImpl;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -38,6 +38,9 @@ public class UserController {
     @Autowired
     private UserAuthenticatedService userAuthenticatedService;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @RequestMapping(value = "/settings", method = RequestMethod.GET)
     public String userSettings(Model model) {
         model.addAttribute("userSettingsModel", new UserSettingsModel());
@@ -49,9 +52,9 @@ public class UserController {
     public ModelAndView saveUserSettings(@ModelAttribute("userSettingsModel") @Valid UserSettingsModel userSettingsModel, BindingResult bindingResult) {
         ModelAndView modelAndView = new ModelAndView();
 
-        User user = (User) userAuthenticatedService.getAuthenticatedUser();
+        User user = userAuthenticatedService.getAuthenticatedUser();
 
-        if (!userSettingsModel.getPassword().equals(user.getPassword())) {
+        if (!passwordEncoder.matches(userSettingsModel.getPassword(), user.getPassword())) {
             bindingResult.rejectValue("password", "error.userRegistrationModel", "Podane hasło jest nieprawidłowe.");
         }
 
