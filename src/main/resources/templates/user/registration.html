@@ -13,7 +13,7 @@
                     <form:option value="" label="...."/>
                     <form:options items="${rooms}"/>
                 </form:select>
-                <div >
+                <div>
                     <form th:object="${userRegistrationModel}" th:action="@{/user/registration}" method="post">
                         <div align="right">
                             <p>
@@ -29,23 +29,27 @@
                                        class="validation-message"/>
                             </p>
                             <p>
-                                Imię: <input type="text" th:field="*{name}" maxlength="30" required="true"/>
+                                Imię: <input type="text" th:field="*{name}" minlength="2" maxlength="30"
+                                             required="true"/>
                             <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}" style="color:red;font-size:15px"
                                class="validation-message"/>
                             </p>
                             <p>
-                                Nazwisko: <input type="text" th:field="*{surname}" maxlength="30" required="true"/>
-                            <p th:if="${#fields.hasErrors('surname')}" th:errors="*{surname}" style="color:red;font-size:15px"
+                                Nazwisko: <input type="text" th:field="*{surname}" minlength="2" maxlength="30"
+                                                 required="true"/>
+                            <p th:if="${#fields.hasErrors('surname')}" th:errors="*{surname}"
+                               style="color:red;font-size:15px"
                                class="validation-message"/>
                             </p>
                             <p>
-                                Email: <input type="text" th:field="*{email}" maxlength="30" required="true"/>
+                                Email: <input type="text" th:field="*{email}" required="true"/>
                             <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}"
                                style="color:red;font-size:15px"
                                class="validation-message"/>
                             </p>
                             <p>
-                                Login: <input type="text" th:field="*{username}" maxlength="30" required="true"/>
+                                Login: <input type="text" th:field="*{username}" minlength="3" maxlength="30"
+                                              required="true"/>
                             <p th:if="${#fields.hasErrors('username')}" th:errors="*{username}"
                                style="color:red;font-size:15px"
                                class="validation-message"/>

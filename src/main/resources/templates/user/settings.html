@@ -18,6 +18,7 @@
                             Zmień login
                             <p>
                                 Nowy login: <input type="text" th:field="*{newUsername}"
+                                                   minlength="3"
                                                    maxlength="30"
                                                    disabled="disabled" required="true"/>
                             <p th:if="${#fields.hasErrors('newUsername')}" th:errors="*{newUsername}"
@@ -29,7 +30,6 @@
                             Zmień email
                             <p>
                                 Nowy email: <input type="text" th:field="*{newEmail}"
-                                                   maxlength="30"
                                                    disabled="disabled" required="true"/>
                             <p th:if="${#fields.hasErrors('newEmail')}" th:errors="*{newEmail}"
                                style="color:red;font-size:15px"
@@ -89,8 +89,6 @@
                 $("input:password[name=newPasswordRepeat]").attr("disabled", !this.checked);
             });
         });
-
-
         </script>
     </body>
     <footer>
