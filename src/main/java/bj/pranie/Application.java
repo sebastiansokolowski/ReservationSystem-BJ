@@ -22,7 +22,8 @@ import java.util.logging.Logger;
 public class Application {
     static Logger log = Logger.getLogger(Application.class.getName());
 
-    private final static int RESET_TIME = 10;
+    public final static int RESET_TIME = 10;
+    public final static int USER_TOKENS_PER_WEEK = 1;
 
     @Autowired
     private UserServiceImpl userService;
@@ -81,7 +82,7 @@ public class Application {
         while (iterator.hasNext()) {
             User user = iterator.next();
             if (user.getRole() == UserRole.USER) {
-                user.setTokens(2);
+                user.setTokens(USER_TOKENS_PER_WEEK);
             }
         }
 

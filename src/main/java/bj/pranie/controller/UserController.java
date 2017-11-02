@@ -20,14 +20,14 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
 
+import static bj.pranie.Application.USER_TOKENS_PER_WEEK;
+
 /**
  * Created by Sebastian Sokolowski on 10.08.16.
  */
 @Controller
 @RequestMapping("/user")
 public class UserController {
-
-    private final static int TOKENS_AT_START = 2;
 
     @Autowired
     private RoomDao roomDao;
@@ -131,7 +131,7 @@ public class UserController {
             ModelMapper modelMapper = new ModelMapper();
             User user = modelMapper.map(userRegistrationModel, User.class);
 
-            user.setTokens(TOKENS_AT_START);
+            user.setTokens(USER_TOKENS_PER_WEEK);
             userService.save(user);
 
             modelAndView.addObject("successMessage", "Rejestracja przebiegła pomyślnie.");
