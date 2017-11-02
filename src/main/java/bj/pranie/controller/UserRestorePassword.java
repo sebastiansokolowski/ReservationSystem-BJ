@@ -1,6 +1,6 @@
 package bj.pranie.controller;
 
-import bj.pranie.service.UserServiceImpl;
+import bj.pranie.dao.UserDao;
 import bj.pranie.entity.User;
 import bj.pranie.model.RestorePasswordModel;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -13,7 +13,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
@@ -30,7 +29,7 @@ import javax.validation.Valid;
 public class UserRestorePassword {
 
     @Autowired
-    private UserServiceImpl userService;
+    private UserDao userDao;
 
     @Autowired
     private JavaMailSender emailSender;
@@ -49,14 +48,14 @@ public class UserRestorePassword {
                                         BindingResult bindingResult) throws MessagingException {
         ModelAndView modelAndView = new ModelAndView();
 
-        User user = userService.findByEmail(restorePasswordModel.getEmail());
+        User user = userDao.findByEmail(restorePasswordModel.getEmail());
 
         if (!bindingResult.hasErrors()) {
             if (user != null) {
                 String resetPasswordKey = RandomStringUtils.randomAlphanumeric(20);
 
                 user.setResetPasswordKey(resetPasswordKey);
-                userService.save(user);
+                userDao.save(user);
 
                 sendMail(user, resetPasswordKey);
                 modelAndView.addObject("successMessage", "Link do resetowania hasła został wysłany na podany adres email.");

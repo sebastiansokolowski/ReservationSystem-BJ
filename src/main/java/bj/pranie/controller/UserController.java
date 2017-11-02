@@ -1,12 +1,12 @@
 package bj.pranie.controller;
 
 import bj.pranie.dao.RoomDao;
+import bj.pranie.dao.UserDao;
 import bj.pranie.entity.Room;
 import bj.pranie.entity.User;
 import bj.pranie.model.UserRegistrationModel;
 import bj.pranie.model.UserSettingsModel;
 import bj.pranie.service.UserAuthenticatedService;
-import bj.pranie.service.UserServiceImpl;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -33,13 +33,13 @@ public class UserController {
     private RoomDao roomDao;
 
     @Autowired
-    private UserServiceImpl userService;
-
-    @Autowired
-    private UserAuthenticatedService userAuthenticatedService;
+    private UserDao userDao;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private UserAuthenticatedService userAuthenticatedService;
 
     @RequestMapping(value = "/settings", method = RequestMethod.GET)
     public String userSettings(Model model) {
@@ -60,13 +60,13 @@ public class UserController {
 
         User userExist;
         if (userSettingsModel.isSetNewUsername()) {
-            userExist = userService.findByUsername(userSettingsModel.getNewUsername());
+            userExist = userDao.findByUsername(userSettingsModel.getNewUsername());
             if (userExist != null) {
                 bindingResult.rejectValue("newUsername", "error.userSettingsModel", "Podana nazwa użytkownika istnieje już w bazie.");
             }
         }
         if (userSettingsModel.isSetNewEmail()) {
-            userExist = userService.findByEmail(userSettingsModel.getNewEmail());
+            userExist = userDao.findByEmail(userSettingsModel.getNewEmail());
             if (userExist != null) {
                 bindingResult.rejectValue("newEmail", "error.userSettingsModel", "Podany adres email istnieje już w bazie.");
             }
@@ -85,10 +85,11 @@ public class UserController {
                 user.setEmail(userSettingsModel.getNewEmail());
             }
             if (userSettingsModel.isSetNewPassword()) {
-                user.setPassword(userSettingsModel.getNewPassword());
+                String hashedPassword = passwordEncoder.encode(userSettingsModel.getNewPassword());
+                user.setPassword(hashedPassword);
             }
 
-            userService.save(user);
+            userDao.save(user);
 
             modelAndView.addObject("successMessage", "Zmiany zostały zachowane pomyślnie.");
         }
@@ -109,11 +110,11 @@ public class UserController {
     public ModelAndView createUser(@ModelAttribute("userRegistrationModel") @Valid UserRegistrationModel userRegistrationModel, BindingResult bindingResult) {
         ModelAndView modelAndView = new ModelAndView();
 
-        User userExist = userService.findByEmail(userRegistrationModel.getEmail());
+        User userExist = userDao.findByEmail(userRegistrationModel.getEmail());
         if (userExist != null) {
             bindingResult.rejectValue("email", "error.userRegistrationModel", "Podany adres email istnieje już w bazie.");
         }
-        userExist = userService.findByUsername(userRegistrationModel.getUsername());
+        userExist = userDao.findByUsername(userRegistrationModel.getUsername());
         if (userExist != null) {
             bindingResult.rejectValue("username", "error.userRegistrationModel", "Podana nazwa użytkownika istnieje już w bazie.");
         }
@@ -123,7 +124,7 @@ public class UserController {
         Room room = roomDao.findOne(userRegistrationModel.getRoomId());
         if (room == null) {
             bindingResult.rejectValue("roomId", "error.userRegistrationModel", "Wybierz pokój z listy.");
-        } else if (userService.findByRoom(room).size() >= room.getPeoples()) {
+        } else if (userDao.findByRoom(room).size() >= room.getPeoples()) {
             bindingResult.rejectValue("roomId", "error.userRegistrationModel", "Brak miejsca w wybranym pokoju.");
         }
 
@@ -131,8 +132,11 @@ public class UserController {
             ModelMapper modelMapper = new ModelMapper();
             User user = modelMapper.map(userRegistrationModel, User.class);
 
+            String hashedPassword = passwordEncoder.encode(user.getPassword());
+            user.setPassword(hashedPassword);
+
             user.setTokens(USER_TOKENS_PER_WEEK);
-            userService.save(user);
+            userDao.save(user);
 
             modelAndView.addObject("successMessage", "Rejestracja przebiegła pomyślnie.");
         }

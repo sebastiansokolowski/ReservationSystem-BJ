@@ -1,12 +1,13 @@
 package bj.pranie.controller;
 
+import bj.pranie.dao.UserDao;
 import bj.pranie.entity.User;
 import bj.pranie.model.ResetPasswordModel;
 import bj.pranie.model.RestorePasswordModel;
-import bj.pranie.service.UserServiceImpl;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.config.ResourceNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -27,7 +28,10 @@ import javax.validation.Valid;
 public class UserResetPassword {
 
     @Autowired
-    private UserServiceImpl userService;
+    private UserDao userDao;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @RequestMapping(value = "/resetPassword", method = RequestMethod.GET)
     public String resetPasswordPorm(@RequestParam String resetPasswordKey,
@@ -57,12 +61,13 @@ public class UserResetPassword {
         }
 
         if (!bindingResult.hasErrors()) {
-            User user = userService.findByResetPasswordKey(resetPasswordKey);
-
+            User user = userDao.findByResetPasswordKey(resetPasswordKey);
             user.setResetPasswordKey(null);
-            user.setPassword(resetPasswordModel.getNewPassword());
 
-            userService.save(user);
+            String hashedPassword = passwordEncoder.encode(resetPasswordModel.getNewPassword());
+            user.setPassword(hashedPassword);
+
+            userDao.save(user);
 
             modelAndView.addObject("successMessage", "Hasło zostało zmienione pomyślnie.");
         }
@@ -72,7 +77,7 @@ public class UserResetPassword {
     }
 
     private boolean checkResetKeyIsValid(String resetPasswordKey) {
-        User user = userService.findByResetPasswordKey(resetPasswordKey);
+        User user = userDao.findByResetPasswordKey(resetPasswordKey);
         if (user != null) {
             return true;
         } else {

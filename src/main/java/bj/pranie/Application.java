@@ -1,8 +1,8 @@
 package bj.pranie;
 
+import bj.pranie.dao.UserDao;
 import bj.pranie.entity.User;
 import bj.pranie.entity.myEnum.UserRole;
-import bj.pranie.service.UserServiceImpl;
 import bj.pranie.util.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -26,7 +26,7 @@ public class Application {
     public final static int USER_TOKENS_PER_WEEK = 1;
 
     @Autowired
-    private UserServiceImpl userService;
+    private UserDao userDao;
 
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
@@ -77,7 +77,7 @@ public class Application {
     }
 
     private void resetUsersTokens() {
-        Iterable<User> iterable = userService.findAll();
+        Iterable<User> iterable = userDao.findAll();
         Iterator<User> iterator = iterable.iterator();
         while (iterator.hasNext()) {
             User user = iterator.next();
@@ -86,6 +86,6 @@ public class Application {
             }
         }
 
-        userService.save(iterable);
+        userDao.save(iterable);
     }
 }
