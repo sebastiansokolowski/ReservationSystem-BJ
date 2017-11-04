@@ -95,9 +95,11 @@ public class WmController {
         Reservation reservation = reservationDao.findOne(reservationId);
         reservationDao.delete(reservationId);
 
-        User user = reservation.getUser();
-        user.setTokens(user.getTokens() + 1);
-        userDao.save(user);
+        if (reservation.getType() != ReservationType.BLOCKED) {
+            User user = reservation.getUser();
+            user.setTokens(user.getTokens() + 1);
+            userDao.save(user);
+        }
 
         return "redirect:/wm/" + year + "/" + month + "/" + day + "/" + washTimeId;
     }

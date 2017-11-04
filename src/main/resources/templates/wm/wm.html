@@ -46,7 +46,7 @@
                             </div>
                             <div th:switch="${reservation.type.name()}">
                                 <p th:case="FREE">
-                                <div sec:authorize="hasAuthority('USER')">
+                                <div sec:authorize="hasAnyAuthority('USER','ADMIN')">
                                     <div th:if="${user.tokens &gt; 0}">
                                         <form th:action="${washTimeId}+@{/register}" method="post">
                                             <input type="text" name="wmNumber" th:value="${i.index}" hidden="hidden"/>
@@ -62,11 +62,11 @@
                                 </div>
                                 </p>
                                 <p th:case="MY">
-                                <div sec:authorize="hasAuthority('USER')">
+                                <div sec:authorize="hasAnyAuthority('USER','ADMIN')">
                                     <form th:action="${washTimeId}+@{/unregister}" method="post">
                                         <input type="text" name="reservationId" th:value="${reservation.reservationId}"
                                                hidden="hidden"/>
-                                        <input class="btn" type="submit" value="Usuń"/>
+                                        <input class="btn" type="submit" value="Wyrejestruj"/>
                                     </form>
                                 </div>
                                 </p>
