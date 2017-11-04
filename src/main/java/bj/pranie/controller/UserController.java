@@ -102,7 +102,7 @@ public class UserController {
     @RequestMapping(value = "/registration", method = RequestMethod.GET)
     public String registrationForm(Model model) {
         model.addAttribute("userRegistrationModel", new UserRegistrationModel());
-        model.addAttribute("rooms", roomDao.findAll());
+        model.addAttribute("rooms", roomDao.findAllByOrderByRoomAscTypeAsc());
         return "user/registration";
     }
 
