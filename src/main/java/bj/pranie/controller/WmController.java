@@ -7,6 +7,7 @@ import bj.pranie.entity.Reservation;
 import bj.pranie.entity.User;
 import bj.pranie.entity.WashTime;
 import bj.pranie.entity.myEnum.ReservationType;
+import bj.pranie.exception.ReservationAlreadyBookedException;
 import bj.pranie.model.WmModel;
 import bj.pranie.service.UserAuthenticatedService;
 import bj.pranie.util.ColorUtil;
@@ -18,6 +19,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -49,49 +51,66 @@ public class WmController {
     private UserAuthenticatedService userAuthenticatedService;
 
     @RequestMapping(path = "/{year}/{month}/{day}/{washTimeId}", method = RequestMethod.GET)
-    public String wm(@PathVariable int year,
+    public ModelAndView wm(@PathVariable int year,
                      @PathVariable int month,
                      @PathVariable int day,
-                     @PathVariable long washTimeId,
-                     Model model) throws ParseException {
-        Date date = dateFormat.parse(year + "/" + month + "/" + day);
+                     @PathVariable long washTimeId)  throws ParseException {
+        ModelAndView modelAndView = new ModelAndView("wm/wm");
+        setModel(year, month, day, washTimeId, modelAndView);
+        return modelAndView;
+    }
 
-        WashTime washTime = washTimeDao.findOne(washTimeId);
-        List<Reservation> reservationList = reservationDao.findByWashTimeIdAndDate(washTimeId, new java.sql.Date(date.getTime()));
-        int wmFree = 3 - reservationList.size();
+    @PostMapping(path = "/{year}/{month}/{day}/{washTimeId}/register")
+    public ModelAndView registerWm(@PathVariable int year,
+                             @PathVariable int month,
+                             @PathVariable int day,
+                             @PathVariable long washTimeId,
+                             @RequestParam int wmNumber) throws ParseException {
+        ModelAndView modelAndView = new ModelAndView("wm/wm");
 
-        model.addAttribute("washTimeId", washTimeId);
-        model.addAttribute("dayName", getDayName(date));
-        model.addAttribute("date", dateFormat.format(date));
-        model.addAttribute("time", getWashTime(washTime));
-        model.addAttribute("wmFree", wmFree);
-        model.addAttribute("reservations", getWmModels(reservationList, date, washTime));
-        model.addAttribute("user", userAuthenticatedService.getAuthenticatedUser());
-        return "wm/wm";
+        User user = userAuthenticatedService.getAuthenticatedUser();
+
+        try {
+            makeReservation(user, year, month, day, washTimeId, wmNumber, ReservationType.USER);
+
+            user.setTokens(user.getTokens() - 1);
+            userDao.save(user);
+        } catch (ReservationAlreadyBookedException reservationAlreadyBookedException) {
+            reservationAlreadyBookedException.printStackTrace();
+            modelAndView.addObject("errorMessage", "Niestety pralka jest już zarezerwowana.");
+        }
+
+        setModel(year, month, day, washTimeId, modelAndView);
+        return modelAndView;
     }
 
     @RequestMapping(path = "/{year}/{month}/{day}/{washTimeId}/unregister", method = RequestMethod.POST)
-    public String unregisterWm(@PathVariable int year,
+    public ModelAndView unregisterWm(@PathVariable int year,
                                @PathVariable int month,
                                @PathVariable int day,
                                @PathVariable long washTimeId,
-                               @RequestParam long reservationId) {
+                               @RequestParam long reservationId) throws ParseException {
+        ModelAndView modelAndView = new ModelAndView("wm/wm");
+
         reservationDao.delete(reservationId);
 
         User user = userAuthenticatedService.getAuthenticatedUser();
         user.setTokens(user.getTokens() + 1);
         userDao.save(user);
 
-        return "redirect:/wm/" + year + "/" + month + "/" + day + "/" + washTimeId;
+        setModel(year, month, day, washTimeId, modelAndView);
+        return modelAndView;
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(path = "/{year}/{month}/{day}/{washTimeId}/remove", method = RequestMethod.POST)
-    public String removeWm(@PathVariable int year,
+    public ModelAndView removeWm(@PathVariable int year,
                            @PathVariable int month,
                            @PathVariable int day,
                            @PathVariable long washTimeId,
-                           @RequestParam long reservationId) {
+                           @RequestParam long reservationId) throws ParseException {
+        ModelAndView modelAndView = new ModelAndView("wm/wm");
+
         Reservation reservation = reservationDao.findOne(reservationId);
         reservationDao.delete(reservationId);
 
@@ -101,42 +120,58 @@ public class WmController {
             userDao.save(user);
         }
 
-        return "redirect:/wm/" + year + "/" + month + "/" + day + "/" + washTimeId;
+        setModel(year, month, day, washTimeId, modelAndView);
+        return modelAndView;
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(path = "/{year}/{month}/{day}/{washTimeId}/block", method = RequestMethod.POST)
-    public String blockWm(@PathVariable int year,
+    public ModelAndView blockWm(@PathVariable int year,
                           @PathVariable int month,
                           @PathVariable int day,
                           @PathVariable long washTimeId,
-                          @RequestParam int wmNumber) {
+                          @RequestParam int wmNumber) throws ParseException {
+        ModelAndView modelAndView = new ModelAndView("wm/wm");
+
         User user = userAuthenticatedService.getAuthenticatedUser();
 
-        makeReservation(user, year, month, day, washTimeId, wmNumber, ReservationType.BLOCKED);
+        try {
+            makeReservation(user, year, month, day, washTimeId, wmNumber, ReservationType.BLOCKED);
+        } catch (ReservationAlreadyBookedException reservationAlreadyBookedException) {
+            reservationAlreadyBookedException.printStackTrace();
+            modelAndView.addObject("errorMessage", "Niestety pralka jest już zarezerwowana.");
+        }
 
-        return "redirect:/wm/" + year + "/" + month + "/" + day + "/" + washTimeId;
+        setModel(year, month, day, washTimeId, modelAndView);
+        return modelAndView;
     }
 
-    @PostMapping(path = "/{year}/{month}/{day}/{washTimeId}/register")
-    public String registerWm(@PathVariable int year,
-                             @PathVariable int month,
-                             @PathVariable int day,
-                             @PathVariable long washTimeId,
-                             @RequestParam int wmNumber) {
-        User user = userAuthenticatedService.getAuthenticatedUser();
+    private void setModel(int year, int month, int day, long washTimeId, ModelAndView modelAndView) throws ParseException {
+        Date date = dateFormat.parse(year + "/" + month + "/" + day);
 
-        makeReservation(user, year, month, day, washTimeId, wmNumber, ReservationType.USER);
+        WashTime washTime = washTimeDao.findOne(washTimeId);
+        List<Reservation> reservationList = reservationDao.findByWashTimeIdAndDate(washTimeId, new java.sql.Date(date.getTime()));
+        int wmFree = 3 - reservationList.size();
 
-        user.setTokens(user.getTokens() - 1);
-        userDao.save(user);
-
-        return "redirect:/wm/" + year + "/" + month + "/" + day + "/" + washTimeId;
+        modelAndView.addObject("washTimeId", washTimeId);
+        modelAndView.addObject("dayName", getDayName(date));
+        modelAndView.addObject("date", dateFormat.format(date));
+        modelAndView.addObject("time", getWashTime(washTime));
+        modelAndView.addObject("wmFree", wmFree);
+        modelAndView.addObject("reservations", getWmModels(reservationList, date, washTime));
+        modelAndView.addObject("user", userAuthenticatedService.getAuthenticatedUser());
     }
 
-    private void makeReservation(User user, int year, int month, int day, long washTimeId, int wmNumber, ReservationType reservationType) {
+    private synchronized void makeReservation(User user, int year, int month, int day, long washTimeId, int wmNumber, ReservationType reservationType) throws ReservationAlreadyBookedException {
+        java.sql.Date date = getSqlDate(year, month, day);
+
+        if (reservationDao.existsByWashTimeIdAndDateAndWm(washTimeId, date, wmNumber)) {
+            throw new ReservationAlreadyBookedException();
+        }
+
+
         Reservation reservation = new Reservation();
-        reservation.setDate(getSqlDate(year, month, day));
+        reservation.setDate(date);
         reservation.setUser(user);
         reservation.setWashTime(washTimeDao.findOne(washTimeId));
         reservation.setWm(wmNumber);
