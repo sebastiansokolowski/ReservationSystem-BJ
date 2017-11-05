@@ -21,7 +21,7 @@
                         </form>
                     </div>
                     <div class="error"
-                         th:if="${param.error}"
+                         th:if="${session[SPRING_SECURITY_LAST_EXCEPTION] != null and session[SPRING_SECURITY_LAST_EXCEPTION].message != null}"
                          th:with="errorMsg=${session[SPRING_SECURITY_LAST_EXCEPTION].message}">
                         <p style="color:red">
                             <span th:text="${errorMsg}"/>
