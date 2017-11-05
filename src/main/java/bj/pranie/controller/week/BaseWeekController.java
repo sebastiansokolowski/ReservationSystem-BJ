@@ -53,15 +53,16 @@ public class BaseWeekController {
     WeekId = year-weekOfYear
     */
     String getCurrentWeekId() {
-        Calendar calendar = TimeUtil.getCalendar();
-
-        int time = calendar.get(Calendar.HOUR_OF_DAY);
-        int today = calendar.get(Calendar.DAY_OF_WEEK);
-        if (today == Calendar.SUNDAY && time >= RESET_TIME) {
-            calendar.add(Calendar.WEEK_OF_YEAR, 1);
-        }
-
-        return calendar.get(Calendar.YEAR) + "-" + calendar.get(Calendar.WEEK_OF_YEAR);
+//        Calendar calendar = TimeUtil.getCalendar();
+//
+//        int time = calendar.get(Calendar.HOUR_OF_DAY);
+//        int today = calendar.get(Calendar.DAY_OF_WEEK);
+//        if (today == Calendar.SUNDAY && time >= RESET_TIME) {
+//            calendar.add(Calendar.WEEK_OF_YEAR, 1);
+//        }
+//
+//        return calendar.get(Calendar.YEAR) + "-" + calendar.get(Calendar.WEEK_OF_YEAR);
+        return "2017-45";
     }
 
     String getWeekFrame(String weekId) {
