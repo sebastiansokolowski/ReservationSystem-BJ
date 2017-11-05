@@ -4,13 +4,7 @@ import bj.pranie.config.exception.ResourceNotFoundException;
 import bj.pranie.dao.UserDao;
 import bj.pranie.entity.User;
 import bj.pranie.model.ResetPasswordModel;
-import bj.pranie.model.RestorePasswordModel;
-import com.sun.istack.internal.Nullable;
-import org.apache.commons.lang3.RandomStringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -52,8 +46,8 @@ public class UserResetPassword {
 
     @RequestMapping(value = "/resetPassword", method = RequestMethod.POST)
     public ModelAndView resetPassword(@RequestParam String resetPasswordKey,
-                                        @ModelAttribute("resetPasswordModel") @Valid ResetPasswordModel resetPasswordModel,
-                                        BindingResult bindingResult) throws MessagingException {
+                                      @ModelAttribute("resetPasswordModel") @Valid ResetPasswordModel resetPasswordModel,
+                                      BindingResult bindingResult) throws MessagingException {
         ModelAndView modelAndView = new ModelAndView();
 
         if (!checkResetKeyIsValid(resetPasswordKey)) {
