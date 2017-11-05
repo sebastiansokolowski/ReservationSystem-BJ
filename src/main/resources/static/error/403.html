@@ -5,11 +5,39 @@
     <title>DS Bursa Jagiellońska</title>
 </head>
 <body>
-
+    <script th:inline="javascript">
+/*<![CDATA[*/
+                var cookieEnabled = (navigator.cookieEnabled) ? true : false
+                if (typeof navigator.cookieEnabled == "undefined" && !cookieEnabled) {
+                    document.cookie = "testcookie"
+                    cookieEnabled = (document.cookie.indexOf("testcookie") != -1) ? true : false
+                }
+                if (!cookieEnabled)
+                {
+                window.onload = function () {
+                    document.getElementById("cookieError").style.display = "block";
+                    }
+                }
+/*]]>*/
+</script>
 <center>
     <img src="/images/logo.jpg"/>
     <br>
     Brak dostępu
+    <noscript>
+        <br>
+        <br>
+        Obsługa JavaScript jest wyłączona w twojej przeglądarce. Aby w pełni korzystać ze strony musisz włączyć ją.
+        <br>
+        <a href="https://www.enable-javascript.com/pl/">Jak włączyć obsługę JavaScript?</a>
+    </noscript>
+    <div id="cookieError" style="display: none;">
+        <br>
+        <br>
+        Obsługa plików cookie jest wyłączona w twojej przeglądarce. Aby w pełni korzystać ze strony musisz włączyć ją.
+        <br>
+        <a href="http://www.polskieradio.pl/13/53/Artykul/675787,Jak-wlaczyc-obsluge-plikow-cookie-w-swojej-przegladarce-">Jak włączyć obsługę plików cookie?</a>
+    </div>
 </center>
 
 </body>
