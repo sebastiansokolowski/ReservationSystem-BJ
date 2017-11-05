@@ -43,4 +43,19 @@ public class WashTime {
     public void setToTime(Time toTime) {
         this.toTime = toTime;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        WashTime washTime = (WashTime) o;
+
+        return id == washTime.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return (int) (id ^ (id >>> 32));
+    }
 }
