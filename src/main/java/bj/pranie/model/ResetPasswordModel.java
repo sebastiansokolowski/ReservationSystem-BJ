@@ -21,7 +21,7 @@ public class ResetPasswordModel {
     }
 
     public void setNewPassword(String newPassword) {
-        this.newPassword = newPassword;
+        this.newPassword = newPassword.trim();
     }
 
     public String getNewPasswordRepeat() {
@@ -29,6 +29,6 @@ public class ResetPasswordModel {
     }
 
     public void setNewPasswordRepeat(String newPasswordRepeat) {
-        this.newPasswordRepeat = newPasswordRepeat;
+        this.newPasswordRepeat = newPasswordRepeat.trim();
     }
 }

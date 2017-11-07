@@ -46,7 +46,7 @@ public class UserSettingsModel {
     }
 
     public void setNewUsername(String newUsername) {
-        this.newUsername = newUsername;
+        this.newUsername = newUsername.trim();
     }
 
     public boolean isSetNewEmail() {
@@ -62,7 +62,7 @@ public class UserSettingsModel {
     }
 
     public void setNewEmail(String newEmail) {
-        this.newEmail = newEmail;
+        this.newEmail = newEmail.trim();
     }
 
     public boolean isSetNewPassword() {
@@ -78,7 +78,7 @@ public class UserSettingsModel {
     }
 
     public void setNewPassword(String newPassword) {
-        this.newPassword = newPassword;
+        this.newPassword = newPassword.trim();
     }
 
     public String getNewPasswordRepeat() {
@@ -86,7 +86,7 @@ public class UserSettingsModel {
     }
 
     public void setNewPasswordRepeat(String newPasswordRepeat) {
-        this.newPasswordRepeat = newPasswordRepeat;
+        this.newPasswordRepeat = newPasswordRepeat.trim();
     }
 
     public String getPassword() {
@@ -94,6 +94,6 @@ public class UserSettingsModel {
     }
 
     public void setPassword(String password) {
-        this.password = password;
+        this.password = password.trim();
     }
 }

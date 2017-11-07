@@ -40,7 +40,7 @@ public class UserRegistrationModel {
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.name = name.trim();
     }
 
     public String getSurname() {
@@ -48,7 +48,7 @@ public class UserRegistrationModel {
     }
 
     public void setSurname(String surname) {
-        this.surname = surname;
+        this.surname = surname.trim();
     }
 
     public String getEmail() {
@@ -56,7 +56,7 @@ public class UserRegistrationModel {
     }
 
     public void setEmail(String email) {
-        this.email = email;
+        this.email = email.trim();
     }
 
     public String getUsername() {
@@ -64,7 +64,7 @@ public class UserRegistrationModel {
     }
 
     public void setUsername(String username) {
-        this.username = username;
+        this.username = username.trim();
     }
 
     public String getPassword() {
@@ -72,7 +72,7 @@ public class UserRegistrationModel {
     }
 
     public void setPassword(String password) {
-        this.password = password;
+        this.password = password.trim();
     }
 
     public String getPasswordRepeat() {
@@ -80,7 +80,7 @@ public class UserRegistrationModel {
     }
 
     public void setPasswordRepeat(String passwordRepeat) {
-        this.passwordRepeat = passwordRepeat;
+        this.passwordRepeat = passwordRepeat.trim();
     }
 
     public Long getRoomId() {
