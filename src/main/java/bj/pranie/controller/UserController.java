@@ -4,10 +4,10 @@ import bj.pranie.dao.RoomDao;
 import bj.pranie.dao.UserDao;
 import bj.pranie.entity.Room;
 import bj.pranie.entity.User;
+import bj.pranie.entity.myEnum.UserRole;
 import bj.pranie.model.UserRegistrationModel;
 import bj.pranie.model.UserSettingsModel;
 import bj.pranie.service.UserAuthenticatedService;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -129,13 +129,19 @@ public class UserController {
         }
 
         if (!bindingResult.hasErrors()) {
-            ModelMapper modelMapper = new ModelMapper();
-            User user = modelMapper.map(userRegistrationModel, User.class);
+            String hashedPassword = passwordEncoder.encode(userRegistrationModel.getPassword());
 
-            String hashedPassword = passwordEncoder.encode(user.getPassword());
+            User user = new User();
+            user.setUsername(userRegistrationModel.getUsername());
             user.setPassword(hashedPassword);
-
+            user.setName(userRegistrationModel.getName());
+            user.setSurname(userRegistrationModel.getSurname());
+            user.setEmail(userRegistrationModel.getEmail());
+            user.setRoom(room);
+            user.setBlocked(false);
+            user.setRole(UserRole.USER);
             user.setTokens(USER_TOKENS_PER_WEEK);
+
             userDao.save(user);
 
             modelAndView.addObject("successMessage", "Rejestracja przebiegła pomyślnie.");
