@@ -51,9 +51,9 @@ public class WmController {
 
     @RequestMapping(path = "/{year}/{month}/{day}/{washTimeId}", method = RequestMethod.GET)
     public ModelAndView wm(@PathVariable int year,
-                     @PathVariable int month,
-                     @PathVariable int day,
-                     @PathVariable long washTimeId)  throws ParseException {
+                           @PathVariable int month,
+                           @PathVariable int day,
+                           @PathVariable long washTimeId) throws ParseException {
         ModelAndView modelAndView = new ModelAndView("wm/wm");
         setModel(year, month, day, washTimeId, modelAndView);
         return modelAndView;
@@ -61,19 +61,25 @@ public class WmController {
 
     @PostMapping(path = "/{year}/{month}/{day}/{washTimeId}/register")
     public ModelAndView registerWm(@PathVariable int year,
-                             @PathVariable int month,
-                             @PathVariable int day,
-                             @PathVariable long washTimeId,
-                             @RequestParam int wmNumber) throws ParseException {
+                                   @PathVariable int month,
+                                   @PathVariable int day,
+                                   @PathVariable long washTimeId,
+                                   @RequestParam int wmNumber) throws ParseException {
         ModelAndView modelAndView = new ModelAndView("wm/wm");
 
         User user = userAuthenticatedService.getAuthenticatedUser();
 
         try {
-            makeReservation(user, year, month, day, washTimeId, wmNumber, ReservationType.USER);
+            int userTokens = user.getTokens();
 
-            user.setTokens(user.getTokens() - 1);
-            userDao.save(user);
+            if (userTokens > 0) {
+                makeReservation(user, year, month, day, washTimeId, wmNumber, ReservationType.USER);
+
+                user.setTokens(userTokens - 1);
+                userDao.save(user);
+            } else {
+                modelAndView.addObject("errorMessage", "Brak tokenów.");
+            }
         } catch (ReservationAlreadyBookedException reservationAlreadyBookedException) {
             reservationAlreadyBookedException.printStackTrace();
             modelAndView.addObject("errorMessage", "Niestety pralka jest już zarezerwowana.");
@@ -85,10 +91,10 @@ public class WmController {
 
     @RequestMapping(path = "/{year}/{month}/{day}/{washTimeId}/unregister", method = RequestMethod.POST)
     public ModelAndView unregisterWm(@PathVariable int year,
-                               @PathVariable int month,
-                               @PathVariable int day,
-                               @PathVariable long washTimeId,
-                               @RequestParam long reservationId) throws ParseException {
+                                     @PathVariable int month,
+                                     @PathVariable int day,
+                                     @PathVariable long washTimeId,
+                                     @RequestParam long reservationId) throws ParseException {
         ModelAndView modelAndView = new ModelAndView("wm/wm");
 
         reservationDao.delete(reservationId);
@@ -104,10 +110,10 @@ public class WmController {
     @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(path = "/{year}/{month}/{day}/{washTimeId}/remove", method = RequestMethod.POST)
     public ModelAndView removeWm(@PathVariable int year,
-                           @PathVariable int month,
-                           @PathVariable int day,
-                           @PathVariable long washTimeId,
-                           @RequestParam long reservationId) throws ParseException {
+                                 @PathVariable int month,
+                                 @PathVariable int day,
+                                 @PathVariable long washTimeId,
+                                 @RequestParam long reservationId) throws ParseException {
         ModelAndView modelAndView = new ModelAndView("wm/wm");
 
         Reservation reservation = reservationDao.findOne(reservationId);
@@ -126,10 +132,10 @@ public class WmController {
     @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(path = "/{year}/{month}/{day}/{washTimeId}/block", method = RequestMethod.POST)
     public ModelAndView blockWm(@PathVariable int year,
-                          @PathVariable int month,
-                          @PathVariable int day,
-                          @PathVariable long washTimeId,
-                          @RequestParam int wmNumber) throws ParseException {
+                                @PathVariable int month,
+                                @PathVariable int day,
+                                @PathVariable long washTimeId,
+                                @RequestParam int wmNumber) throws ParseException {
         ModelAndView modelAndView = new ModelAndView("wm/wm");
 
         User user = userAuthenticatedService.getAuthenticatedUser();
