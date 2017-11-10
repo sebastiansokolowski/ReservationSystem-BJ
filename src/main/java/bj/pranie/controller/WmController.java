@@ -12,6 +12,9 @@ import bj.pranie.model.WmModel;
 import bj.pranie.service.UserAuthenticatedService;
 import bj.pranie.util.ColorUtil;
 import bj.pranie.util.TimeUtil;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeConstants;
+import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -23,7 +26,6 @@ import org.springframework.web.servlet.ModelAndView;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -152,18 +154,18 @@ public class WmController {
     }
 
     private void setModel(int year, int month, int day, long washTimeId, ModelAndView modelAndView) throws ParseException {
-        Date date = dateFormat.parse(year + "/" + month + "/" + day);
+        LocalDate localDate = new LocalDate(year, month, day);
 
         WashTime washTime = washTimeDao.findOne(washTimeId);
-        List<Reservation> reservationList = reservationDao.findByWashTimeIdAndDate(washTimeId, new java.sql.Date(date.getTime()));
+        List<Reservation> reservationList = reservationDao.findByWashTimeIdAndDate(washTimeId, new java.sql.Date(localDate.toDate().getTime()));
         int wmFree = 3 - reservationList.size();
 
         modelAndView.addObject("washTimeId", washTimeId);
-        modelAndView.addObject("dayName", getDayName(date));
-        modelAndView.addObject("date", dateFormat.format(date));
+        modelAndView.addObject("dayName", getDayName(localDate));
+        modelAndView.addObject("date", dateFormat.format(localDate.toDate()));
         modelAndView.addObject("time", getWashTime(washTime));
         modelAndView.addObject("wmFree", wmFree);
-        modelAndView.addObject("reservations", getWmModels(reservationList, date, washTime));
+        modelAndView.addObject("reservations", getWmModels(reservationList, localDate, washTime));
         modelAndView.addObject("user", userAuthenticatedService.getAuthenticatedUser());
     }
 
@@ -186,24 +188,19 @@ public class WmController {
     }
 
     private java.sql.Date getSqlDate(int year, int month, int day) {
-        try {
-            Date date = dateFormat.parse(year + "/" + month + "/" + day);
-            return new java.sql.Date(date.getTime());
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return null;
+        Date date = new java.sql.Date(new LocalDate(year, month, day).toDate().getTime());
+        return new java.sql.Date(date.getTime());
     }
 
     private String getWashTime(WashTime washTime) {
         return timeFormat.format(washTime.getFromTime()) + " - " + timeFormat.format(washTime.getToTime());
     }
 
-    private List<WmModel> getWmModels(List<Reservation> reservationList, Date date, WashTime washTime) {
+    private List<WmModel> getWmModels(List<Reservation> reservationList, LocalDate date, WashTime washTime) {
         List<WmModel> wmModels = new ArrayList<>();
 
         List<Integer> brokenWm = getBrokenWm();
-        boolean isPast = TimeUtil.isPast(timeFormat.format(washTime.getFromTime()), dateFormat.format(date));
+        boolean isPast = TimeUtil.isPast(washTime.getFromTime(), date);
 
         for (int i = 0; i != 3; i++) {
             WmModel wmModel = new WmModel();
@@ -265,24 +262,21 @@ public class WmController {
         return new ArrayList<>();
     }
 
-    private String getDayName(Date date) {
-        Calendar calendar = TimeUtil.getCalendar();
-        calendar.setTime(date);
-
-        switch (calendar.get(Calendar.DAY_OF_WEEK)) {
-            case 2:
+    private String getDayName(LocalDate date) {
+        switch (date.getDayOfWeek()) {
+            case DateTimeConstants.MONDAY:
                 return "Poniedziałek";
-            case 3:
+            case DateTimeConstants.TUESDAY:
                 return "Wtorek";
-            case 4:
+            case DateTimeConstants.WEDNESDAY:
                 return "Środa";
-            case 5:
+            case DateTimeConstants.THURSDAY:
                 return "Czwartek";
-            case 6:
+            case DateTimeConstants.FRIDAY:
                 return "Piątek";
-            case 7:
+            case DateTimeConstants.SATURDAY:
                 return "Sobota";
-            case 1:
+            case DateTimeConstants.SUNDAY:
                 return "Niedziela";
             default:
                 return "Null";

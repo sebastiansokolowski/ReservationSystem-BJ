@@ -4,6 +4,8 @@ import bj.pranie.dao.UserDao;
 import bj.pranie.entity.User;
 import bj.pranie.entity.myEnum.UserRole;
 import bj.pranie.util.TimeUtil;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -38,10 +40,10 @@ public class Application {
     }
 
     private void startTimerToResetUsersTokens() {
-        Calendar nowCalendar = TimeUtil.getCalendar();
-        Calendar nextReset = getNextResetTime();
+        DateTime nowCalendar = TimeUtil.getCalendar();
+        DateTime nextReset = getNextResetTime();
 
-        long delay = nextReset.getTimeInMillis() - nowCalendar.getTimeInMillis();
+        long delay = nextReset.getMillis() - nowCalendar.getMillis();
 
         float hourDelay = (delay / (float) (1000 * 60 * 60 * 24));
         log.info("Delay to start reset users tokens: " + hourDelay + " days.");
@@ -56,21 +58,20 @@ public class Application {
         }, delay);
     }
 
-    private Calendar getNextResetTime() {
-        Calendar nowCalendar = TimeUtil.getCalendar();
+    private DateTime getNextResetTime() {
+        DateTime now = TimeUtil.getCalendar();
 
-        Calendar nextReset = TimeUtil.getCalendar();
-        nextReset.set(Calendar.HOUR_OF_DAY, RESET_TIME);
-        nextReset.set(Calendar.MINUTE, 0);
-        nextReset.set(Calendar.SECOND, 0);
+        DateTime nextReset = TimeUtil.getCalendar()
+                .withHourOfDay(RESET_TIME)
+                .withMinuteOfHour(0)
+                .withSecondOfMinute(0);
 
+        int sunday = DateTimeConstants.SUNDAY;
 
-        if (nowCalendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY &&
-                nowCalendar.get(Calendar.HOUR_OF_DAY) >= RESET_TIME ||
-                nowCalendar.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) {
-            do {
-                nextReset.add(Calendar.DAY_OF_WEEK, 1);
-            } while (nextReset.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY);
+        if (sunday > now.getDayOfWeek()) {
+            nextReset = nextReset.plusDays(sunday - now.getDayOfWeek());
+        } else if (sunday == now.getDayOfWeek() && RESET_TIME <= now.getHourOfDay()) {
+            nextReset = nextReset.plusWeeks(1);
         }
 
         return nextReset;

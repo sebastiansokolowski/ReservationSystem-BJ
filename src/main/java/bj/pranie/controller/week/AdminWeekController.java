@@ -52,7 +52,7 @@ public class AdminWeekController extends BaseWeekController {
     public String unblockDay(@PathVariable String weekId,
                              @RequestParam String date,
                              Model model) throws ParseException {
-        java.sql.Date sqlDate = new java.sql.Date(dateFormat.parse(date).getTime());
+        java.sql.Date sqlDate = new java.sql.Date(dateFormat.parseDateTime(date).getMillis());
         List<Reservation> reservations = reservationDao.findByDate(sqlDate);
         for (Reservation reservation : reservations) {
             if (reservation.getType() == ReservationType.BLOCKED) {
@@ -68,7 +68,7 @@ public class AdminWeekController extends BaseWeekController {
     public String blockDay(@PathVariable String weekId,
                            @RequestParam String date,
                            Model model) throws ParseException {
-        java.sql.Date sqlDate = new java.sql.Date(dateFormat.parse(date).getTime());
+        java.sql.Date sqlDate = new java.sql.Date(dateFormat.parseDateTime(date).getMillis());
 
         removeUsersRegistrations(sqlDate);
         makeReservations(sqlDate);
@@ -80,8 +80,7 @@ public class AdminWeekController extends BaseWeekController {
     void setModel(String weekId, Model model) throws ParseException {
         super.setModel(weekId, model);
 
-        String nextWeekId = getSpecificWeekId(weekId, WEEK_TYPE.NEXT);
-        model.addAttribute("nextWeekId", nextWeekId);
+        model.addAttribute("nextWeekId", getSpecificWeekId(weekId, WEEK_TYPE.NEXT));
         model.addAttribute("prevWeekId", getSpecificWeekId(weekId, WEEK_TYPE.PREV));
     }
 

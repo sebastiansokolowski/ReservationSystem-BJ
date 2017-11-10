@@ -9,6 +9,11 @@ import bj.pranie.model.TimeWeekModel;
 import bj.pranie.service.UserAuthenticatedService;
 import bj.pranie.util.ColorUtil;
 import bj.pranie.util.TimeUtil;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeConstants;
+import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,10 +21,7 @@ import org.springframework.ui.Model;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by Sebastian Sokolowski on 22.10.17.
@@ -27,7 +29,7 @@ import java.util.List;
 public class BaseWeekController {
     private static final int RESET_TIME = 10;
 
-    static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+    static final DateTimeFormatter dateFormat = DateTimeFormat.forPattern("yyyy/MM/dd");
     static final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
 
     @Autowired
@@ -53,39 +55,28 @@ public class BaseWeekController {
     WeekId = year-weekOfYear
     */
     String getCurrentWeekId() {
-//        Calendar calendar = TimeUtil.getCalendar();
-//
-//        int time = calendar.get(Calendar.HOUR_OF_DAY);
-//        int today = calendar.get(Calendar.DAY_OF_WEEK);
-//        if (today == Calendar.SUNDAY && time >= RESET_TIME) {
-//            calendar.add(Calendar.WEEK_OF_YEAR, 1);
-//        }
-//
-//        return calendar.get(Calendar.YEAR) + "-" + calendar.get(Calendar.WEEK_OF_YEAR);
-        return "2017-45";
+        DateTime dateTime = TimeUtil.getCalendar();
+
+        int time = dateTime.getHourOfDay();
+        int today = dateTime.getDayOfWeek();
+        if (today == DateTimeConstants.SUNDAY && time >= RESET_TIME) {
+            dateTime = dateTime.plusWeeks(1);
+        }
+
+        return dateTime.getYear() + "-" + dateTime.getWeekOfWeekyear();
     }
 
     String getWeekFrame(String weekId) {
-        Calendar calendar = getCalendar(weekId);
-        calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+        LocalDate localDate = getLocalDateByWeekId(weekId).withDayOfWeek(DateTimeConstants.MONDAY);
 
-        String weekFrame = dateFormat.format(calendar.getTime()) + " - ";
-
-        calendar.add(Calendar.DAY_OF_MONTH, 6);
-
-        weekFrame += dateFormat.format(calendar.getTime());
-
-        return weekFrame;
+        return localDate.toString(dateFormat) + " - " + localDate.plusDays(6).toString(dateFormat);
     }
 
-    Calendar getCalendar(String weekId) {
+    LocalDate getLocalDateByWeekId(String weekId) {
         int year = Integer.parseInt(weekId.split("-")[0]);
         int weekOfYear = Integer.parseInt(weekId.split("-")[1]);
 
-        Calendar calendar = TimeUtil.getCalendar();
-        calendar.set(Calendar.WEEK_OF_YEAR, weekOfYear);
-        calendar.set(Calendar.YEAR, year);
-        return calendar;
+        return new LocalDate().withWeekOfWeekyear(weekOfYear).withYear(year);
     }
 
     enum WEEK_TYPE {
@@ -93,43 +84,40 @@ public class BaseWeekController {
     }
 
     String getSpecificWeekId(String weekId, UserWeekController.WEEK_TYPE week_type) {
-        Calendar calendar = getCalendar(weekId);
+        LocalDate localDate = getLocalDateByWeekId(weekId);
 
         switch (week_type) {
             case NEXT:
-                calendar.add(Calendar.WEEK_OF_YEAR, 1);
+                localDate = localDate.plusWeeks(1);
                 break;
             case PREV:
-                calendar.add(Calendar.WEEK_OF_YEAR, -1);
+                localDate = localDate.minusWeeks(1);
                 break;
         }
 
-        return calendar.get(Calendar.YEAR) + "-" + calendar.get(Calendar.WEEK_OF_YEAR);
+        return localDate.getYear() + "-" + localDate.getWeekOfWeekyear();
     }
 
     List<TimeWeekModel> getTimeWeekModels(String weekId) throws ParseException {
         final List<TimeWeekModel> timeWeekModels = new ArrayList<>();
 
-        List<String> weekDays = getWeekDays(weekId);
+        List<LocalDate> weekDays = getWeekDays(weekId);
 
         Iterator<WashTime> washTimeIterator = washTimeDao.findAll().iterator();
         while (washTimeIterator.hasNext()) {
             WashTime washTime = washTimeIterator.next();
 
-            String fromTime = timeFormat.format(washTime.getFromTime());
-            String toTime = timeFormat.format(washTime.getToTime());
-
             TimeWeekModel timeWeekModel = new TimeWeekModel();
-            timeWeekModel.setTime(fromTime + " - " + toTime);
+            timeWeekModel.setTime(timeFormat.format(washTime.getFromTime()) + " - " + timeFormat.format(washTime.getToTime()));
 
             List<TimeWeekModel.WmDate> wmDates = new ArrayList<>();
-            for (String date : weekDays) {
+            for (LocalDate localDate : weekDays) {
                 TimeWeekModel.WmDate wmDate = timeWeekModel.new WmDate();
-                wmDate.setDate(date);
+                wmDate.setDate(localDate.toString(dateFormat));
 
-                boolean isPast = TimeUtil.isPast(fromTime, date);
+                boolean isPast = TimeUtil.isPast(washTime.getFromTime(), localDate);
 
-                List<Reservation> reservations = getReservationsByWashTimeAndDate(washTime.getId(), date);
+                List<Reservation> reservations = getReservationsByWashTimeAndDate(washTime.getId(), localDate);
 
                 int wmFree = 3;
                 if (isPast) {
@@ -150,22 +138,20 @@ public class BaseWeekController {
         return timeWeekModels;
     }
 
-    List<String> getWeekDays(String weekId) {
-        List<String> daysOfWeek = new ArrayList<>();
+    List<LocalDate> getWeekDays(String weekId) {
+        List<LocalDate> daysOfWeek = new ArrayList<>();
 
-        Calendar now = getCalendar(weekId);
-        now.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+        LocalDate localDate = getLocalDateByWeekId(weekId).withDayOfWeek(DateTimeConstants.MONDAY);
 
         for (int i = 0; i < 6; i++) {
-            daysOfWeek.add(dateFormat.format(now.getTime()));
-            now.add(Calendar.DAY_OF_MONTH, 1);
+            daysOfWeek.add(localDate.plusDays(i));
         }
 
         return daysOfWeek;
     }
 
-    List<Reservation> getReservationsByWashTimeAndDate(long washTimeId, String date) throws ParseException {
-        java.sql.Date sqlDate = new java.sql.Date(dateFormat.parse(date).getTime());
+    List<Reservation> getReservationsByWashTimeAndDate(long washTimeId, LocalDate date) throws ParseException {
+        java.sql.Date sqlDate = new java.sql.Date(date.toDate().getTime());
         return reservationDao.findByWashTimeIdAndDate(washTimeId, sqlDate);
     }
 
