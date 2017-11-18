@@ -33,13 +33,13 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        String username = authentication.getName();
+        String usernameOrEmail = authentication.getName();
         String password = (String) authentication.getCredentials();
 
-        User user = userDao.findByUsername(username);
+        User user = getUser(usernameOrEmail);
 
-        if (user == null || !user.getUsername().equalsIgnoreCase(username)) {
-            throw new BadCredentialsException("Nieprawidłowa nazwa użytkownika");
+        if (user == null) {
+            throw new BadCredentialsException("Nieprawidłowy login lub email");
         }
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
@@ -51,6 +51,15 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         }
 
         return new UsernamePasswordAuthenticationToken(user, password, getUserGrantedAuthority(user));
+    }
+
+    private User getUser(String usernameOrEmail) {
+        User user = userDao.findByUsername(usernameOrEmail);
+        if (user == null) {
+            user = userDao.findByEmail(usernameOrEmail);
+        }
+
+        return user;
     }
 
     private Collection<? extends GrantedAuthority> getUserGrantedAuthority(User user) {
