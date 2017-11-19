@@ -82,9 +82,7 @@ public class Application {
         Iterator<User> iterator = iterable.iterator();
         while (iterator.hasNext()) {
             User user = iterator.next();
-            if (user.getRole() == UserRole.USER) {
-                user.setTokens(USER_TOKENS_PER_WEEK);
-            }
+            user.setTokens(USER_TOKENS_PER_WEEK);
         }
 
         userDao.save(iterable);
