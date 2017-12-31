@@ -76,7 +76,9 @@ public class BaseWeekController {
         int year = Integer.parseInt(weekId.split("-")[0]);
         int weekOfYear = Integer.parseInt(weekId.split("-")[1]);
 
-        return new LocalDate().withWeekOfWeekyear(weekOfYear).withYear(year);
+        //todo: improve ugly fast fix
+        return new LocalDate().withDayOfWeek(DateTimeConstants.MONDAY).withWeekOfWeekyear(weekOfYear).withYear(year).
+                withDayOfWeek(DateTimeConstants.MONDAY);
     }
 
     enum WEEK_TYPE {
