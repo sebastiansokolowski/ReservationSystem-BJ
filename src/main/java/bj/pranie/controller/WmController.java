@@ -26,8 +26,10 @@ import org.springframework.web.servlet.ModelAndView;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Sebastian Sokolowski on 12.10.16.
@@ -38,6 +40,8 @@ public class WmController {
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
     private static final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
     private static final SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+
+    private static final long TIME_BEFORE_BLOCK_USER_UNREGISTER = TimeUnit.HOURS.toMillis(1);
 
     @Autowired
     private ReservationDao reservationDao;
@@ -99,11 +103,21 @@ public class WmController {
                                      @RequestParam long reservationId) throws ParseException {
         ModelAndView modelAndView = new ModelAndView("wm/wm");
 
-        reservationDao.delete(reservationId);
-
         User user = userAuthenticatedService.getAuthenticatedUser();
-        user.setTokens(user.getTokens() + 1);
-        userDao.save(user);
+        Reservation reservation = reservationDao.findOne(reservationId);
+
+        if (user != null && reservation != null &&
+                reservation.getUser().getId() == user.getId()) {
+            if (isUnregisterAvailable(reservation)) {
+                reservationDao.delete(reservationId);
+
+                user.setTokens(user.getTokens() + 1);
+                userDao.save(user);
+            } else {
+                modelAndView.addObject("errorMessage", "Niestety już za późno aby się wyrejestrować.");
+            }
+        }
+
 
         setModel(year, month, day, washTimeId, modelAndView);
         return modelAndView;
@@ -151,6 +165,24 @@ public class WmController {
 
         setModel(year, month, day, washTimeId, modelAndView);
         return modelAndView;
+    }
+
+    private boolean isUnregisterAvailable(Reservation reservation) {
+        Calendar time = Calendar.getInstance();
+        time.setTime(reservation.getWashTime().getFromTime());
+
+        DateTime reservationDate = new DateTime(reservation.getDate())
+                .withHourOfDay(time.get(Calendar.HOUR_OF_DAY))
+                .withMinuteOfHour(time.get(Calendar.MINUTE));
+
+        DateTime now = TimeUtil.getCalendar()
+                .plus(TIME_BEFORE_BLOCK_USER_UNREGISTER);
+
+        if (now.isBefore(reservationDate)) {
+            return true;
+        }
+
+        return false;
     }
 
     private void setModel(int year, int month, int day, long washTimeId, ModelAndView modelAndView) throws ParseException {
@@ -230,7 +262,7 @@ public class WmController {
                 if (currentReservation.getType() == ReservationType.BLOCKED) {
                     wmModel.setColor(ColorUtil.RESERVATION_UNAVAILABLE_COLOR);
                     wmModel.setType(WmModel.TYPE.UNAVAILABLE);
-                } else if (isMyReservation(currentReservation.getUser())) {
+                } else if (isMyReservation(currentReservation.getUser()) && isUnregisterAvailable(currentReservation)) {
                     wmModel.setType(WmModel.TYPE.MY);
                     wmModel.setColor(ColorUtil.RESERVATION_MY_COLOR);
                     wmModel.setUser(currentReservation.getUser());
