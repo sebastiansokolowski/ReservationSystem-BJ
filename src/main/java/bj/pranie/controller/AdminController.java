@@ -1,14 +1,23 @@
 package bj.pranie.controller;
 
+import bj.pranie.Application;
+import bj.pranie.dao.ReservationDao;
 import bj.pranie.dao.RoomDao;
 import bj.pranie.dao.UserDao;
+import bj.pranie.entity.Reservation;
 import bj.pranie.entity.Room;
+import bj.pranie.entity.User;
 import bj.pranie.entity.myEnum.RoomType;
+import bj.pranie.entity.myEnum.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Created by Sebastian Sokolowski on 19.10.16.
@@ -23,10 +32,25 @@ public class AdminController {
     @Autowired
     private RoomDao roomDao;
 
+    @Autowired
+    private ReservationDao reservationDao;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @ResponseBody
     @RequestMapping(value = "/registrationRooms", method = RequestMethod.GET)
-    public String registrationRooms(Model model) {
+    public String registrationRooms() {
         registrationAllRooms();
-        return "user/registration";
+        return "Success!!";
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/enableHolidaySystem", method = RequestMethod.GET)
+    public String enableHolidaySystem() {
+        removeAllStudentsAccounts();
+        createHolidaysAccounts();
+        return "Success!!";
     }
 
     /**
@@ -73,6 +97,52 @@ public class AdminController {
             roomDao.save(room);
             room = new Room(actualRoom, RoomType.C, 1);
             roomDao.save(room);
+        }
+    }
+
+    private void removeAllStudentsAccounts() {
+        Iterable<User> iterable = userDao.findAll();
+        Iterator<User> iterator = iterable.iterator();
+        while (iterator.hasNext()) {
+            User user = iterator.next();
+
+            if (user.getRole() == UserRole.ADMIN) {
+                continue;
+            }
+            if (user.getRoom() == null) {
+                continue;
+            }
+            if (user.getRoom().getRoom() > Application.STUDENTS_LAST_ROOM) {
+                continue;
+            }
+
+            List<Reservation> reservations = reservationDao.findByUserId(user.getId());
+            reservationDao.delete(reservations);
+
+            userDao.delete(user.getId());
+        }
+    }
+
+    private void createHolidaysAccounts() {
+        List<Room> rooms = roomDao.findAllByOrderByRoomAscTypeAsc();
+
+        for (Room room : rooms) {
+            if (room.getRoom() > Application.STUDENTS_LAST_ROOM) {
+                continue;
+            }
+
+            String hashedPassword = passwordEncoder.encode("bursa");
+            String username = room.getRoom() + room.getType().toString().toLowerCase();
+
+            User user = new User();
+            user.setUsername(username);
+            user.setPassword(hashedPassword);
+            user.setRoom(room);
+            user.setBlocked(false);
+            user.setRole(UserRole.USER);
+            user.setTokens(room.getPeoples());
+
+            userDao.save(user);
         }
     }
 }

@@ -29,7 +29,22 @@
                     </div>
                     <br/>
                     <a href="/user/restorePassword">Nie pamiętasz hasła?</a><br/>
-                    <a href="/user/regulations">Utwórz konto</a><br/>
+
+                    <a th:if="${!holidays}" href="/user/regulations">Utwórz konto</a><br/>
+                </fieldset>
+                <br/>
+                <fieldset th:if="${holidays}" class="fieldset">
+                    <div align="center">
+                        <font color="red">UWAGA!</font><br/>
+                        Na okres wakacji zostały wprowadzone małe zmiany.<br/>
+                        <br/>
+                        Login: numer pokoju<br/>
+                        Hasło: bursa<br/>
+                        <br/>
+                        * Numer pokoju składa się z numeru składu i litery oznaczającej pokój. np. 33b, 24c, 19a<br/>
+                        * Zmiana nie dotyczy części asystenckiej.<br/>
+                        * Brak możliwości zmiany terminu.<br/>
+                    </div>
                 </fieldset>
             </div>
         </center>

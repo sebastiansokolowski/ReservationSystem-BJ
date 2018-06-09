@@ -23,10 +23,8 @@ public class User {
 
     private String resetPasswordKey;
 
-    @NotNull
     private String name;
 
-    @NotNull
     private String surname;
 
     @NotNull
@@ -36,7 +34,6 @@ public class User {
     @NotNull
     private UserRole role = UserRole.USER;
 
-    @NotNull
     private String email;
 
     @OneToOne

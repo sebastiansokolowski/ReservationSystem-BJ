@@ -11,7 +11,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import javax.annotation.PostConstruct;
-import java.util.Calendar;
 import java.util.Iterator;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -26,6 +25,8 @@ public class Application {
 
     public final static int RESET_TIME = 10;
     public final static int USER_TOKENS_PER_WEEK = 1;
+    public final static int STUDENTS_LAST_ROOM = 45;
+    public final static boolean HOLIDAYS = true;
 
     @Autowired
     private UserDao userDao;
@@ -82,7 +83,12 @@ public class Application {
         Iterator<User> iterator = iterable.iterator();
         while (iterator.hasNext()) {
             User user = iterator.next();
-            user.setTokens(USER_TOKENS_PER_WEEK);
+            if (user.getRoom() != null && user.getRole() == UserRole.USER &&
+                    HOLIDAYS && user.getRoom().getRoom() <= STUDENTS_LAST_ROOM) {
+                user.setTokens(user.getRoom().getPeoples());
+            } else {
+                user.setTokens(USER_TOKENS_PER_WEEK);
+            }
         }
 
         userDao.save(iterable);

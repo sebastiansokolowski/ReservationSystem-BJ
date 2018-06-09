@@ -26,12 +26,12 @@
                             <img src="/images/wm.jpg"/>
                             <div th:switch="${reservation.type.name()}">
                                 <p th:case="RESERVED">
-                                    <span th:text="${reservation.user.name}"/>
+                                    <span th:if="${reservation.user.name != null}" th:text="${reservation.user.name}"/>
                                     <br/>
                                     <span th:text="${reservation.user.room.room}+${reservation.user.room.type}"/>
                                 </p>
                                 <p th:case="MY">
-                                    <span th:text="${reservation.user.name}"/>
+                                    <span th:if="${reservation.user.name != null}" th:text="${reservation.user.name}"/>
                                     <br/>
                                     <span th:text="${reservation.user.room.room}+${reservation.user.room.type}"/>
                                 </p>

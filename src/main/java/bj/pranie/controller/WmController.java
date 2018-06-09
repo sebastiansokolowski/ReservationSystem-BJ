@@ -1,5 +1,6 @@
 package bj.pranie.controller;
 
+import bj.pranie.Application;
 import bj.pranie.dao.ReservationDao;
 import bj.pranie.dao.UserDao;
 import bj.pranie.dao.WashTimeDao;
@@ -263,7 +264,7 @@ public class WmController {
                     wmModel.setColor(ColorUtil.RESERVATION_UNAVAILABLE_COLOR);
                     wmModel.setType(WmModel.TYPE.UNAVAILABLE);
                 } else if (isMyReservation(currentReservation.getUser()) && isUnregisterAvailable(currentReservation)) {
-                    wmModel.setType(WmModel.TYPE.MY);
+                    wmModel.setType(Application.HOLIDAYS ? WmModel.TYPE.RESERVED : WmModel.TYPE.MY);
                     wmModel.setColor(ColorUtil.RESERVATION_MY_COLOR);
                     wmModel.setUser(currentReservation.getUser());
                 } else {
