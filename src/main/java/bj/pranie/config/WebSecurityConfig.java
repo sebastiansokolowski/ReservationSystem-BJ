@@ -28,7 +28,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        List<String> urls = new ArrayList<>(Arrays.asList("/",
+        List<String> permitUrls = new ArrayList<>(Arrays.asList("/",
                 "/logout",
                 "/week", "/week/*",
                 "/wm/*/*/*/*/",
@@ -37,13 +37,21 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 "/favicon.ico",
                 "/js/*"));
 
-        if(!Application.HOLIDAYS){
-            urls.add("/user/regulations");
-            urls.add("/user/registration");
+        List<String> denyUrls = new ArrayList<>();
+
+        if (Application.HOLIDAYS) {
+            denyUrls.add("/user/regulations");
+            denyUrls.add("/user/registration");
+            denyUrls.add("/user/settings");
+        } else {
+            permitUrls.add("/user/regulations");
+            permitUrls.add("/user/registration");
+            permitUrls.add("/user/settings");
         }
 
         http.authorizeRequests()
-                .antMatchers(urls.toArray(new String[urls.size()])).permitAll()
+                .antMatchers(permitUrls.toArray(new String[permitUrls.size()])).permitAll()
+                .antMatchers(denyUrls.toArray(new String[denyUrls.size()])).denyAll()
                 .antMatchers("/admin").hasAuthority("ADMIN")
                 .anyRequest().authenticated()
                 .and()
