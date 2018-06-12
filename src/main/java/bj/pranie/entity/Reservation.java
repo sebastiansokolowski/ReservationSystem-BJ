@@ -29,7 +29,6 @@ public class Reservation {
     @NotNull
     private ReservationType type;
 
-
     @NotNull
     private Date date;
 
@@ -94,6 +93,18 @@ public class Reservation {
         Reservation that = (Reservation) o;
 
         return id == that.id;
+    }
+
+    @Override
+    public String toString() {
+        return "Reservation{" +
+                "id=" + id +
+                ", wm=" + wm +
+                ", user=" + user +
+                ", type=" + type +
+                ", date=" + date +
+                ", washTime=" + washTime +
+                '}';
     }
 
     @Override

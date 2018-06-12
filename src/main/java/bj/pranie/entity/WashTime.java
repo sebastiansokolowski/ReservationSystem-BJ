@@ -55,6 +55,15 @@ public class WashTime {
     }
 
     @Override
+    public String toString() {
+        return "WashTime{" +
+                "id=" + id +
+                ", fromTime=" + fromTime +
+                ", toTime=" + toTime +
+                '}';
+    }
+
+    @Override
     public int hashCode() {
         return (int) (id ^ (id >>> 32));
     }

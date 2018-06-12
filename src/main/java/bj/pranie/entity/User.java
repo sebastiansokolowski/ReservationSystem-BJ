@@ -142,6 +142,20 @@ public class User {
     }
 
     @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", name='" + name + '\'' +
+                ", surname='" + surname + '\'' +
+                ", tokens=" + tokens +
+                ", role=" + role +
+                ", room=" + room +
+                ", blocked=" + blocked +
+                '}';
+    }
+
+    @Override
     public int hashCode() {
         return (int) (id ^ (id >>> 32));
     }

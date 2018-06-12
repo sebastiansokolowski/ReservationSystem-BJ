@@ -31,6 +31,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 
 /**
  * Created by Sebastian Sokolowski on 12.10.16.
@@ -38,6 +39,8 @@ import java.util.concurrent.TimeUnit;
 @Controller
 @RequestMapping(value = "/wm")
 public class WmController {
+    private static Logger LOG = Logger.getLogger(TimeUtil.class.getName());
+
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
     private static final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
     private static final SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm");
@@ -111,14 +114,15 @@ public class WmController {
                 reservation.getUser().getId() == user.getId()) {
             if (isUnregisterAvailable(reservation)) {
                 reservationDao.delete(reservationId);
+                LOG.info("unregister wm " + reservation);
 
                 user.setTokens(user.getTokens() + 1);
                 userDao.save(user);
             } else {
                 modelAndView.addObject("errorMessage", "Niestety już za późno aby się wyrejestrować.");
+                LOG.info("unregister wm TOO LATE " + reservation);
             }
         }
-
 
         setModel(year, month, day, washTimeId, modelAndView);
         return modelAndView;
@@ -135,6 +139,7 @@ public class WmController {
 
         Reservation reservation = reservationDao.findOne(reservationId);
         reservationDao.delete(reservationId);
+        LOG.info("remove wm " + reservation);
 
         if (reservation.getType() != ReservationType.BLOCKED) {
             User user = reservation.getUser();
@@ -205,11 +210,6 @@ public class WmController {
     private synchronized void makeReservation(User user, int year, int month, int day, long washTimeId, int wmNumber, ReservationType reservationType) throws ReservationAlreadyBookedException {
         java.sql.Date date = getSqlDate(year, month, day);
 
-        if (reservationDao.existsByWashTimeIdAndDateAndWm(washTimeId, date, wmNumber)) {
-            throw new ReservationAlreadyBookedException();
-        }
-
-
         Reservation reservation = new Reservation();
         reservation.setDate(date);
         reservation.setUser(user);
@@ -217,7 +217,13 @@ public class WmController {
         reservation.setWm(wmNumber);
         reservation.setType(reservationType);
 
+        if (reservationDao.existsByWashTimeIdAndDateAndWm(washTimeId, date, wmNumber)) {
+            LOG.info("register wm EXIST " + reservation);
+            throw new ReservationAlreadyBookedException();
+        }
+
         reservationDao.save(reservation);
+        LOG.info("register wm " + reservation);
     }
 
     private java.sql.Date getSqlDate(int year, int month, int day) {

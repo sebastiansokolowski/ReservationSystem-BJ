@@ -77,6 +77,15 @@ public class Room {
     }
 
     @Override
+    public String toString() {
+        return "Room{" +
+                "id=" + id +
+                ", room=" + room +
+                ", type=" + type +
+                '}';
+    }
+
+    @Override
     public int hashCode() {
         return (int) (id ^ (id >>> 32));
     }
