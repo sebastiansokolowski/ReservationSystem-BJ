@@ -23,6 +23,7 @@
                             width="11%" align="center"
                             th:bgcolor="${reservation.color}">
                             <span th:text="${i.count}"/>
+                            <br/>
                             <img src="/images/wm.jpg"/>
                             <div th:switch="${reservation.type.name()}">
                                 <p th:case="RESERVED">
