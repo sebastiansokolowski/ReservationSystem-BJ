@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.sql.Date;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -47,30 +48,39 @@ public class AdminWeekController extends BaseWeekController {
         return "wm/week";
     }
 
-    @RequestMapping(path = "/{weekId}/unblock", method = RequestMethod.POST)
-    public String unblockDay(@PathVariable String weekId,
-                             @RequestParam String date,
-                             Model model) throws ParseException {
+    @RequestMapping(path = "/{weekId}/block", method = RequestMethod.POST)
+    public String blockDay(@PathVariable String weekId,
+                           @RequestParam String date,
+                           @RequestParam(defaultValue = "") String[] wmValues,
+                           Model model) throws ParseException {
         java.sql.Date sqlDate = new java.sql.Date(dateFormat.parseDateTime(date).getMillis());
-        List<Reservation> reservations = reservationDao.findByDate(sqlDate);
-        for (Reservation reservation : reservations) {
-            if (reservation.getType() == ReservationType.BLOCKED) {
-                reservationDao.delete(reservation.getId());
-            }
-        }
+
+        List<Integer> wmToBlock = parseStringArratToIntegerList(wmValues);
+
+        removeUsersRegistrations(sqlDate, wmToBlock);
+        makeReservations(sqlDate, wmToBlock);
 
         setModel(weekId, model);
         return "wm/week";
     }
 
-    @RequestMapping(path = "/{weekId}/block", method = RequestMethod.POST)
-    public String blockDay(@PathVariable String weekId,
-                           @RequestParam String date,
-                           Model model) throws ParseException {
+    @RequestMapping(path = "/{weekId}/unblock", method = RequestMethod.POST)
+    public String unblockDay(@PathVariable String weekId,
+                             @RequestParam String date,
+                             @RequestParam(defaultValue = "") String[] wmValues,
+                             Model model) throws ParseException {
         java.sql.Date sqlDate = new java.sql.Date(dateFormat.parseDateTime(date).getMillis());
 
-        removeUsersRegistrations(sqlDate);
-        makeReservations(sqlDate);
+        List<Integer> wmToUnlock = parseStringArratToIntegerList(wmValues);
+
+        for (Integer wm : wmToUnlock) {
+            List<Reservation> reservations = reservationDao.findByDateAndWm(sqlDate, wm);
+            for (Reservation reservation : reservations) {
+                if (reservation.getType() == ReservationType.BLOCKED) {
+                    reservationDao.delete(reservation.getId());
+                }
+            }
+        }
 
         setModel(weekId, model);
         return "wm/week";
@@ -81,16 +91,28 @@ public class AdminWeekController extends BaseWeekController {
 
         model.addAttribute("nextWeekId", getSpecificWeekId(weekId, WEEK_TYPE.NEXT));
         model.addAttribute("prevWeekId", getSpecificWeekId(weekId, WEEK_TYPE.PREV));
+        model.addAttribute("wmCount", 3);
     }
 
     // private
 
-    private void removeUsersRegistrations(Date sqlDate) throws ParseException {
-        List<Reservation> reservations = reservationDao.findByDate(sqlDate);
-        for (Reservation reservation : reservations) {
-            giveBackUserToken(reservation.getUser());
+    private List<Integer> parseStringArratToIntegerList(String[] array) {
+        List<Integer> result = new ArrayList<>();
+        for (int i = 0; i != array.length; i++) {
+            result.add(Integer.parseInt(array[i]));
+        }
 
-            reservationDao.delete(reservation.getId());
+        return result;
+    }
+
+    private void removeUsersRegistrations(Date sqlDate, List<Integer> wmToBlock) throws ParseException {
+        for (Integer wm : wmToBlock) {
+            List<Reservation> reservations = reservationDao.findByDateAndWm(sqlDate, wm);
+
+            for (Reservation reservation : reservations) {
+                giveBackUserToken(reservation.getUser());
+                reservationDao.delete(reservation.getId());
+            }
         }
     }
 
@@ -100,14 +122,14 @@ public class AdminWeekController extends BaseWeekController {
         userDao.save(user);
     }
 
-    private void makeReservations(Date sqlDate) {
+    private void makeReservations(Date sqlDate, List<Integer> wmToBlock) {
         User admin = userAuthenticatedService.getAuthenticatedUser();
 
         Iterator<WashTime> washTimes = washTimeDao.findAll().iterator();
         while (washTimes.hasNext()) {
             WashTime washTime = washTimes.next();
-            for (int i = 0; i != 3; i++) {
-                makeReservation(admin, sqlDate, washTime.getId(), i, ReservationType.BLOCKED);
+            for (Integer wm : wmToBlock) {
+                makeReservation(admin, sqlDate, washTime.getId(), wm, ReservationType.BLOCKED);
             }
         }
     }

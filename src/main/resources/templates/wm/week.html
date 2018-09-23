@@ -50,14 +50,30 @@
                         <th th:each="dayDate : ${timesWeek[0].dates}">
                             <span th:text="${dayDate.date}"/>
                             <div sec:authorize="hasAuthority('ADMIN')">
-                                <form th:action="@{/admin/week/}+${weekId}+@{/block}" method="post">
-                                    <input type="text" name="date" th:value="${dayDate.date}" hidden="hidden"/>
-                                    <input class="btn" type="submit" value="Blokada"/>
-                                </form>
-                                <form th:action="@{/admin/week/}+${weekId}+@{/unblock}" method="post">
-                                    <input type="text" name="date" th:value="${dayDate.date}" hidden="hidden"/>
-                                    <input class="btn" type="submit" value="Odblokowanie"/>
-                                </form>
+                                <fieldset class="fieldset">
+                                    Blokada
+                                    <form th:action="@{/admin/week/}+${weekId}+@{/block}" method="post">
+                                        <input type="text" name="date" th:value="${dayDate.date}" hidden="hidden"/>
+                                        <span th:each="i: ${#numbers.sequence(0, wmCount - 1)}">
+                                            <input type="checkbox" name="wmValues" th:value="${i}"/>
+                                            <span th:text="${i}+1"/>
+                                        </span>
+                                        <br/>
+                                        <input class="btn" type="submit" value="Wyslij"/>
+                                    </form>
+                                </fieldset>
+                                <fieldset class="fieldset">
+                                    Odblokowanie
+                                    <form th:action="@{/admin/week/}+${weekId}+@{/unblock}" method="post">
+                                        <input type="text" name="date" th:value="${dayDate.date}" hidden="hidden"/>
+                                        <span th:each="i: ${#numbers.sequence(0, wmCount - 1)}">
+                                            <input type="checkbox" name="wmValues" th:value="${i}"/>
+                                            <span th:text="${i}+1"/>
+                                        </span>
+                                        <br/>
+                                        <input class="btn" type="submit" value="Wyslij"/>
+                                    </form>
+                                </fieldset>
                             </div>
                         </th>
                     </tr>
