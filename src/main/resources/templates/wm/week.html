@@ -51,7 +51,7 @@
                             <span th:text="${dayDate.date}"/>
                             <div sec:authorize="hasAuthority('ADMIN')">
                                 <fieldset class="fieldset">
-                                    Blokada
+                                    Blokowanie
                                     <form th:action="@{/admin/week/}+${weekId}+@{/block}" method="post">
                                         <input type="text" name="date" th:value="${dayDate.date}" hidden="hidden"/>
                                         <span th:each="i: ${#numbers.sequence(0, wmCount - 1)}">
