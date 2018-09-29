@@ -41,6 +41,9 @@ public class UserController {
     @Autowired
     private UserAuthenticatedService userAuthenticatedService;
 
+    @Value("${holidays}")
+    private boolean holidays;
+
     @PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
     @RequestMapping(value = "/settings", method = RequestMethod.GET)
     public String userSettings(Model model) {

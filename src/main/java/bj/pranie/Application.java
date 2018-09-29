@@ -26,7 +26,6 @@ public class Application {
     public final static int RESET_TIME = 10;
     public final static int USER_TOKENS_PER_WEEK = 1;
     public final static int STUDENTS_LAST_ROOM = 45;
-    public final static boolean HOLIDAYS = true;
 
     @Autowired
     private UserDao userDao;
