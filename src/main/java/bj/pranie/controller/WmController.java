@@ -1,6 +1,5 @@
 package bj.pranie.controller;
 
-import bj.pranie.Application;
 import bj.pranie.dao.ReservationDao;
 import bj.pranie.dao.UserDao;
 import bj.pranie.dao.WashTimeDao;
@@ -99,6 +98,7 @@ public class WmController {
         return modelAndView;
     }
 
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
     @RequestMapping(path = "/{year}/{month}/{day}/{washTimeId}/unregister", method = RequestMethod.POST)
     public ModelAndView unregisterWm(@PathVariable int year,
                                      @PathVariable int month,
@@ -270,7 +270,7 @@ public class WmController {
                     wmModel.setColor(ColorUtil.RESERVATION_UNAVAILABLE_COLOR);
                     wmModel.setType(WmModel.TYPE.UNAVAILABLE);
                 } else if (isMyReservation(currentReservation.getUser()) && isUnregisterAvailable(currentReservation)) {
-                    wmModel.setType(Application.HOLIDAYS ? WmModel.TYPE.RESERVED : WmModel.TYPE.MY);
+                    wmModel.setType(WmModel.TYPE.MY);
                     wmModel.setColor(ColorUtil.RESERVATION_MY_COLOR);
                     wmModel.setUser(currentReservation.getUser());
                 } else {

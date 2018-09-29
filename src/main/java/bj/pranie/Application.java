@@ -83,8 +83,7 @@ public class Application {
         Iterator<User> iterator = iterable.iterator();
         while (iterator.hasNext()) {
             User user = iterator.next();
-            if (user.getRoom() != null && user.getRole() == UserRole.USER &&
-                    HOLIDAYS && user.getRoom().getRoom() <= STUDENTS_LAST_ROOM) {
+            if (user.getRole() == UserRole.GROUP) {
                 user.setTokens(user.getRoom().getPeoples());
             } else {
                 user.setTokens(USER_TOKENS_PER_WEEK);

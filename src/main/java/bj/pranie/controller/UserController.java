@@ -41,6 +41,7 @@ public class UserController {
     @Autowired
     private UserAuthenticatedService userAuthenticatedService;
 
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
     @RequestMapping(value = "/settings", method = RequestMethod.GET)
     public String userSettings(Model model) {
         model.addAttribute("userSettingsModel", new UserSettingsModel());
@@ -48,6 +49,7 @@ public class UserController {
         return "user/settings";
     }
 
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
     @RequestMapping(value = "/settings", method = RequestMethod.POST)
     public ModelAndView saveUserSettings(@ModelAttribute("userSettingsModel") @Valid UserSettingsModel userSettingsModel, BindingResult bindingResult) {
         ModelAndView modelAndView = new ModelAndView();

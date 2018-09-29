@@ -73,6 +73,10 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         if (user.getRole().equals(UserRole.USER)) {
             grantedAuths.add(new SimpleGrantedAuthority("USER"));
         }
+
+        if (user.getRole().equals(UserRole.GROUP)) {
+            grantedAuths.add(new SimpleGrantedAuthority("GROUP"));
+        }
         return grantedAuths;
     }
 
