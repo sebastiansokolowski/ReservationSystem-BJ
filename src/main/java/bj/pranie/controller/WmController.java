@@ -196,7 +196,7 @@ public class WmController {
 
         WashTime washTime = washTimeDao.findOne(washTimeId);
         List<Reservation> reservationList = reservationDao.findByWashTimeIdAndDate(washTimeId, new java.sql.Date(localDate.toDate().getTime()));
-        int wmFree = 3 - reservationList.size();
+        int wmFree = 5 - reservationList.size();
 
         modelAndView.addObject("washTimeId", washTimeId);
         modelAndView.addObject("dayName", getDayName(localDate));
@@ -241,7 +241,7 @@ public class WmController {
         List<Integer> brokenWm = getBrokenWm();
         boolean isPast = TimeUtil.isPast(washTime.getFromTime(), date);
 
-        for (int i = 0; i != 3; i++) {
+        for (int i = 0; i != 5; i++) {
             WmModel wmModel = new WmModel();
 
             Reservation currentReservation = null;

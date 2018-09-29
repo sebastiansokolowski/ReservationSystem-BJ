@@ -121,7 +121,7 @@ public class BaseWeekController {
 
                 List<Reservation> reservations = getReservationsByWashTimeAndDate(washTime.getId(), localDate);
 
-                int wmFree = 3;
+                int wmFree = 5;
                 if (isPast) {
                     wmFree = 0;
                 } else {
@@ -188,6 +188,8 @@ public class BaseWeekController {
         }
 
         switch (freeSpace) {
+            case 5:
+            case 4:
             case 3:
                 return ColorUtil.RESERVATION_FREE_COLOR;
             case 2:
