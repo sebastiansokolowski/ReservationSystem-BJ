@@ -23,12 +23,15 @@ public class Room {
     private RoomType type;
 
     @NotNull
+    private boolean students;
+
+    @NotNull
     private int peoples;
 
     public Room() {
     }
 
-    public Room(int room, RoomType type, int peoples) {
+    public Room(int room, RoomType type, boolean students, int peoples) {
         this.room = room;
         this.type = type;
         this.peoples = peoples;
@@ -56,6 +59,14 @@ public class Room {
 
     public void setType(RoomType type) {
         this.type = type;
+    }
+
+    public boolean isStudents() {
+        return students;
+    }
+
+    public void setStudents(boolean students) {
+        this.students = students;
     }
 
     public int getPeoples() {

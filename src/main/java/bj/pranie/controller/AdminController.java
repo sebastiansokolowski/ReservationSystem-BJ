@@ -64,38 +64,38 @@ public class AdminController {
 
         //right room 3 at first floor
         int actualRoom = 3;
-        Room room = new Room(actualRoom, RoomType.A, 3);
+        Room room = new Room(actualRoom, RoomType.A, true, 3);
         roomDao.save(room);
-        room = new Room(actualRoom, RoomType.B, 2);
+        room = new Room(actualRoom, RoomType.B, true, 2);
         roomDao.save(room);
-        room = new Room(actualRoom, RoomType.C, 1);
+        room = new Room(actualRoom, RoomType.C, true, 1);
         roomDao.save(room);
 
         // iteration floor which is 15 (without first 1, 2, 3)
         for (int i = 1; i != 15; i++) {
             //left
             actualRoom += 1;
-            room = new Room(actualRoom, RoomType.A, 3);
+            room = new Room(actualRoom, RoomType.A, true, 3);
             roomDao.save(room);
-            room = new Room(actualRoom, RoomType.B, 2);
+            room = new Room(actualRoom, RoomType.B, true, 2);
             roomDao.save(room);
-            room = new Room(actualRoom, RoomType.C, 1);
+            room = new Room(actualRoom, RoomType.C, true, 1);
             roomDao.save(room);
 
             //center
             actualRoom += 1;
-            room = new Room(actualRoom, RoomType.A, 3);
+            room = new Room(actualRoom, RoomType.A, true, 3);
             roomDao.save(room);
-            room = new Room(actualRoom, RoomType.B, 2);
+            room = new Room(actualRoom, RoomType.B, true, 2);
             roomDao.save(room);
 
             //right
             actualRoom += 1;
-            room = new Room(actualRoom, RoomType.A, 3);
+            room = new Room(actualRoom, RoomType.A, true, 3);
             roomDao.save(room);
-            room = new Room(actualRoom, RoomType.B, 2);
+            room = new Room(actualRoom, RoomType.B, true, 2);
             roomDao.save(room);
-            room = new Room(actualRoom, RoomType.C, 1);
+            room = new Room(actualRoom, RoomType.C, true, 1);
             roomDao.save(room);
         }
     }

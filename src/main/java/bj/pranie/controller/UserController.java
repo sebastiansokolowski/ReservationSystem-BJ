@@ -9,6 +9,8 @@ import bj.pranie.model.UserRegistrationModel;
 import bj.pranie.model.UserSettingsModel;
 import bj.pranie.service.UserAuthenticatedService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
 
 import static bj.pranie.Application.USER_TOKENS_PER_WEEK;
 
@@ -106,8 +110,12 @@ public class UserController {
 
     @RequestMapping(value = "/registration", method = RequestMethod.GET)
     public String registrationForm(Model model) {
+        List<Room> rooms = roomDao.findAllByOrderByRoomAscTypeAsc();
+        if (holidays) {
+            rooms = removeStudentRooms(rooms);
+        }
         model.addAttribute("userRegistrationModel", new UserRegistrationModel());
-        model.addAttribute("rooms", roomDao.findAllByOrderByRoomAscTypeAsc());
+        model.addAttribute("rooms", rooms);
         return "user/registration";
     }
 
@@ -157,4 +165,14 @@ public class UserController {
         return modelAndView;
     }
 
+    private List<Room> removeStudentRooms(List<Room> rooms) {
+        List<Room> newRooms = new ArrayList<>();
+        for (Room room : rooms) {
+            if (!room.isStudents()) {
+                newRooms.add(room);
+            }
+        }
+
+        return newRooms;
+    }
 }
