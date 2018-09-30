@@ -91,7 +91,7 @@ public class AdminWeekController extends BaseWeekController {
 
         model.addAttribute("nextWeekId", getSpecificWeekId(weekId, WEEK_TYPE.NEXT));
         model.addAttribute("prevWeekId", getSpecificWeekId(weekId, WEEK_TYPE.PREV));
-        model.addAttribute("wmCount", 3);
+        model.addAttribute("wmCount", wmCount);
     }
 
     // private

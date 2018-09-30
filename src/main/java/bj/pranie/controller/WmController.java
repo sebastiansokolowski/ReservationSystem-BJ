@@ -16,6 +16,7 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -57,6 +58,9 @@ public class WmController {
 
     @Autowired
     private UserAuthenticatedService userAuthenticatedService;
+
+    @Value("${wmCount}")
+    private int wmCount;
 
     @RequestMapping(path = "/{year}/{month}/{day}/{washTimeId}", method = RequestMethod.GET)
     public ModelAndView wm(@PathVariable int year,
@@ -196,7 +200,7 @@ public class WmController {
 
         WashTime washTime = washTimeDao.findOne(washTimeId);
         List<Reservation> reservationList = reservationDao.findByWashTimeIdAndDate(washTimeId, new java.sql.Date(localDate.toDate().getTime()));
-        int wmFree = 5 - reservationList.size();
+        int wmFree = wmCount - reservationList.size();
 
         modelAndView.addObject("washTimeId", washTimeId);
         modelAndView.addObject("dayName", getDayName(localDate));
@@ -241,7 +245,7 @@ public class WmController {
         List<Integer> brokenWm = getBrokenWm();
         boolean isPast = TimeUtil.isPast(washTime.getFromTime(), date);
 
-        for (int i = 0; i != 5; i++) {
+        for (int i = 0; i != wmCount; i++) {
             WmModel wmModel = new WmModel();
 
             Reservation currentReservation = null;

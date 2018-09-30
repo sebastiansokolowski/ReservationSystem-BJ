@@ -15,6 +15,7 @@ import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.Model;
@@ -40,6 +41,9 @@ public class BaseWeekController {
 
     @Autowired
     private UserAuthenticatedService userAuthenticatedService;
+
+    @Value("${wmCount}")
+    int wmCount;
 
     void setModel(String weekId, Model model) throws ParseException {
         model.addAttribute("weekId", weekId);
@@ -121,7 +125,7 @@ public class BaseWeekController {
 
                 List<Reservation> reservations = getReservationsByWashTimeAndDate(washTime.getId(), localDate);
 
-                int wmFree = 5;
+                int wmFree = wmCount;
                 if (isPast) {
                     wmFree = 0;
                 } else {
@@ -187,11 +191,11 @@ public class BaseWeekController {
             return ColorUtil.RESERVATION_MY_COLOR;
         }
 
+        if (freeSpace > 2 && freeSpace <= wmCount) {
+            return ColorUtil.RESERVATION_FREE_COLOR;
+        }
+
         switch (freeSpace) {
-            case 5:
-            case 4:
-            case 3:
-                return ColorUtil.RESERVATION_FREE_COLOR;
             case 2:
                 return ColorUtil.RESERVATION_TWO_FREE_COLOR;
             case 1:
