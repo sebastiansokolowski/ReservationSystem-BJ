@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -44,7 +45,7 @@ public class UserRestorePassword {
     }
 
     @RequestMapping(value = "/restorePassword", method = RequestMethod.POST)
-    public ModelAndView restorePassword(@ModelAttribute("restorePasswordModel") @Valid RestorePasswordModel restorePasswordModel,
+    public ModelAndView restorePassword(@RequestHeader String host, @ModelAttribute("restorePasswordModel") @Valid RestorePasswordModel restorePasswordModel,
                                         BindingResult bindingResult) throws MessagingException {
         ModelAndView modelAndView = new ModelAndView();
 
@@ -57,7 +58,8 @@ public class UserRestorePassword {
                 user.setResetPasswordKey(resetPasswordKey);
                 userDao.save(user);
 
-                sendMail(user, resetPasswordKey);
+                sendMail(user, resetPasswordKey, host);
+                modelAndView.addObject("host", host);
                 modelAndView.addObject("successMessage", "Link do resetowania hasła został wysłany na podany adres email.");
             } else {
                 bindingResult.rejectValue("email", "error.restorePasswordDto", "Podany adres email nie istnieje w bazie.");
@@ -68,10 +70,11 @@ public class UserRestorePassword {
         return modelAndView;
     }
 
-    private void sendMail(User user, String resetPasswordKey) throws MessagingException {
+    private void sendMail(User user, String resetPasswordKey, String host) throws MessagingException {
         MimeMessage mail = emailSender.createMimeMessage();
 
         Context context = new Context();
+        context.setVariable("host", host);
         context.setVariable("name", user.getName());
         context.setVariable("resetPasswordKey", resetPasswordKey);
 
@@ -81,7 +84,7 @@ public class UserRestorePassword {
         helper.setTo(user.getEmail());
         helper.setReplyTo("bursa.jagiellonska@gmail.com");
         helper.setFrom("bursa.jagiellonska@gmail.com");
-        helper.setSubject("Resetowanie hasła www.bj-pranie.pl");
+        helper.setSubject("Resetowanie hasła " + host);
         helper.setText(body, true);
 
         emailSender.send(mail);
