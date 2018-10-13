@@ -36,7 +36,7 @@ public class UserResetPassword {
                                     Model model) {
 
         if (!checkResetKeyIsValid(resetPasswordKey)) {
-            throw new ResourceNotFoundException();
+            return "user/invalidToken";
         }
         model.addAttribute("resetPasswordKey", resetPasswordKey);
         model.addAttribute("resetPasswordModel", new ResetPasswordModel());
