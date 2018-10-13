@@ -51,7 +51,8 @@ public class UserResetPassword {
         ModelAndView modelAndView = new ModelAndView();
 
         if (!checkResetKeyIsValid(resetPasswordKey)) {
-            throw new ResourceNotFoundException();
+            modelAndView.setViewName("user/invalidToken");
+            return modelAndView;
         }
 
         if (!resetPasswordModel.getNewPassword().equals(resetPasswordModel.getNewPasswordRepeat())) {
@@ -70,6 +71,7 @@ public class UserResetPassword {
             modelAndView.addObject("successMessage", "Hasło zostało zmienione pomyślnie.");
         }
 
+        modelAndView.addObject("resetPasswordKey", resetPasswordKey);
         modelAndView.setViewName("user/resetPassword");
         return modelAndView;
     }
