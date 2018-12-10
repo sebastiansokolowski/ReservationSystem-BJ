@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+    <head>
+        <link rel="stylesheet"
+              href="//code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css"/>
+        <script src="//code.jquery.com/jquery-1.10.2.js"/>
+        <script src="//code.jquery.com/ui/1.11.2/jquery-ui.js"/>
+        <div th:include="fragments/header :: header-css"/>
+        <style>
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+
+
+        </style>
+    </head>
+    <body>
+        <div th:include="fragments/header :: menu"/>
+        <center>
+            <h1>
+                Lista użytkowników
+            </h1>
+            <p>
+                Liczba użytkowników: <span th:text="${count}"/>
+            </p>
+            <table style="margin-bottom: 100px;">
+                <tbody>
+                    <tr>
+                        <th align="center">Pokój</th>
+                        <th align="center">Imię</th>
+                        <th align="center">Nazwisko</th>
+                        <th align="center">Nazwa użytkownika</th>
+                        <th align="center">Email</th>
+                        <th align="center">Tokeny</th>
+                        <th align="center">Zablokowany</th>
+                    </tr>
+                    <tr th:each="user : ${users}">
+                        <th>
+                            <span th:text="${user.room.room}+${user.room.type}"/>
+                        </th>
+                        <th>
+                            <span th:text="${user.name}"/>
+                        </th>
+                        <th>
+                            <span th:text="${user.surname}"/>
+                        </th>
+                        <th>
+                            <span th:text="${user.username}"/>
+                        </th>
+                        <th>
+                            <span th:text="${user.email}"/>
+                        </th>
+                        <th>
+                            <span th:text="${user.tokens}"/>
+                        </th>
+                        <th>
+                            <span th:text="${user.blocked}"/>
+                        </th>
+                    </tr>
+                </tbody>
+            </table>
+        </center>
+    </body>
+    <footer>
+        <div th:replace="fragments/footer :: footer"/>
+    </footer>
+</html>
