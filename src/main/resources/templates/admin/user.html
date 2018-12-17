@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+    <head>
+        <link rel="stylesheet"
+              href="//code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css"/>
+        <script src="//code.jquery.com/jquery-1.10.2.js"/>
+        <script src="//code.jquery.com/ui/1.11.2/jquery-ui.js"/>
+        <div th:include="fragments/header :: header-css"/>
+        <script>
+  $( function() {
+    $( ".save" ).on( "click", function() {
+        var form = $( this ).closest("form");
+        var dialog = $( "#save-confirm" ).dialog({
+              resizable: false,
+              height: "auto",
+              autoOpen: false,
+              width: 400,
+              modal: true,
+              buttons: {
+                "Zapisz": function() {
+                  form.submit();
+                  $( this ).dialog( "close" );
+                },
+                "Anuluj" : function() {
+                  $( this ).dialog( "close" );
+                }
+              }
+        });
+
+        dialog.dialog( "open" );
+    });
+  } );
+        </script>
+    </head>
+    <body>
+        <div th:include="fragments/header :: menu"/>
+        <center>
+            <a th:href="@{/admin/users}">Powrót</a>
+            <h1>
+                Dane użytkownika <span th:text="${userModel.username}"/>
+            </h1>
+            <fieldset class="fieldset" style="margin-left: 35%; margin-right: 35%;">
+                <div>
+                    <form th:object="${userModel}" th:action="@{/admin/users/edit/} + ${userModel.id}" method="post">
+                        <div align="right">
+                            <p>
+                                Login: <input type="text" th:field="*{username}" minlength="2" maxlength="30"
+                                              required="true"/>
+                            </p>
+                            <p>
+                                Imię: <input type="text" th:field="*{name}" minlength="2" maxlength="30"/>
+                            </p>
+                            <p>
+                                Nazwisko: <input type="text" th:field="*{surname}" minlength="2" maxlength="30"/>
+                            </p>
+                            <p>
+                                Email: <input type="text" th:field="*{email}"/>
+                            </p>
+                            <p>
+                                Tokeny: <input type="number" th:field="*{tokens}" minlength="1" maxlength="2"
+                                               required="true"/>
+                            </p>
+                            <p>
+                                Zablokowany: <input type="checkbox" th:field="*{blocked}" required="true"/>
+                            </p>
+                            <p>
+                                Pokój:
+                                <select th:field="*{roomId}" required="true">
+                                    <option th:each="room : ${rooms}"
+                                            th:value="${room.id}"
+                                            th:text="${room.room}+${room.type}"/>
+                                </select>
+                            </p>
+                            <p>
+                                Rola:
+                                <select th:field="*{roleId}" required="true">
+                                    <option th:each="role,i : ${userRoles}"
+                                            th:value="${i.count - 1}"
+                                            th:text="${role}"/>
+                                </select>
+                            </p>
+                        </div>
+                        <input class="save" type="button" value="Zapisz" style="margin-bottom: 20px;"/>
+                    </form>
+                </div>
+            </fieldset>
+        </center>
+        <div id="save-confirm" style="display: none" title="Zmiana danych użytkownika">
+            <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>Czy na pewno
+                chcesz zapisać zmiany?</p>
+        </div>
+    </body>
+    <footer>
+        <div th:replace="fragments/footer :: footer"/>
+    </footer>
+</html>

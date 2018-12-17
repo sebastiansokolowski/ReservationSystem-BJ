@@ -7,18 +7,57 @@
         <script src="//code.jquery.com/ui/1.11.2/jquery-ui.js"/>
         <div th:include="fragments/header :: header-css"/>
         <style>
-table, th, td {
-    border: 1px solid black;
-    border-collapse: collapse;
-}
+        table, th, td {
+            border: 1px solid #dddddd;
+            border-collapse: collapse;
+            text-align: left;
+            padding: 8px;
+        }
 
+        tr:nth-child(even) {
+          background-color: #dddddd;
+        }
+
+        .full-size{
+            width: 100%;
+            height: 100$;
+            display: inline-block;
+        }
 
 
         </style>
+        <script>
+  $( function() {
+    $( ".delete" ).on( "click", function() {
+        var form = $( this ).closest("form");
+        var dialog = $( "#delete-confirm" ).dialog({
+              resizable: false,
+              height: "auto",
+              autoOpen: false,
+              width: 400,
+              modal: true,
+              buttons: {
+                "Usuń": function() {
+                  form.submit();
+                  $( this ).dialog( "close" );
+                },
+                "Anuluj" : function() {
+                  $( this ).dialog( "close" );
+                }
+              }
+        });
+
+        dialog.dialog( "open" );
+    });
+  } );
+
+
+        </script>
     </head>
     <body>
         <div th:include="fragments/header :: menu"/>
         <center>
+            <a th:href="@{/admin/week}">Powrót</a>
             <h1>
                 Lista użytkowników
             </h1>
@@ -34,9 +73,11 @@ table, th, td {
                         <th align="center">Nazwa użytkownika</th>
                         <th align="center">Email</th>
                         <th align="center">Tokeny</th>
+                        <th align="center">Rola</th>
                         <th align="center">Zablokowany</th>
+                        <th align="center">Akcja</th>
                     </tr>
-                    <tr th:each="user : ${users}">
+                    <tr class="user" th:each="user : ${users}">
                         <th>
                             <span th:text="${user.room.room}+${user.room.type}"/>
                         </th>
@@ -56,12 +97,27 @@ table, th, td {
                             <span th:text="${user.tokens}"/>
                         </th>
                         <th>
+                            <span th:text="${user.role}"/>
+                        </th>
+                        <th>
                             <span th:text="${user.blocked}"/>
+                        </th>
+                        <th>
+                            <form th:action="@{/admin/users/delete/}+${user.id}" method="get">
+                                <input class="delete full-size" type="button" value="Usuń"/>
+                            </form>
+                            <form th:action="@{/admin/users/edit/}+${user.id}" method="get">
+                                <input class="full-size" type="submit" value="Edytuj"/>
+                            </form>
                         </th>
                     </tr>
                 </tbody>
             </table>
         </center>
+        <div id="delete-confirm" style="display: none" title="Usuwanie użytkownika">
+            <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>Czy na pewno
+                chcesz usunąć wybranego użytkownika?</p>
+        </div>
     </body>
     <footer>
         <div th:replace="fragments/footer :: footer"/>
