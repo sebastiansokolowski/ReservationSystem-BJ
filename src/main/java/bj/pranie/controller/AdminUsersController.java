@@ -46,8 +46,8 @@ public class AdminUsersController {
     @RequestMapping(value = "/delete/{userId}", method = RequestMethod.GET)
     public ModelAndView removeUser(@PathVariable long userId) {
         if (userDao.findOne(userId) != null) {
-            userDao.delete(userId);
             reservationDao.deleteByUserId(userId);
+            userDao.delete(userId);
         }
         return new ModelAndView("redirect:/admin/users");
     }
