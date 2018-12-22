@@ -1,4 +1,4 @@
-package bj.pranie.controller;
+package bj.pranie.controller.admin;
 
 import bj.pranie.Application;
 import bj.pranie.dao.ReservationDao;

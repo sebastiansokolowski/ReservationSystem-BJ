@@ -1,8 +1,9 @@
-package bj.pranie.controller;
+package bj.pranie.controller.admin;
 
 import bj.pranie.dao.ReservationDao;
 import bj.pranie.dao.RoomDao;
 import bj.pranie.dao.UserDao;
+import bj.pranie.entity.Reservation;
 import bj.pranie.entity.Room;
 import bj.pranie.entity.User;
 import bj.pranie.entity.myEnum.UserRole;
@@ -11,7 +12,10 @@ import bj.pranie.service.UserAuthenticatedService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
