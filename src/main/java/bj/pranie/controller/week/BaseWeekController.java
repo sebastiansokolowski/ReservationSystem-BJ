@@ -80,9 +80,7 @@ public class BaseWeekController {
         int year = Integer.parseInt(weekId.split("-")[0]);
         int weekOfYear = Integer.parseInt(weekId.split("-")[1]);
 
-        //todo: improve ugly fast fix
-        return new LocalDate().withDayOfWeek(DateTimeConstants.MONDAY).withWeekOfWeekyear(weekOfYear).withYear(year).
-                withDayOfWeek(DateTimeConstants.MONDAY);
+        return new LocalDate().withWeekyear(year).withWeekOfWeekyear(weekOfYear).withDayOfWeek(DateTimeConstants.MONDAY);
     }
 
     enum WEEK_TYPE {
@@ -101,7 +99,7 @@ public class BaseWeekController {
                 break;
         }
 
-        return localDate.getYear() + "-" + localDate.getWeekOfWeekyear();
+        return localDate.getWeekyear() + "-" + localDate.getWeekOfWeekyear();
     }
 
     List<TimeWeekModel> getTimeWeekModels(String weekId) throws ParseException {
