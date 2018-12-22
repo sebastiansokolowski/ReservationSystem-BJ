@@ -20,5 +20,5 @@ public interface UserDao extends CrudRepository<User, Long> {
 
     User findByResetPasswordKey(String resetPasswordKey);
 
-    List<User> findAllByOrderByRoomAsc();
+    List<User> findAllByOrderByRoomRoomAscRoomTypeAsc();
 }

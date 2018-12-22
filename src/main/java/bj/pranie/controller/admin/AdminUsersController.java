@@ -3,7 +3,6 @@ package bj.pranie.controller.admin;
 import bj.pranie.dao.ReservationDao;
 import bj.pranie.dao.RoomDao;
 import bj.pranie.dao.UserDao;
-import bj.pranie.entity.Reservation;
 import bj.pranie.entity.Room;
 import bj.pranie.entity.User;
 import bj.pranie.entity.myEnum.UserRole;
@@ -42,7 +41,7 @@ public class AdminUsersController {
     @RequestMapping(value = "", method = RequestMethod.GET)
     public String showUsers(Model model) {
         model.addAttribute("count", userDao.count());
-        model.addAttribute("users", userDao.findAllByOrderByRoomAsc());
+        model.addAttribute("users", userDao.findAllByOrderByRoomRoomAscRoomTypeAsc());
         model.addAttribute("user", userAuthenticatedService.getAuthenticatedUser());
         return "admin/users";
     }
