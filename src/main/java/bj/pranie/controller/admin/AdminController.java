@@ -116,9 +116,6 @@ public class AdminController {
                 continue;
             }
 
-            List<Reservation> reservations = reservationDao.findByUserId(user.getId());
-            reservationDao.delete(reservations);
-
             userDao.delete(user.getId());
         }
     }

@@ -4,6 +4,7 @@ import bj.pranie.entity.myEnum.UserRole;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * Created by Sebastian Sokolowski on 15.10.16.
@@ -39,6 +40,10 @@ public class User {
     @OneToOne
     @JoinColumn(name = "room_id")
     private Room room;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "user_id")
+    private List<Reservation> reservations;
 
     @NotNull
     private boolean blocked;
@@ -121,6 +126,14 @@ public class User {
 
     public void setRole(UserRole role) {
         this.role = role;
+    }
+
+    public List<Reservation> getReservations() {
+        return reservations;
+    }
+
+    public void setReservations(List<Reservation> reservations) {
+        this.reservations = reservations;
     }
 
     public boolean isBlocked() {
