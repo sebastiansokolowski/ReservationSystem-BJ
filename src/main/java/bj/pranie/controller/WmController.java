@@ -39,7 +39,7 @@ import java.util.logging.Logger;
 @Controller
 @RequestMapping(value = "/wm")
 public class WmController {
-    private static Logger LOG = Logger.getLogger(TimeUtil.class.getName());
+    private static Logger LOG = Logger.getLogger(WmController.class.getName());
 
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
     private static final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");

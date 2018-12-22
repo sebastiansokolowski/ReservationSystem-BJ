@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Created by Sebastian Sokolowski on 12.11.18.
@@ -25,6 +26,7 @@ import java.util.List;
 @Controller
 @RequestMapping("/admin/users")
 public class AdminUsersController {
+    private static Logger LOG = Logger.getLogger(AdminUsersController.class.getName());
 
     @Autowired
     private UserDao userDao;
@@ -52,6 +54,7 @@ public class AdminUsersController {
         if (user != null) {
             userDao.delete(user);
         }
+        LOG.info("remove user " + user);
         return new ModelAndView("redirect:/admin/users");
     }
 
@@ -77,6 +80,7 @@ public class AdminUsersController {
         model.addAttribute("rooms", rooms);
         model.addAttribute("userRoles", UserRole.values());
         model.addAttribute("user", userAuthenticatedService.getAuthenticatedUser());
+
         return "admin/user";
     }
 
@@ -85,6 +89,9 @@ public class AdminUsersController {
                                  @ModelAttribute("userEditModel") UserEditModel userEditModel) {
 
         User user = userDao.findOne(userId);
+
+        LOG.info("edit user data from " + user);
+
         user.setUsername(userEditModel.getUsername());
         user.setName(userEditModel.getName());
         user.setSurname(userEditModel.getSurname());
@@ -93,8 +100,9 @@ public class AdminUsersController {
         user.setBlocked(userEditModel.getBlocked());
         user.setRole(UserRole.values()[userEditModel.getRoleId()]);
         user.setRoom(roomDao.findOne(userEditModel.getRoomId()));
-
         userDao.save(user);
+
+        LOG.info("edit user data to " + user);
 
         return new ModelAndView("redirect:/admin/users");
     }
