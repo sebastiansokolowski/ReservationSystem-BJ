@@ -24,7 +24,4 @@ public interface ReservationDao extends CrudRepository<Reservation, Long> {
 
     List<Reservation> findByDateAndWm(Date date, int wm);
 
-    List<Reservation> findByUserId(long userId);
-
-    Long deleteByUserId(long userId);
 }
