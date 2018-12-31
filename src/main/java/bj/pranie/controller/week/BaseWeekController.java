@@ -67,7 +67,7 @@ public class BaseWeekController {
             dateTime = dateTime.plusWeeks(1);
         }
 
-        return dateTime.getYear() + "-" + dateTime.getWeekOfWeekyear();
+        return dateTime.getWeekyear() + "-" + dateTime.getWeekOfWeekyear();
     }
 
     String getWeekFrame(String weekId) {
