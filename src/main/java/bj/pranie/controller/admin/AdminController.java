@@ -136,7 +136,7 @@ public class AdminController {
             user.setPassword(hashedPassword);
             user.setRoom(room);
             user.setBlocked(false);
-            user.setRole(UserRole.USER);
+            user.setRole(UserRole.GROUP);
             user.setTokens(room.getPeoples());
 
             userDao.save(user);
