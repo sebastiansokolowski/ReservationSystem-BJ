@@ -82,8 +82,8 @@ public class UserRestorePassword {
 
         MimeMessageHelper helper = new MimeMessageHelper(mail, true);
         helper.setTo(user.getEmail());
-        helper.setReplyTo("bursa.jagiellonska@gmail.com");
-        helper.setFrom("bursa.jagiellonska@gmail.com");
+        helper.setReplyTo("rm.bursa@samorzad.uj.edu.pl");
+        helper.setFrom("rm.bursa@samorzad.uj.edu.pl");
         helper.setSubject("Resetowanie hasła " + host);
         helper.setText(body, true);
 
