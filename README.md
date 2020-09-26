@@ -1,5 +1,5 @@
 # ReservationSystem-BJ
-https://www.bj-pranie.tk/
+https://www.bj-pranie.ga/
 
 Reservation system to washing machines.
 
