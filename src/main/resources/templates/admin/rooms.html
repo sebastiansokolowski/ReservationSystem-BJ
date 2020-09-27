@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+    <head>
+        <link rel="stylesheet"
+              href="//code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css"/>
+        <script src="//code.jquery.com/jquery-1.10.2.js"/>
+        <script src="//code.jquery.com/ui/1.11.2/jquery-ui.js"/>
+        <div th:include="fragments/header :: header-css"/>
+        <style>
+        table, th, td {
+            border: 1px solid #dddddd;
+            border-collapse: collapse;
+            text-align: left;
+            padding: 8px;
+        }
+
+        tr:nth-child(even) {
+          background-color: #dddddd;
+        }
+
+        .full-size{
+            width: 100%;
+            height: 100$;
+            display: inline-block;
+        }
+
+
+        </style>
+    </head>
+    <body>
+        <div th:include="fragments/header :: menu"/>
+        <center>
+            <a th:href="@{/admin/week}">Powrót</a>
+            <h1>
+                Lista pokojów
+            </h1>
+            <p>
+                Liczba pokojów: <span th:text="${count}"/>
+            </p>
+            <table style="margin-bottom: 100px;">
+                <tbody>
+                    <tr>
+                        <th align="center">Pokój</th>
+                        <th align="center">Część studencka</th>
+                        <th align="center">Liczba miejsc</th>
+                        <th align="center">Akcja</th>
+                    </tr>
+                    <tr class="room" th:each="room : ${rooms}">
+                        <th>
+                            <span th:text="${room.room}+${room.type}"/>
+                        </th>
+                        <th>
+                            <span th:text="${room.students}"/>
+                        </th>
+                        <th>
+                            <span th:text="${room.peoples}"/>
+                        </th>
+                        <th>
+                            <form th:action="@{/admin/rooms/edit/}+${room.id}" method="get">
+                                <input class="full-size" type="submit" value="Edytuj"/>
+                            </form>
+                        </th>
+                    </tr>
+                </tbody>
+            </table>
+        </center>
+    </body>
+    <footer>
+        <div th:replace="fragments/footer :: footer"/>
+    </footer>
+</html>

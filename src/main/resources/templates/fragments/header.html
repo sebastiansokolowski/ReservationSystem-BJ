@@ -47,6 +47,9 @@
             <div sec:authorize="hasAuthority('ADMIN')">
                 <a href="/admin/users">Użytkownicy</a>
             </div>
+            <div sec:authorize="hasAuthority('ADMIN')">
+                <a href="/admin/rooms">Pokoje</a>
+            </div>
             <a href="javascript: document.logoutForm.submit()">Wyloguj</a>
             <form name="logoutForm" th:action="@{/logout}" method="post" th:hidden="true">
                 <input hidden="true" class="btn" type="submit" value="Logout"/>

@@ -1,6 +1,5 @@
 package bj.pranie.controller.admin;
 
-import bj.pranie.dao.ReservationDao;
 import bj.pranie.dao.RoomDao;
 import bj.pranie.dao.UserDao;
 import bj.pranie.entity.Room;
@@ -30,9 +29,6 @@ public class AdminUsersController {
 
     @Autowired
     private UserDao userDao;
-
-    @Autowired
-    private ReservationDao reservationDao;
 
     @Autowired
     private RoomDao roomDao;
