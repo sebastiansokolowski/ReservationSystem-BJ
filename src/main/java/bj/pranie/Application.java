@@ -23,7 +23,7 @@ import java.util.logging.Logger;
 public class Application {
     static Logger log = Logger.getLogger(Application.class.getName());
 
-    public final static int RESET_TIME = 10;
+    public final static int RESET_TIME = 20;
     public final static int USER_TOKENS_PER_WEEK = 1;
     public final static int STUDENTS_LAST_ROOM = 45;
 
