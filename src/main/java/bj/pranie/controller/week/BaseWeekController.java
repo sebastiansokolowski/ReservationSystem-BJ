@@ -147,7 +147,7 @@ public class BaseWeekController {
 
         LocalDate localDate = getLocalDateByWeekId(weekId).withDayOfWeek(DateTimeConstants.MONDAY);
 
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < 7; i++) {
             daysOfWeek.add(localDate.plusDays(i));
         }
 
