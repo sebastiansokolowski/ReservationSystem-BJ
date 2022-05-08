@@ -28,7 +28,7 @@ import java.util.*;
  * Created by Sebastian Sokolowski on 22.10.17.
  */
 public class BaseWeekController {
-    private static final int RESET_TIME = 10;
+    private static final int RESET_TIME = 20;
 
     static final DateTimeFormatter dateFormat = DateTimeFormat.forPattern("yyyy/MM/dd");
     static final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
@@ -147,7 +147,7 @@ public class BaseWeekController {
 
         LocalDate localDate = getLocalDateByWeekId(weekId).withDayOfWeek(DateTimeConstants.MONDAY);
 
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < 7; i++) {
             daysOfWeek.add(localDate.plusDays(i));
         }
 
