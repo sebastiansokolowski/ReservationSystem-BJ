@@ -24,7 +24,7 @@
                             th:bgcolor="${reservation.color}">
                             <span th:text="${i.count}"/>
                             <br/>
-                            <img src="/images/wm.jpg"/>
+                            <img style="background-color:#FFFFFF;width: 200px" src="/images/washer.png"/>
                             <div th:switch="${reservation.type.name()}">
                                 <p th:case="RESERVED">
                                     <span th:if="${reservation.user.name != null}" th:text="${reservation.user.name}"/>
