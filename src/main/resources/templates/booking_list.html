@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <link rel="stylesheet"
+              href="//code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css"/>
+        <script src="//code.jquery.com/jquery-1.10.2.js"/>
+        <script src="//code.jquery.com/ui/1.11.2/jquery-ui.js"/>
+        <div th:include="fragments/header :: header-css"/>
+    </head>
+    <body>
+        <div th:include="fragments/header :: menu"/>
+        <center>
+            <h1>Lista rezerwacji</h1>
+            <table class="aligncenter">
+                <tbody>
+                    <tr>
+                        <td class="time">
+                            <form action="/week" method="get">
+                                <input class="time" type="image" src="/images/washer.png"/>
+                            </form>
+                        </td>
+                        <td>
+                            <form action="/week" method="get">
+                                <input class="time" type="image" src="/images/dryer.png"/>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="center">Pranie</td>
+                        <td align="center">Suszenie</td>
+                    </tr>
+                </tbody>
+            </table>
+        </center>
+        <script type="text/javascript">
+            $(function () {
+                $('.time').mouseover(function () {
+                    $(this).animate({
+                        opacity: 0.5
+                    }, 20);
+                });
+                $('.time').mouseout(function () {
+                    $(this).animate({
+                        opacity: 1
+                    }, 20);
+                });
+            });
+        </script>
+    </body>
+    <footer>
+        <div th:replace="fragments/footer :: footer"/>
+    </footer>
+</html>
