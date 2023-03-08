@@ -3,7 +3,7 @@ package bj.pranie.controller.week;
 import bj.pranie.dao.UserDao;
 import bj.pranie.entity.Reservation;
 import bj.pranie.entity.User;
-import bj.pranie.entity.WashTime;
+import bj.pranie.entity.ReservationTime;
 import bj.pranie.entity.myEnum.ReservationType;
 import bj.pranie.service.UserAuthenticatedService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -125,20 +125,20 @@ public class AdminWeekController extends BaseWeekController {
     private void makeReservations(Date sqlDate, List<Integer> wmToBlock) {
         User admin = userAuthenticatedService.getAuthenticatedUser();
 
-        Iterator<WashTime> washTimes = washTimeDao.findAll().iterator();
-        while (washTimes.hasNext()) {
-            WashTime washTime = washTimes.next();
+        Iterator<ReservationTime> reservationTimes = reservationTimeDao.findAll().iterator();
+        while (reservationTimes.hasNext()) {
+            ReservationTime reservationTime = reservationTimes.next();
             for (Integer wm : wmToBlock) {
-                makeReservation(admin, sqlDate, washTime.getId(), wm, ReservationType.BLOCKED);
+                makeReservation(admin, sqlDate, reservationTime.getId(), wm, ReservationType.BLOCKED);
             }
         }
     }
 
-    private void makeReservation(User user, java.sql.Date date, long washTimeId, int wmNumber, ReservationType reservationType) {
+    private void makeReservation(User user, java.sql.Date date, long reservationTimeId, int wmNumber, ReservationType reservationType) {
         Reservation reservation = new Reservation();
         reservation.setDate(date);
         reservation.setUser(user);
-        reservation.setWashTime(washTimeDao.findOne(washTimeId));
+        reservation.setReservationTime(reservationTimeDao.findOne(reservationTimeId));
         reservation.setWm(wmNumber);
         reservation.setType(reservationType);
 

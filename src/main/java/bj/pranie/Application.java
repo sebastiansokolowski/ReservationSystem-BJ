@@ -2,10 +2,10 @@ package bj.pranie;
 
 import bj.pranie.dao.ReservationDao;
 import bj.pranie.dao.UserDao;
-import bj.pranie.dao.WashTimeDao;
+import bj.pranie.dao.ReservationTimeDao;
 import bj.pranie.entity.Reservation;
 import bj.pranie.entity.User;
-import bj.pranie.entity.WashTime;
+import bj.pranie.entity.ReservationTime;
 import bj.pranie.entity.myEnum.ReservationType;
 import bj.pranie.entity.myEnum.UserRole;
 import bj.pranie.util.TimeUtil;
@@ -43,7 +43,7 @@ public class Application {
     private ReservationDao reservationDao;
 
     @Autowired
-    private WashTimeDao washTimeDao;
+    private ReservationTimeDao reservationTimeDao;
 
     @Value("${wmCount}")
     private int wmCount;
@@ -119,15 +119,15 @@ public class Application {
         User user = admins.get(0);
         DateTime nextSunday = TimeUtil.getCalendar().plusWeeks(1);
         java.sql.Date nextSundayDate = new java.sql.Date(nextSunday.toDate().getTime());
-        List<WashTime> washTimes = washTimeDao.findAllByOrderByIdAsc();
-        for (WashTime washTime : washTimes) {
-            if (washTime.getFromTime().getHours() <= SUNDAY_RESERVATIONS_AVAILABLE_FROM ||
-                    washTime.getFromTime().getHours() >= SUNDAY_RESERVATIONS_AVAILABLE_TO) {
+        List<ReservationTime> reservationTimes = reservationTimeDao.findAllByOrderByIdAsc();
+        for (ReservationTime reservationTime : reservationTimes) {
+            if (reservationTime.getFromTime().getHours() <= SUNDAY_RESERVATIONS_AVAILABLE_FROM ||
+                    reservationTime.getFromTime().getHours() >= SUNDAY_RESERVATIONS_AVAILABLE_TO) {
                 for (int wmNumber = 0; wmNumber != wmCount; wmNumber++) {
                     Reservation reservation = new Reservation();
                     reservation.setDate(nextSundayDate);
                     reservation.setUser(user);
-                    reservation.setWashTime(washTime);
+                    reservation.setReservationTime(reservationTime);
                     reservation.setWm(wmNumber);
                     reservation.setType(ReservationType.BLOCKED);
 

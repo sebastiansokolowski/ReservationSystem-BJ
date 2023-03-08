@@ -1,10 +1,10 @@
 package bj.pranie.controller.week;
 
 import bj.pranie.dao.ReservationDao;
-import bj.pranie.dao.WashTimeDao;
+import bj.pranie.dao.ReservationTimeDao;
 import bj.pranie.entity.Reservation;
 import bj.pranie.entity.User;
-import bj.pranie.entity.WashTime;
+import bj.pranie.entity.ReservationTime;
 import bj.pranie.model.TimeWeekModel;
 import bj.pranie.service.UserAuthenticatedService;
 import bj.pranie.util.ColorUtil;
@@ -37,7 +37,7 @@ public class BaseWeekController {
     ReservationDao reservationDao;
 
     @Autowired
-    WashTimeDao washTimeDao;
+    ReservationTimeDao reservationTimeDao;
 
     @Autowired
     private UserAuthenticatedService userAuthenticatedService;
@@ -107,21 +107,21 @@ public class BaseWeekController {
 
         List<LocalDate> weekDays = getWeekDays(weekId);
 
-        Iterator<WashTime> washTimeIterator = washTimeDao.findAll().iterator();
-        while (washTimeIterator.hasNext()) {
-            WashTime washTime = washTimeIterator.next();
+        Iterator<ReservationTime> reservationTimeIterator = reservationTimeDao.findAll().iterator();
+        while (reservationTimeIterator.hasNext()) {
+            ReservationTime reservationTime = reservationTimeIterator.next();
 
             TimeWeekModel timeWeekModel = new TimeWeekModel();
-            timeWeekModel.setTime(timeFormat.format(washTime.getFromTime()) + " - " + timeFormat.format(washTime.getToTime()));
+            timeWeekModel.setTime(timeFormat.format(reservationTime.getFromTime()) + " - " + timeFormat.format(reservationTime.getToTime()));
 
             List<TimeWeekModel.WmDate> wmDates = new ArrayList<>();
             for (LocalDate localDate : weekDays) {
                 TimeWeekModel.WmDate wmDate = timeWeekModel.new WmDate();
                 wmDate.setDate(localDate.toString(dateFormat));
 
-                boolean isPast = TimeUtil.isPast(washTime.getFromTime(), localDate);
+                boolean isPast = TimeUtil.isPast(reservationTime.getFromTime(), localDate);
 
-                List<Reservation> reservations = getReservationsByWashTimeAndDate(washTime.getId(), localDate);
+                List<Reservation> reservations = getReservationsByReservationTimeAndDate(reservationTime.getId(), localDate);
 
                 int wmFree = wmCount;
                 if (isPast) {
@@ -154,9 +154,9 @@ public class BaseWeekController {
         return daysOfWeek;
     }
 
-    List<Reservation> getReservationsByWashTimeAndDate(long washTimeId, LocalDate date) throws ParseException {
+    List<Reservation> getReservationsByReservationTimeAndDate(long reservationTimeId, LocalDate date) throws ParseException {
         java.sql.Date sqlDate = new java.sql.Date(date.toDate().getTime());
-        return reservationDao.findByWashTimeIdAndDate(washTimeId, sqlDate);
+        return reservationDao.findByReservationTimeIdAndDate(reservationTimeId, sqlDate);
     }
 
     boolean isUserAuthenticatedReservation(List<Reservation> reservationUser) {

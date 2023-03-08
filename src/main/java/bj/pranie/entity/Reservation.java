@@ -1,7 +1,6 @@
 package bj.pranie.entity;
 
 import bj.pranie.entity.myEnum.ReservationType;
-import bj.pranie.entity.myEnum.RoomType;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -33,9 +32,9 @@ public class Reservation {
     private Date date;
 
     @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "wash_time_id")
+    @JoinColumn(name = "reservation_time_id")
     @NotNull
-    private WashTime washTime;
+    private ReservationTime reservationTime;
 
     public long getId() {
         return id;
@@ -77,12 +76,12 @@ public class Reservation {
         this.date = date;
     }
 
-    public WashTime getWashTime() {
-        return washTime;
+    public ReservationTime getReservationTime() {
+        return reservationTime;
     }
 
-    public void setWashTime(WashTime washTime) {
-        this.washTime = washTime;
+    public void setReservationTime(ReservationTime reservationTime) {
+        this.reservationTime = reservationTime;
     }
 
     @Override
@@ -103,7 +102,7 @@ public class Reservation {
                 ", user=" + user +
                 ", type=" + type +
                 ", date=" + date +
-                ", washTime=" + washTime +
+                ", reservationTime=" + reservationTime +
                 '}';
     }
 
