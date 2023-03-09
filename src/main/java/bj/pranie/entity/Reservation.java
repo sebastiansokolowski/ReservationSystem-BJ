@@ -1,5 +1,6 @@
 package bj.pranie.entity;
 
+import bj.pranie.entity.myEnum.DeviceType;
 import bj.pranie.entity.myEnum.ReservationType;
 
 import javax.persistence.*;
@@ -18,6 +19,10 @@ public class Reservation {
 
     @NotNull
     private int wm;
+
+    @Enumerated(EnumType.ORDINAL)
+    @NotNull
+    private DeviceType deviceType;
 
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
@@ -48,8 +53,12 @@ public class Reservation {
         return wm;
     }
 
-    public void setWm(int wm) {
-        this.wm = wm;
+    public DeviceType getDeviceType() {
+        return deviceType;
+    }
+
+    public void setDeviceType(DeviceType deviceType) {
+        this.deviceType = deviceType;
     }
 
     public User getUser() {
@@ -99,6 +108,7 @@ public class Reservation {
         return "Reservation{" +
                 "id=" + id +
                 ", wm=" + wm +
+                ", deviceType=" + deviceType +
                 ", user=" + user +
                 ", type=" + type +
                 ", date=" + date +
