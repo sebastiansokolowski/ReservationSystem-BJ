@@ -18,7 +18,7 @@ public class Reservation {
     private long id;
 
     @NotNull
-    private int wm;
+    private int deviceNumber;
 
     @Enumerated(EnumType.ORDINAL)
     @NotNull
@@ -49,8 +49,12 @@ public class Reservation {
         this.id = id;
     }
 
-    public int getWm() {
-        return wm;
+    public int getDeviceNumber() {
+        return deviceNumber;
+    }
+
+    public void setDeviceNumber(int deviceNumber) {
+        this.deviceNumber = deviceNumber;
     }
 
     public DeviceType getDeviceType() {
@@ -107,7 +111,7 @@ public class Reservation {
     public String toString() {
         return "Reservation{" +
                 "id=" + id +
-                ", wm=" + wm +
+                ", deviceNumber=" + deviceNumber +
                 ", deviceType=" + deviceType +
                 ", user=" + user +
                 ", type=" + type +

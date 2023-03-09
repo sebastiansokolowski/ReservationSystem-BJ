@@ -14,12 +14,12 @@ import java.util.List;
 @Transactional
 public interface ReservationDao extends CrudRepository<Reservation, Long> {
 
-    boolean existsByReservationTimeIdAndDateAndWm(long reservationTimeId, Date date, int wm);
+    boolean existsByReservationTimeIdAndDateAndDeviceNumber(long reservationTimeId, Date date, int deviceNumber);
 
     List<Reservation> findByReservationTimeIdAndDate(long reservationTimeId, Date date);
 
     List<Reservation> findByDate(Date date);
 
-    List<Reservation> findByDateAndWm(Date date, int wm);
+    List<Reservation> findByDateAndDeviceNumber(Date date, int deviceNumber);
 
 }

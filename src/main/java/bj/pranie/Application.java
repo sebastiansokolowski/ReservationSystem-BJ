@@ -128,7 +128,7 @@ public class Application {
                     reservation.setDate(nextSundayDate);
                     reservation.setUser(user);
                     reservation.setReservationTime(reservationTime);
-                    reservation.setWm(wmNumber);
+                    reservation.setDeviceNumber(wmNumber);
                     reservation.setType(ReservationType.BLOCKED);
 
                     reservationDao.save(reservation);

@@ -77,7 +77,7 @@ public class WmController {
                                    @PathVariable int month,
                                    @PathVariable int day,
                                    @PathVariable long reservationTimeId,
-                                   @RequestParam int wmNumber) throws ParseException {
+                                   @RequestParam int deviceNumber) throws ParseException {
         ModelAndView modelAndView = new ModelAndView("wm/wm");
 
         User user = userAuthenticatedService.getAuthenticatedUser();
@@ -86,7 +86,7 @@ public class WmController {
             int userTokens = user.getTokens();
 
             if (userTokens > 0) {
-                makeReservation(user, year, month, day, reservationTimeId, wmNumber, ReservationType.USER);
+                makeReservation(user, year, month, day, reservationTimeId, deviceNumber, ReservationType.USER);
 
                 user.setTokens(userTokens - 1);
                 userDao.save(user);
@@ -123,7 +123,7 @@ public class WmController {
                 user.setTokens(user.getTokens() + 1);
                 userDao.save(user);
             } else {
-                modelAndView.addObject("errorMessage", "Niestety już za późno aby się wyrejestrować.");
+                modelAndView.addObject("errorMessage", "Niestety jest już za późno aby się wyrejestrować.");
                 LOG.info("unregister wm TOO LATE " + reservation);
             }
         }
@@ -170,7 +170,7 @@ public class WmController {
             makeReservation(user, year, month, day, reservationTimeId, wmNumber, ReservationType.BLOCKED);
         } catch (ReservationAlreadyBookedException reservationAlreadyBookedException) {
             reservationAlreadyBookedException.printStackTrace();
-            modelAndView.addObject("errorMessage", "Niestety pralka jest już zarezerwowana.");
+            modelAndView.addObject("errorMessage", "Niestety termin jest już zajęty.");
         }
 
         setModel(year, month, day, reservationTimeId, modelAndView);
@@ -210,23 +210,23 @@ public class WmController {
         modelAndView.addObject("user", userAuthenticatedService.getAuthenticatedUser());
     }
 
-    private synchronized void makeReservation(User user, int year, int month, int day, long reservationTimeId, int wmNumber, ReservationType reservationType) throws ReservationAlreadyBookedException {
+    private synchronized void makeReservation(User user, int year, int month, int day, long reservationTimeId, int deviceNumber, ReservationType reservationType) throws ReservationAlreadyBookedException {
         java.sql.Date date = getSqlDate(year, month, day);
 
         Reservation reservation = new Reservation();
         reservation.setDate(date);
         reservation.setUser(user);
         reservation.setReservationTime(reservationTimeDao.findOne(reservationTimeId));
-        reservation.setWm(wmNumber);
+        reservation.setDeviceNumber(deviceNumber);
         reservation.setType(reservationType);
 
-        if (reservationDao.existsByReservationTimeIdAndDateAndWm(reservationTimeId, date, wmNumber)) {
-            LOG.info("register wm EXIST " + reservation);
+        if (reservationDao.existsByReservationTimeIdAndDateAndDeviceNumber(reservationTimeId, date, deviceNumber)) {
+            LOG.info("register device EXIST " + reservation);
             throw new ReservationAlreadyBookedException();
         }
 
         reservationDao.save(reservation);
-        LOG.info("register wm " + reservation);
+        LOG.info("register device " + reservation);
     }
 
     private java.sql.Date getSqlDate(int year, int month, int day) {
@@ -250,7 +250,7 @@ public class WmController {
             Reservation currentReservation = null;
             for (Reservation reservation : reservationList
                     ) {
-                if (reservation.getWm() == i) {
+                if (reservation.getDeviceNumber() == i) {
                     currentReservation = reservation;
                     break;
                 }

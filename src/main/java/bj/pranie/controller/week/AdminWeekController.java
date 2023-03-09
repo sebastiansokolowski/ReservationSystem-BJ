@@ -67,14 +67,14 @@ public class AdminWeekController extends BaseWeekController {
     @RequestMapping(path = "/{weekId}/unblock", method = RequestMethod.POST)
     public String unblockDay(@PathVariable String weekId,
                              @RequestParam String date,
-                             @RequestParam(defaultValue = "") String[] wmValues,
+                             @RequestParam(defaultValue = "") String[] deviceValues,
                              Model model) throws ParseException {
         java.sql.Date sqlDate = new java.sql.Date(dateFormat.parseDateTime(date).getMillis());
 
-        List<Integer> wmToUnlock = parseStringArratToIntegerList(wmValues);
+        List<Integer> devicesToUnlock = parseStringArratToIntegerList(deviceValues);
 
-        for (Integer wm : wmToUnlock) {
-            List<Reservation> reservations = reservationDao.findByDateAndWm(sqlDate, wm);
+        for (Integer deviceNumber : devicesToUnlock) {
+            List<Reservation> reservations = reservationDao.findByDateAndDeviceNumber(sqlDate, deviceNumber);
             for (Reservation reservation : reservations) {
                 if (reservation.getType() == ReservationType.BLOCKED) {
                     reservationDao.delete(reservation.getId());
@@ -105,9 +105,9 @@ public class AdminWeekController extends BaseWeekController {
         return result;
     }
 
-    private void removeUsersRegistrations(Date sqlDate, List<Integer> wmToBlock) throws ParseException {
-        for (Integer wm : wmToBlock) {
-            List<Reservation> reservations = reservationDao.findByDateAndWm(sqlDate, wm);
+    private void removeUsersRegistrations(Date sqlDate, List<Integer> devicesToBlock) throws ParseException {
+        for (Integer deviceNumber : devicesToBlock) {
+            List<Reservation> reservations = reservationDao.findByDateAndDeviceNumber(sqlDate, deviceNumber);
 
             for (Reservation reservation : reservations) {
                 giveBackUserToken(reservation.getUser());
@@ -122,24 +122,24 @@ public class AdminWeekController extends BaseWeekController {
         userDao.save(user);
     }
 
-    private void makeReservations(Date sqlDate, List<Integer> wmToBlock) {
+    private void makeReservations(Date sqlDate, List<Integer> devicesToBlock) {
         User admin = userAuthenticatedService.getAuthenticatedUser();
 
         Iterator<ReservationTime> reservationTimes = reservationTimeDao.findAll().iterator();
         while (reservationTimes.hasNext()) {
             ReservationTime reservationTime = reservationTimes.next();
-            for (Integer wm : wmToBlock) {
-                makeReservation(admin, sqlDate, reservationTime.getId(), wm, ReservationType.BLOCKED);
+            for (Integer deviceNumber : devicesToBlock) {
+                makeReservation(admin, sqlDate, reservationTime.getId(), deviceNumber, ReservationType.BLOCKED);
             }
         }
     }
 
-    private void makeReservation(User user, java.sql.Date date, long reservationTimeId, int wmNumber, ReservationType reservationType) {
+    private void makeReservation(User user, java.sql.Date date, long reservationTimeId, int deviceNumber, ReservationType reservationType) {
         Reservation reservation = new Reservation();
         reservation.setDate(date);
         reservation.setUser(user);
         reservation.setReservationTime(reservationTimeDao.findOne(reservationTimeId));
-        reservation.setWm(wmNumber);
+        reservation.setDeviceNumber(deviceNumber);
         reservation.setType(reservationType);
 
         reservationDao.save(reservation);
