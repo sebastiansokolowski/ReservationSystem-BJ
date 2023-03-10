@@ -6,7 +6,6 @@
     <body>
         <div th:include="fragments/header :: menu"/>
         <center>
-            <a th:href="@{/week}">Powrót</a>
             <h1>
                 <span th:text="${dayName}"/> <span th:text="${date}"/>
                 <br/>
@@ -14,7 +13,7 @@
             </h1>
             <p>
                 Liczba wolnych miejsc:
-                <span th:text="${wmFree}"/>
+                <span th:text="${freeDevices}"/>
             </p>
             <table width="35%">
                 <tbody>

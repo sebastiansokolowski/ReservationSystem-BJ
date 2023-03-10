@@ -38,8 +38,8 @@ import java.util.logging.Logger;
  */
 @Controller
 @RequestMapping(value = "/wm")
-public class WmController {
-    private static Logger LOG = Logger.getLogger(WmController.class.getName());
+public class ReservationController {
+    private static Logger LOG = Logger.getLogger(ReservationController.class.getName());
 
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
     private static final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
@@ -67,7 +67,7 @@ public class WmController {
                            @PathVariable int month,
                            @PathVariable int day,
                            @PathVariable long reservationTimeId) throws ParseException {
-        ModelAndView modelAndView = new ModelAndView("wm/wm");
+        ModelAndView modelAndView = new ModelAndView("reservation");
         setModel(year, month, day, reservationTimeId, modelAndView);
         return modelAndView;
     }
@@ -78,7 +78,7 @@ public class WmController {
                                    @PathVariable int day,
                                    @PathVariable long reservationTimeId,
                                    @RequestParam int deviceNumber) throws ParseException {
-        ModelAndView modelAndView = new ModelAndView("wm/wm");
+        ModelAndView modelAndView = new ModelAndView("reservation");
 
         User user = userAuthenticatedService.getAuthenticatedUser();
 
@@ -109,7 +109,7 @@ public class WmController {
                                      @PathVariable int day,
                                      @PathVariable long reservationTimeId,
                                      @RequestParam long reservationId) throws ParseException {
-        ModelAndView modelAndView = new ModelAndView("wm/wm");
+        ModelAndView modelAndView = new ModelAndView("reservation");
 
         User user = userAuthenticatedService.getAuthenticatedUser();
         Reservation reservation = reservationDao.findOne(reservationId);
@@ -139,7 +139,7 @@ public class WmController {
                                  @PathVariable int day,
                                  @PathVariable long reservationTimeId,
                                  @RequestParam long reservationId) throws ParseException {
-        ModelAndView modelAndView = new ModelAndView("wm/wm");
+        ModelAndView modelAndView = new ModelAndView("reservation");
 
         Reservation reservation = reservationDao.findOne(reservationId);
         reservationDao.delete(reservationId);
@@ -162,7 +162,7 @@ public class WmController {
                                 @PathVariable int day,
                                 @PathVariable long reservationTimeId,
                                 @RequestParam int wmNumber) throws ParseException {
-        ModelAndView modelAndView = new ModelAndView("wm/wm");
+        ModelAndView modelAndView = new ModelAndView("reservation");
 
         User user = userAuthenticatedService.getAuthenticatedUser();
 
@@ -200,12 +200,12 @@ public class WmController {
 
         ReservationTime reservationTime = reservationTimeDao.findOne(reservationTimeId);
         List<Reservation> reservationList = reservationDao.findByReservationTimeIdAndDate(reservationTimeId, new java.sql.Date(localDate.toDate().getTime()));
-        int wmFree = wmCount - reservationList.size();
+        int freeDevices = wmCount - reservationList.size();
 
         modelAndView.addObject("dayName", getDayName(localDate));
         modelAndView.addObject("date", dateFormat.format(localDate.toDate()));
         modelAndView.addObject("time", getReservationTime(reservationTime));
-        modelAndView.addObject("wmFree", wmFree);
+        modelAndView.addObject("freeDevices", freeDevices);
         modelAndView.addObject("reservations", getWmModels(reservationList, localDate, reservationTime));
         modelAndView.addObject("user", userAuthenticatedService.getAuthenticatedUser());
     }
