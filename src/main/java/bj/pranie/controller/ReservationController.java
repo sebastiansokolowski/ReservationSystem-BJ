@@ -6,9 +6,10 @@ import bj.pranie.dao.ReservationTimeDao;
 import bj.pranie.entity.Reservation;
 import bj.pranie.entity.User;
 import bj.pranie.entity.ReservationTime;
+import bj.pranie.entity.myEnum.DeviceType;
 import bj.pranie.entity.myEnum.ReservationType;
 import bj.pranie.exception.ReservationAlreadyBookedException;
-import bj.pranie.model.WmModel;
+import bj.pranie.model.DeviceModel;
 import bj.pranie.service.UserAuthenticatedService;
 import bj.pranie.util.ColorUtil;
 import bj.pranie.util.TimeUtil;
@@ -199,7 +200,7 @@ public class ReservationController {
         LocalDate localDate = new LocalDate(year, month, day);
 
         ReservationTime reservationTime = reservationTimeDao.findOne(reservationTimeId);
-        List<Reservation> reservationList = reservationDao.findByReservationTimeIdAndDate(reservationTimeId, new java.sql.Date(localDate.toDate().getTime()));
+        List<Reservation> reservationList = reservationDao.findByReservationTimeIdAndDateAndDeviceType(reservationTimeId, new java.sql.Date(localDate.toDate().getTime()), DeviceType.WASHING_MACHINE);
         int freeDevices = wmCount - reservationList.size();
 
         modelAndView.addObject("dayName", getDayName(localDate));
@@ -238,14 +239,14 @@ public class ReservationController {
         return timeFormat.format(reservationTime.getFromTime()) + " - " + timeFormat.format(reservationTime.getToTime());
     }
 
-    private List<WmModel> getWmModels(List<Reservation> reservationList, LocalDate date, ReservationTime reservationTime) {
-        List<WmModel> wmModels = new ArrayList<>();
+    private List<DeviceModel> getWmModels(List<Reservation> reservationList, LocalDate date, ReservationTime reservationTime) {
+        List<DeviceModel> deviceModels = new ArrayList<>();
 
         List<Integer> brokenWm = getBrokenWm();
         boolean isPast = TimeUtil.isPast(reservationTime.getFromTime(), date);
 
         for (int i = 0; i != wmCount; i++) {
-            WmModel wmModel = new WmModel();
+            DeviceModel deviceModel = new DeviceModel();
 
             Reservation currentReservation = null;
             for (Reservation reservation : reservationList
@@ -258,35 +259,35 @@ public class ReservationController {
 
             if (currentReservation == null) {
                 if (isPast) {
-                    wmModel.setType(WmModel.TYPE.PAST);
-                    wmModel.setColor(ColorUtil.RESERVATION_UNAVAILABLE_COLOR);
+                    deviceModel.setType(DeviceModel.TYPE.PAST);
+                    deviceModel.setColor(ColorUtil.RESERVATION_UNAVAILABLE_COLOR);
                 } else if (brokenWm.contains(i)) {
-                    wmModel.setType(WmModel.TYPE.UNAVAILABLE);
-                    wmModel.setColor(ColorUtil.RESERVATION_UNAVAILABLE_COLOR);
+                    deviceModel.setType(DeviceModel.TYPE.UNAVAILABLE);
+                    deviceModel.setColor(ColorUtil.RESERVATION_UNAVAILABLE_COLOR);
                 } else {
-                    wmModel.setType(WmModel.TYPE.FREE);
-                    wmModel.setColor(ColorUtil.RESERVATION_FREE_COLOR);
+                    deviceModel.setType(DeviceModel.TYPE.FREE);
+                    deviceModel.setColor(ColorUtil.RESERVATION_FREE_COLOR);
                 }
             } else {
-                wmModel.setReservationId(currentReservation.getId());
+                deviceModel.setReservationId(currentReservation.getId());
                 if (currentReservation.getType() == ReservationType.BLOCKED) {
-                    wmModel.setColor(ColorUtil.RESERVATION_UNAVAILABLE_COLOR);
-                    wmModel.setType(WmModel.TYPE.UNAVAILABLE);
+                    deviceModel.setColor(ColorUtil.RESERVATION_UNAVAILABLE_COLOR);
+                    deviceModel.setType(DeviceModel.TYPE.UNAVAILABLE);
                 } else if (isMyReservation(currentReservation.getUser()) && isUnregisterAvailable(currentReservation)) {
-                    wmModel.setType(WmModel.TYPE.MY);
-                    wmModel.setColor(ColorUtil.RESERVATION_MY_COLOR);
-                    wmModel.setUser(currentReservation.getUser());
+                    deviceModel.setType(DeviceModel.TYPE.MY);
+                    deviceModel.setColor(ColorUtil.RESERVATION_MY_COLOR);
+                    deviceModel.setUser(currentReservation.getUser());
                 } else {
-                    wmModel.setColor(ColorUtil.RESERVATION_UNAVAILABLE_COLOR);
-                    wmModel.setType(WmModel.TYPE.RESERVED);
-                    wmModel.setUser(currentReservation.getUser());
+                    deviceModel.setColor(ColorUtil.RESERVATION_UNAVAILABLE_COLOR);
+                    deviceModel.setType(DeviceModel.TYPE.RESERVED);
+                    deviceModel.setUser(currentReservation.getUser());
                 }
             }
 
-            wmModels.add(wmModel);
+            deviceModels.add(deviceModel);
         }
 
-        return wmModels;
+        return deviceModels;
     }
 
     private boolean isMyReservation(User reservationUser) {

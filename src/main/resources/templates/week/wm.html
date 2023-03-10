@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.w3.org/1999/xhtml">
+    <head>
+        <link rel="stylesheet"
+              href="//code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css"/>
+        <script src="//code.jquery.com/jquery-1.10.2.js"/>
+        <script src="//code.jquery.com/ui/1.11.2/jquery-ui.js"/>
+        <div th:include="fragments/header :: header-css"/>
+    </head>
+    <body>
+        <div th:include="fragments/header :: menu"/>
+        <center>
+            <h1>
+                Lista na pranie na tydzień <span th:text="${weekFrame}"/>
+            </h1>
+            <p>
+                Liczba wolnych miejsc: <span th:text="${freeDevices}"/>
+            </p>
+
+            <div sec:authorize="hasAuthority('ADMIN')">
+                <form th:action="@{/admin/wm/week/__${prevWeekId}__}" class="alignleft" style="margin-left:50px">
+                    <input class="btn" type="submit" value="Poprzedni tydzień"/>
+                </form>
+                <form th:action="@{/admin/wm/week/__${nextWeekId}__}" class="alignright"
+                      style="margin-right:50px">
+                    <input class="btn" type="submit" value="Następny tydzień"/>
+                </form>
+            </div>
+            <div sec:authorize="!hasAuthority('ADMIN')">
+                <form th:if="${prevWeekButton}" th:action="@{/wm/week/last}" class="alignleft" style="margin-left:50px">
+                    <input class="btn" type="submit" value="Poprzedni tydzień"/>
+                </form>
+                <form th:if="${nextWeekButton}" th:action="@{/wm/week/}" class="alignright"
+                      style="margin-right:50px">
+                    <input class="btn" type="submit" value="Następny tydzień"/>
+                </form>
+            </div>
+
+            <table width="100%">
+                <tbody>
+                    <tr>
+                        <th align="center">Poniedziałek</th>
+                        <th align="center">Wtorek</th>
+                        <th align="center">Środa</th>
+                        <th align="center">Czwartek</th>
+                        <th align="center">Piątek</th>
+                        <th align="center">Sobota</th>
+                        <th align="center">Niedziela</th>
+                    </tr>
+                    <tr>
+                        <th th:each="dayDate : ${timesWeek[0].dates}">
+                            <span th:text="${dayDate.date}"/>
+                            <div sec:authorize="hasAuthority('ADMIN')">
+                                <fieldset class="fieldset">
+                                    Blokowanie
+                                    <form th:action="@{/admin/wm/week/__${weekId}__/block}" method="post">
+                                        <input type="text" name="date" th:value="${dayDate.date}" hidden="hidden"/>
+                                        <span th:each="i: ${#numbers.sequence(0, devicesCount - 1)}">
+                                            <input type="checkbox" name="deviceValues" th:value="${i}"/>
+                                            <span th:text="${i}+1"/>
+                                        </span>
+                                        <br/>
+                                        <input class="btn" type="submit" value="Wyslij"/>
+                                    </form>
+                                </fieldset>
+                                <fieldset class="fieldset">
+                                    Odblokowanie
+                                    <form th:action="@{/admin/wm/week/__${weekId}__/unblock}" method="post">
+                                        <input type="text" name="date" th:value="${dayDate.date}" hidden="hidden"/>
+                                        <span th:each="i: ${#numbers.sequence(0, devicesCount - 1)}">
+                                            <input type="checkbox" name="deviceValues" th:value="${i}"/>
+                                            <span th:text="${i}+1"/>
+                                        </span>
+                                        <br/>
+                                        <input class="btn" type="submit" value="Wyslij"/>
+                                    </form>
+                                </fieldset>
+                            </div>
+                        </th>
+                    </tr>
+                    <tr th:each="timeWeek,i : ${timesWeek}">
+                        <th th:each="date : ${timeWeek.dates}" class="time" th:bgcolor="${date.color}"
+                            style="border-radius: 10px; cursor: pointer; text-align: center; opacity: 1;">
+                            <form action="#" th:action="@{/wm/__${date.date}__/__${i.count}__/}" method="get">
+                                <button type="submit"
+                                        style="width: 100%; outline: none; border:none; background-color: transparent; cursor:pointer;">
+                                    <span th:text="${timeWeek.time}"/>
+                                    <br/>
+                                    <br/>
+                                    Wolne pralki: <span th:text="${date.freeDevices}"/>
+                                </button>
+                            </form>
+                        </th>
+                    </tr>
+                </tbody>
+            </table>
+        </center>
+        <div>
+            <table class="alignleft">
+                <tbody>
+                    <tr>
+                        <td>Znaczenie kolorów</td>
+                    </tr>
+                    <tr height="50">
+                        <td bgcolor="#E9E581" align="center" >Wolna pralka</td>
+                        <td bgcolor="#ffdb0c" align="center">Moja pralka</td>
+                        <td bgcolor="#B71427" align="center">Zajęta pralka/Termin nieaktualny</td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="alignright">
+                <tbody>
+                    <tr>
+                        <td>Zasady:</td>
+                    </tr>
+                    <tr>
+                        <td>- każdemu przysługuje jedna pralka na tydzień</td>
+                    </tr>
+                    <tr>
+                        <td>- lista jest resetowana w każdą niedzielę o 20:00</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <br/>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <script type="text/javascript">
+        $(function () {
+            $('.time').mouseover(function () {
+                $(this).animate({
+                opacity: 0.75
+                }, 20);
+            });
+            $('.time').mouseout(function () {
+                $(this).animate({
+                opacity: 1
+                }, 20);
+            });
+        });
+        </script>
+    </body>
+    <footer>
+        <div th:replace="fragments/footer :: footer"/>
+    </footer>
+</html>

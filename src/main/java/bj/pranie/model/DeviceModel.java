@@ -5,7 +5,7 @@ import bj.pranie.entity.User;
 /**
  * Created by Sebastian Sokolowski on 14.09.17.
  */
-public class WmModel {
+public class DeviceModel {
     public enum TYPE {
         UNAVAILABLE, PAST, RESERVED, FREE, MY
     }

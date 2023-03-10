@@ -4,7 +4,6 @@ import bj.pranie.entity.User;
 import bj.pranie.entity.myEnum.UserRole;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -14,29 +13,27 @@ import java.text.ParseException;
 /**
  * Created by Sebastian Sokolowski on 07.09.17.
  */
-@Controller
-@RequestMapping("/week")
-public class UserWeekController extends BaseWeekController {
+public abstract class BaseUserWeekController extends BaseWeekController {
 
-    private static String ADMIN_PAGE_REDIRECT = "redirect:/admin/week";
+    private static final String ADMIN_PAGE_REDIRECT = "redirect:/admin/%s/week";
 
     @RequestMapping(method = RequestMethod.GET)
     public String week(Model model) throws ParseException {
         if (isAdminAuthenticated()) {
-            return ADMIN_PAGE_REDIRECT;
+            return String.format(ADMIN_PAGE_REDIRECT, getDeviceType().getPathName());
         }
 
         String weekId = getCurrentWeekId();
 
         setModel(weekId, model);
         model.addAttribute("prevWeekButton", true);
-        return "wm/week";
+        return getWeekView();
     }
 
     @RequestMapping(path = "/last", method = RequestMethod.GET)
     public String lastWeek(Model model) throws ParseException {
         if (isAdminAuthenticated()) {
-            return ADMIN_PAGE_REDIRECT;
+            return String.format(ADMIN_PAGE_REDIRECT, getDeviceType().getPathName());
         }
 
         String weekId = getCurrentWeekId();
@@ -44,7 +41,7 @@ public class UserWeekController extends BaseWeekController {
 
         setModel(prevWeekId, model);
         model.addAttribute("nextWeekButton", true);
-        return "wm/week";
+        return getWeekView();
     }
 
     private boolean isAdminAuthenticated() {

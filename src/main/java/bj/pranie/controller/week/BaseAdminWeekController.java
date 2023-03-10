@@ -2,12 +2,11 @@ package bj.pranie.controller.week;
 
 import bj.pranie.dao.UserDao;
 import bj.pranie.entity.Reservation;
-import bj.pranie.entity.User;
 import bj.pranie.entity.ReservationTime;
+import bj.pranie.entity.User;
 import bj.pranie.entity.myEnum.ReservationType;
 import bj.pranie.service.UserAuthenticatedService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,9 +22,7 @@ import java.util.List;
 /**
  * Created by Sebastian Sokolowski on 07.09.17.
  */
-@Controller
-@RequestMapping("/admin/week")
-public class AdminWeekController extends BaseWeekController {
+public abstract class BaseAdminWeekController extends BaseWeekController {
 
     @Autowired
     private UserDao userDao;
@@ -38,30 +35,30 @@ public class AdminWeekController extends BaseWeekController {
         String weekId = getCurrentWeekId();
 
         setModel(weekId, model);
-        return "wm/week";
+        return getWeekView();
     }
 
     @RequestMapping(path = "/{weekId}", method = RequestMethod.GET)
     public String week(@PathVariable String weekId, Model model) throws ParseException {
         setModel(weekId, model);
 
-        return "wm/week";
+        return getWeekView();
     }
 
     @RequestMapping(path = "/{weekId}/block", method = RequestMethod.POST)
     public String blockDay(@PathVariable String weekId,
                            @RequestParam String date,
-                           @RequestParam(defaultValue = "") String[] wmValues,
+                           @RequestParam(defaultValue = "") String[] deviceValues,
                            Model model) throws ParseException {
         java.sql.Date sqlDate = new java.sql.Date(dateFormat.parseDateTime(date).getMillis());
 
-        List<Integer> wmToBlock = parseStringArratToIntegerList(wmValues);
+        List<Integer> devicesToBlock = parseStringArratToIntegerList(deviceValues);
 
-        removeUsersRegistrations(sqlDate, wmToBlock);
-        makeReservations(sqlDate, wmToBlock);
+        removeUsersRegistrations(sqlDate, devicesToBlock);
+        makeReservations(sqlDate, devicesToBlock);
 
         setModel(weekId, model);
-        return "wm/week";
+        return getWeekView();
     }
 
     @RequestMapping(path = "/{weekId}/unblock", method = RequestMethod.POST)
@@ -83,15 +80,15 @@ public class AdminWeekController extends BaseWeekController {
         }
 
         setModel(weekId, model);
-        return "wm/week";
+        return getWeekView();
     }
 
-    void setModel(String weekId, Model model) throws ParseException {
+    public void setModel(String weekId, Model model) throws ParseException {
         super.setModel(weekId, model);
 
         model.addAttribute("nextWeekId", getSpecificWeekId(weekId, WEEK_TYPE.NEXT));
         model.addAttribute("prevWeekId", getSpecificWeekId(weekId, WEEK_TYPE.PREV));
-        model.addAttribute("wmCount", wmCount);
+        model.addAttribute("devicesCount", getDevicesCount());
     }
 
     // private
@@ -139,6 +136,7 @@ public class AdminWeekController extends BaseWeekController {
         reservation.setDate(date);
         reservation.setUser(user);
         reservation.setReservationTime(reservationTimeDao.findOne(reservationTimeId));
+        reservation.setDeviceType(getDeviceType());
         reservation.setDeviceNumber(deviceNumber);
         reservation.setType(reservationType);
 
