@@ -10,6 +10,7 @@
     <body>
         <div th:include="fragments/header :: menu"/>
         <center>
+            <a th:href="@{/type}">Powrót</a>
             <h1>
                 Lista na pranie na tydzień <span th:text="${weekFrame}"/>
             </h1>

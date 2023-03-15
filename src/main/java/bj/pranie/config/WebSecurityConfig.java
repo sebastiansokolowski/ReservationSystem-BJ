@@ -25,7 +25,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 .antMatchers("/",
-                        "/booking_list",
+                        "/type",
                         "/logout",
                         "/*/week", "/*/week/*",
                         "/wm/*/*/*/*/",
@@ -43,7 +43,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .formLogin()
                 .loginPage("/login")
-                .defaultSuccessUrl("/week")
+                .defaultSuccessUrl("/type")
                 .permitAll()
                 .and()
                 .logout()

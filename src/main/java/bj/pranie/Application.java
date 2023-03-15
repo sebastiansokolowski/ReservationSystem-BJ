@@ -6,6 +6,7 @@ import bj.pranie.dao.ReservationTimeDao;
 import bj.pranie.entity.Reservation;
 import bj.pranie.entity.User;
 import bj.pranie.entity.ReservationTime;
+import bj.pranie.entity.myEnum.DeviceType;
 import bj.pranie.entity.myEnum.ReservationType;
 import bj.pranie.entity.myEnum.UserRole;
 import bj.pranie.util.TimeUtil;
@@ -128,6 +129,7 @@ public class Application {
                     reservation.setDate(nextSundayDate);
                     reservation.setUser(user);
                     reservation.setReservationTime(reservationTime);
+                    reservation.setDeviceType(DeviceType.WASHING_MACHINE);
                     reservation.setDeviceNumber(wmNumber);
                     reservation.setType(ReservationType.BLOCKED);
 

@@ -14,14 +14,20 @@
             <table class="aligncenter">
                 <tbody>
                     <tr>
-                        <td class="time">
-                            <form action="/week" method="get">
-                                <input style="width: 200px" class="time" type="image" src="/images/washer.png"/>
+                        <td class="type">
+                            <form action="/wm/week" method="get">
+                                <button type="submit" class="type"
+                                        style="outline: none; border:none; background-color: transparent; cursor:pointer;">
+                                    <img style="width: 200px" src="/images/washer.png"/>
+                                </button>
                             </form>
                         </td>
                         <td>
-                            <form action="/week" method="get">
-                                <input style="width: 200px" class="time" type="image" src="/images/dryer.png"/>
+                            <form action="/td/week" method="get">
+                                <button type="submit" class="type"
+                                        style="outline: none; border:none; background-color: transparent; cursor:pointer;">
+                                    <img style="width: 200px" src="/images/dryer.png"/>
+                                </button>
                             </form>
                         </td>
                     </tr>
@@ -34,12 +40,12 @@
         </center>
         <script type="text/javascript">
             $(function () {
-                $('.time').mouseover(function () {
+                $('.type').mouseover(function () {
                     $(this).animate({
                         opacity: 0.5
                     }, 20);
                 });
-                $('.time').mouseout(function () {
+                $('.type').mouseout(function () {
                     $(this).animate({
                         opacity: 1
                     }, 20);

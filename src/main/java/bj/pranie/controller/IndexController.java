@@ -24,7 +24,7 @@ public class IndexController {
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public ModelAndView index() {
         if (userAuthenticatedService.isAuthenticatedUser()) {
-            return new ModelAndView("redirect:/week");
+            return new ModelAndView("redirect:/type");
         }
         ModelAndView modelAndView = new ModelAndView("index");
         modelAndView.addObject("holidays", holidays);
