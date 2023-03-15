@@ -1,6 +1,7 @@
 package bj.pranie.model;
 
 import bj.pranie.entity.User;
+import bj.pranie.entity.myEnum.DeviceType;
 
 /**
  * Created by Sebastian Sokolowski on 14.09.17.
@@ -10,6 +11,8 @@ public class DeviceModel {
         UNAVAILABLE, PAST, RESERVED, FREE, MY
     }
 
+    private DeviceType deviceType;
+
     private TYPE type;
 
     private User user;
@@ -17,6 +20,14 @@ public class DeviceModel {
     private long reservationId;
 
     private String color;
+
+    public DeviceType getDeviceType() {
+        return deviceType;
+    }
+
+    public void setDeviceType(DeviceType deviceType) {
+        this.deviceType = deviceType;
+    }
 
     public User getUser() {
         return user;

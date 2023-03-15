@@ -1,4 +1,4 @@
-package bj.pranie.controller;
+package bj.pranie.controller.reservation;
 
 import bj.pranie.dao.ReservationDao;
 import bj.pranie.dao.UserDao;
@@ -17,11 +17,9 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -37,10 +35,8 @@ import java.util.logging.Logger;
 /**
  * Created by Sebastian Sokolowski on 12.10.16.
  */
-@Controller
-@RequestMapping(value = "/wm")
-public class ReservationController {
-    private static Logger LOG = Logger.getLogger(ReservationController.class.getName());
+public abstract class BaseReservationController {
+    private static Logger LOG = Logger.getLogger(BaseReservationController.class.getName());
 
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
     private static final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
@@ -60,25 +56,26 @@ public class ReservationController {
     @Autowired
     private UserAuthenticatedService userAuthenticatedService;
 
-    @Value("${wmCount}")
-    private int wmCount;
+    public abstract DeviceType getDeviceType();
+
+    public abstract int getDevicesCount();
 
     @RequestMapping(path = "/{year}/{month}/{day}/{reservationTimeId}", method = RequestMethod.GET)
-    public ModelAndView wm(@PathVariable int year,
-                           @PathVariable int month,
-                           @PathVariable int day,
-                           @PathVariable long reservationTimeId) throws ParseException {
+    public ModelAndView reservation(@PathVariable int year,
+                                    @PathVariable int month,
+                                    @PathVariable int day,
+                                    @PathVariable long reservationTimeId) throws ParseException {
         ModelAndView modelAndView = new ModelAndView("reservation");
         setModel(year, month, day, reservationTimeId, modelAndView);
         return modelAndView;
     }
 
     @PostMapping(path = "/{year}/{month}/{day}/{reservationTimeId}/register")
-    public ModelAndView registerWm(@PathVariable int year,
-                                   @PathVariable int month,
-                                   @PathVariable int day,
-                                   @PathVariable long reservationTimeId,
-                                   @RequestParam int deviceNumber) throws ParseException {
+    public ModelAndView makeReservation(@PathVariable int year,
+                                        @PathVariable int month,
+                                        @PathVariable int day,
+                                        @PathVariable long reservationTimeId,
+                                        @RequestParam int deviceNumber) throws ParseException {
         ModelAndView modelAndView = new ModelAndView("reservation");
 
         User user = userAuthenticatedService.getAuthenticatedUser();
@@ -105,11 +102,11 @@ public class ReservationController {
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
     @RequestMapping(path = "/{year}/{month}/{day}/{reservationTimeId}/unregister", method = RequestMethod.POST)
-    public ModelAndView unregisterWm(@PathVariable int year,
-                                     @PathVariable int month,
-                                     @PathVariable int day,
-                                     @PathVariable long reservationTimeId,
-                                     @RequestParam long reservationId) throws ParseException {
+    public ModelAndView cancelReservation(@PathVariable int year,
+                                          @PathVariable int month,
+                                          @PathVariable int day,
+                                          @PathVariable long reservationTimeId,
+                                          @RequestParam long reservationId) throws ParseException {
         ModelAndView modelAndView = new ModelAndView("reservation");
 
         User user = userAuthenticatedService.getAuthenticatedUser();
@@ -135,11 +132,11 @@ public class ReservationController {
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(path = "/{year}/{month}/{day}/{reservationTimeId}/remove", method = RequestMethod.POST)
-    public ModelAndView removeWm(@PathVariable int year,
-                                 @PathVariable int month,
-                                 @PathVariable int day,
-                                 @PathVariable long reservationTimeId,
-                                 @RequestParam long reservationId) throws ParseException {
+    public ModelAndView removeReservation(@PathVariable int year,
+                                          @PathVariable int month,
+                                          @PathVariable int day,
+                                          @PathVariable long reservationTimeId,
+                                          @RequestParam long reservationId) throws ParseException {
         ModelAndView modelAndView = new ModelAndView("reservation");
 
         Reservation reservation = reservationDao.findOne(reservationId);
@@ -158,17 +155,17 @@ public class ReservationController {
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(path = "/{year}/{month}/{day}/{reservationTimeId}/block", method = RequestMethod.POST)
-    public ModelAndView blockWm(@PathVariable int year,
-                                @PathVariable int month,
-                                @PathVariable int day,
-                                @PathVariable long reservationTimeId,
-                                @RequestParam int wmNumber) throws ParseException {
+    public ModelAndView blockDevice(@PathVariable int year,
+                                    @PathVariable int month,
+                                    @PathVariable int day,
+                                    @PathVariable long reservationTimeId,
+                                    @RequestParam int deviceNumber) throws ParseException {
         ModelAndView modelAndView = new ModelAndView("reservation");
 
         User user = userAuthenticatedService.getAuthenticatedUser();
 
         try {
-            makeReservation(user, year, month, day, reservationTimeId, wmNumber, ReservationType.BLOCKED);
+            makeReservation(user, year, month, day, reservationTimeId, deviceNumber, ReservationType.BLOCKED);
         } catch (ReservationAlreadyBookedException reservationAlreadyBookedException) {
             reservationAlreadyBookedException.printStackTrace();
             modelAndView.addObject("errorMessage", "Niestety termin jest już zajęty.");
@@ -200,12 +197,13 @@ public class ReservationController {
         LocalDate localDate = new LocalDate(year, month, day);
 
         ReservationTime reservationTime = reservationTimeDao.findOne(reservationTimeId);
-        List<Reservation> reservationList = reservationDao.findByReservationTimeIdAndDateAndDeviceType(reservationTimeId, new java.sql.Date(localDate.toDate().getTime()), DeviceType.WASHING_MACHINE);
-        int freeDevices = wmCount - reservationList.size();
+        List<Reservation> reservationList = reservationDao.findByReservationTimeIdAndDateAndDeviceType(reservationTimeId, new java.sql.Date(localDate.toDate().getTime()), getDeviceType());
+        int freeDevices = getDevicesCount() - reservationList.size();
 
         modelAndView.addObject("dayName", getDayName(localDate));
         modelAndView.addObject("date", dateFormat.format(localDate.toDate()));
         modelAndView.addObject("time", getReservationTime(reservationTime));
+        modelAndView.addObject("backPath", "/" + getDeviceType().getPathName() + "/week");
         modelAndView.addObject("freeDevices", freeDevices);
         modelAndView.addObject("reservations", getWmModels(reservationList, localDate, reservationTime));
         modelAndView.addObject("user", userAuthenticatedService.getAuthenticatedUser());
@@ -218,6 +216,7 @@ public class ReservationController {
         reservation.setDate(date);
         reservation.setUser(user);
         reservation.setReservationTime(reservationTimeDao.findOne(reservationTimeId));
+        reservation.setDeviceType(getDeviceType());
         reservation.setDeviceNumber(deviceNumber);
         reservation.setType(reservationType);
 
@@ -245,12 +244,13 @@ public class ReservationController {
         List<Integer> brokenWm = getBrokenWm();
         boolean isPast = TimeUtil.isPast(reservationTime.getFromTime(), date);
 
-        for (int i = 0; i != wmCount; i++) {
+        for (int i = 0; i != getDevicesCount(); i++) {
             DeviceModel deviceModel = new DeviceModel();
+            deviceModel.setDeviceType(getDeviceType());
 
             Reservation currentReservation = null;
             for (Reservation reservation : reservationList
-                    ) {
+            ) {
                 if (reservation.getDeviceNumber() == i) {
                     currentReservation = reservation;
                     break;

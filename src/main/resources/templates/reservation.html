@@ -6,6 +6,7 @@
     <body>
         <div th:include="fragments/header :: menu"/>
         <center>
+            <a th:href="${backPath}">Powrót</a>
             <h1>
                 <span th:text="${dayName}"/> <span th:text="${date}"/>
                 <br/>
@@ -15,15 +16,21 @@
                 Liczba wolnych miejsc:
                 <span th:text="${freeDevices}"/>
             </p>
-            <table width="35%">
+            <table>
                 <tbody>
                     <tr>
                         <th th:each="reservation,i : ${reservations}" style="border-radius: 7px;vertical-align:top"
-                            width="11%" align="center"
                             th:bgcolor="${reservation.color}">
                             <span th:text="${i.count}"/>
                             <br/>
-                            <img style="background-color:#FFFFFF;width: 200px" src="/images/washer.png"/>
+                            <div th:switch="${reservation.deviceType.name()}">
+                                <p th:case="WASHING_MACHINE">
+                                    <img style="background-color:#FFFFFF;width: 200px" src="/images/washer.png"/>
+                                </p>
+                                <p th:case="TUMBLE_DRYER">
+                                    <img style="background-color:#FFFFFF;width: 200px" src="/images/dryer.png"/>
+                                </p>
+                            </div>
                             <div th:switch="${reservation.type.name()}">
                                 <p th:case="RESERVED">
                                     <span th:if="${reservation.user.name != null}" th:text="${reservation.user.name}"/>
@@ -50,14 +57,14 @@
                                 <div sec:authorize="hasAnyAuthority('USER','ADMIN','GROUP')">
                                     <div th:if="${user.tokens &gt; 0}">
                                         <form th:action="@{register}" method="post">
-                                            <input type="text" name="wmNumber" th:value="${i.index}" hidden="hidden"/>
+                                            <input type="text" name="deviceNumber" th:value="${i.index}" hidden="hidden"/>
                                             <input class="btn" type="submit" value="Zarezerwuj"/>
                                         </form>
                                     </div>
                                 </div>
                                 <div sec:authorize="hasAuthority('ADMIN')">
                                     <form th:action="@{block}" method="post">
-                                        <input type="text" name="wmNumber" th:value="${i.index}" hidden="hidden"/>
+                                        <input type="text" name="deviceNumber" th:value="${i.index}" hidden="hidden"/>
                                         <input class="btn" type="submit" value="Blokada"/>
                                     </form>
                                 </div>
