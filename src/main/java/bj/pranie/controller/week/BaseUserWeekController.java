@@ -48,9 +48,7 @@ public abstract class BaseUserWeekController extends BaseWeekController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication.getPrincipal() instanceof User) {
             User currentUser = (User) authentication.getPrincipal();
-            if (currentUser.getRole() == UserRole.ADMIN) {
-                return true;
-            }
+            return currentUser.getRole() == UserRole.ADMIN;
         }
         return false;
     }

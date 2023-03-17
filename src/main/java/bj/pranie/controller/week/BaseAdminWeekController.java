@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.sql.Date;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -122,9 +121,7 @@ public abstract class BaseAdminWeekController extends BaseWeekController {
     private void makeReservations(Date sqlDate, List<Integer> devicesToBlock) {
         User admin = userAuthenticatedService.getAuthenticatedUser();
 
-        Iterator<ReservationTime> reservationTimes = reservationTimeDao.findAll().iterator();
-        while (reservationTimes.hasNext()) {
-            ReservationTime reservationTime = reservationTimes.next();
+        for (ReservationTime reservationTime : reservationTimeDao.findAll()) {
             for (Integer deviceNumber : devicesToBlock) {
                 makeReservation(admin, sqlDate, reservationTime.getId(), deviceNumber, ReservationType.BLOCKED);
             }

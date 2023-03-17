@@ -112,10 +112,7 @@ public abstract class BaseWeekController {
 
         List<LocalDate> weekDays = getWeekDays(weekId);
 
-        Iterator<ReservationTime> reservationTimeIterator = reservationTimeDao.findAll().iterator();
-        while (reservationTimeIterator.hasNext()) {
-            ReservationTime reservationTime = reservationTimeIterator.next();
-
+        for (ReservationTime reservationTime : reservationTimeDao.findAll()) {
             TimeWeekModel timeWeekModel = new TimeWeekModel();
             timeWeekModel.setTime(timeFormat.format(reservationTime.getFromTime()) + " - " + timeFormat.format(reservationTime.getToTime()));
 

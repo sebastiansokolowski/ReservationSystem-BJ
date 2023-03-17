@@ -1,11 +1,11 @@
 package bj.pranie.controller.reservation;
 
 import bj.pranie.dao.ReservationDao;
-import bj.pranie.dao.UserDao;
 import bj.pranie.dao.ReservationTimeDao;
+import bj.pranie.dao.UserDao;
 import bj.pranie.entity.Reservation;
-import bj.pranie.entity.User;
 import bj.pranie.entity.ReservationTime;
+import bj.pranie.entity.User;
 import bj.pranie.entity.myEnum.DeviceType;
 import bj.pranie.entity.myEnum.ReservationType;
 import bj.pranie.exception.ReservationAlreadyBookedException;
@@ -116,13 +116,13 @@ public abstract class BaseReservationController {
                 reservation.getUser().getId() == user.getId()) {
             if (isUnregisterAvailable(reservation)) {
                 reservationDao.delete(reservationId);
-                LOG.info("unregister wm " + reservation);
+                LOG.info("cancel reservation " + reservation);
 
                 user.setTokens(user.getTokens() + 1);
                 userDao.save(user);
             } else {
                 modelAndView.addObject("errorMessage", "Niestety jest już za późno aby się wyrejestrować.");
-                LOG.info("unregister wm TOO LATE " + reservation);
+                LOG.info("cancel reservation too late " + reservation);
             }
         }
 
@@ -141,7 +141,7 @@ public abstract class BaseReservationController {
 
         Reservation reservation = reservationDao.findOne(reservationId);
         reservationDao.delete(reservationId);
-        LOG.info("remove wm " + reservation);
+        LOG.info("remove reservation " + reservation);
 
         if (reservation.getType() != ReservationType.BLOCKED) {
             User user = reservation.getUser();
@@ -186,11 +186,7 @@ public abstract class BaseReservationController {
         DateTime now = TimeUtil.getCalendar()
                 .plus(TIME_BEFORE_BLOCK_USER_UNREGISTER);
 
-        if (now.isBefore(reservationDate)) {
-            return true;
-        }
-
-        return false;
+        return now.isBefore(reservationDate);
     }
 
     private void setModel(int year, int month, int day, long reservationTimeId, ModelAndView modelAndView) throws ParseException {
@@ -205,7 +201,7 @@ public abstract class BaseReservationController {
         modelAndView.addObject("time", getReservationTime(reservationTime));
         modelAndView.addObject("backPath", "/" + getDeviceType().getPathName() + "/week");
         modelAndView.addObject("freeDevices", freeDevices);
-        modelAndView.addObject("reservations", getWmModels(reservationList, localDate, reservationTime));
+        modelAndView.addObject("reservations", getDeviceModels(reservationList, localDate, reservationTime));
         modelAndView.addObject("user", userAuthenticatedService.getAuthenticatedUser());
     }
 
@@ -221,12 +217,12 @@ public abstract class BaseReservationController {
         reservation.setType(reservationType);
 
         if (reservationDao.existsByReservationTimeIdAndDateAndDeviceNumber(reservationTimeId, date, deviceNumber)) {
-            LOG.info("register device EXIST " + reservation);
+            LOG.info("reservation EXIST " + reservation);
             throw new ReservationAlreadyBookedException();
         }
 
         reservationDao.save(reservation);
-        LOG.info("register device " + reservation);
+        LOG.info("make reservation " + reservation);
     }
 
     private java.sql.Date getSqlDate(int year, int month, int day) {
@@ -238,10 +234,9 @@ public abstract class BaseReservationController {
         return timeFormat.format(reservationTime.getFromTime()) + " - " + timeFormat.format(reservationTime.getToTime());
     }
 
-    private List<DeviceModel> getWmModels(List<Reservation> reservationList, LocalDate date, ReservationTime reservationTime) {
+    private List<DeviceModel> getDeviceModels(List<Reservation> reservationList, LocalDate date, ReservationTime reservationTime) {
         List<DeviceModel> deviceModels = new ArrayList<>();
 
-        List<Integer> brokenWm = getBrokenWm();
         boolean isPast = TimeUtil.isPast(reservationTime.getFromTime(), date);
 
         for (int i = 0; i != getDevicesCount(); i++) {
@@ -260,9 +255,6 @@ public abstract class BaseReservationController {
             if (currentReservation == null) {
                 if (isPast) {
                     deviceModel.setType(DeviceModel.TYPE.PAST);
-                    deviceModel.setColor(ColorUtil.RESERVATION_UNAVAILABLE_COLOR);
-                } else if (brokenWm.contains(i)) {
-                    deviceModel.setType(DeviceModel.TYPE.UNAVAILABLE);
                     deviceModel.setColor(ColorUtil.RESERVATION_UNAVAILABLE_COLOR);
                 } else {
                     deviceModel.setType(DeviceModel.TYPE.FREE);
@@ -294,15 +286,9 @@ public abstract class BaseReservationController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication.getPrincipal() instanceof User) {
             User currentUser = (User) authentication.getPrincipal();
-            if (currentUser.getId() == reservationUser.getId()) {
-                return true;
-            }
+            return currentUser.getId() == reservationUser.getId();
         }
         return false;
-    }
-
-    private List<Integer> getBrokenWm() {
-        return new ArrayList<>();
     }
 
     private String getDayName(LocalDate date) {

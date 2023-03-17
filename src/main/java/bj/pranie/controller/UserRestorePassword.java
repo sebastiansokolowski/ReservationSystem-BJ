@@ -62,7 +62,7 @@ public class UserRestorePassword {
                 modelAndView.addObject("host", host);
                 modelAndView.addObject("successMessage", "Link do resetowania hasła został wysłany na podany adres email.");
             } else {
-                bindingResult.rejectValue("email", "error.restorePasswordDto", "Podany adres email nie istnieje w bazie.");
+                bindingResult.rejectValue("email", "error.restorePasswordDto", "Podany adres email nie istnieje w bazie danych.");
             }
         }
 

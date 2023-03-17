@@ -1,6 +1,5 @@
 package bj.pranie.controller;
 
-import bj.pranie.config.exception.ResourceNotFoundException;
 import bj.pranie.dao.UserDao;
 import bj.pranie.entity.User;
 import bj.pranie.model.ResetPasswordModel;
@@ -35,7 +34,7 @@ public class UserResetPassword {
     public String resetPasswordPorm(@RequestParam String resetPasswordKey,
                                     Model model) {
 
-        if (!checkResetKeyIsValid(resetPasswordKey)) {
+        if (checkResetKeyIsInvalid(resetPasswordKey)) {
             return "user/invalidToken";
         }
         model.addAttribute("resetPasswordKey", resetPasswordKey);
@@ -50,7 +49,7 @@ public class UserResetPassword {
                                       BindingResult bindingResult) throws MessagingException {
         ModelAndView modelAndView = new ModelAndView();
 
-        if (!checkResetKeyIsValid(resetPasswordKey)) {
+        if (checkResetKeyIsInvalid(resetPasswordKey)) {
             modelAndView.setViewName("user/invalidToken");
             return modelAndView;
         }
@@ -76,12 +75,8 @@ public class UserResetPassword {
         return modelAndView;
     }
 
-    private boolean checkResetKeyIsValid(String resetPasswordKey) {
+    private boolean checkResetKeyIsInvalid(String resetPasswordKey) {
         User user = userDao.findByResetPasswordKey(resetPasswordKey);
-        if (user != null) {
-            return true;
-        } else {
-            return false;
-        }
+        return user != null;
     }
 }
