@@ -9,6 +9,7 @@
     <body>
         <div th:include="fragments/header :: menu"/>
         <center>
+            <a th:href="@{/type}">Powrót</a>
             <h2>Ustawienia konta</h2>
             <div style="margin-left: 35%; margin-right: 35%;">
                 <form th:object="${userSettingsModel}" th:action="@{/user/settings}" method="post">
