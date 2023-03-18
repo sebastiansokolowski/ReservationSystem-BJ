@@ -1,6 +1,5 @@
 package bj.pranie.controller.admin;
 
-import bj.pranie.Application;
 import bj.pranie.dao.RoomDao;
 import bj.pranie.dao.UserDao;
 import bj.pranie.entity.Room;
@@ -8,6 +7,7 @@ import bj.pranie.entity.User;
 import bj.pranie.entity.myEnum.RoomType;
 import bj.pranie.entity.myEnum.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,6 +31,9 @@ public class AdminController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Value("${studentsLastRoom}")
+    int studentsLastRoom;
 
     @ResponseBody
     @RequestMapping(value = "/registrationRooms", method = RequestMethod.GET)
@@ -103,7 +106,7 @@ public class AdminController {
             if (user.getRoom() == null) {
                 continue;
             }
-            if (user.getRoom().getRoom() > Application.STUDENTS_LAST_ROOM) {
+            if (user.getRoom().getRoom() > studentsLastRoom) {
                 continue;
             }
 
@@ -115,7 +118,7 @@ public class AdminController {
         List<Room> rooms = roomDao.findAllByOrderByRoomAscTypeAsc();
 
         for (Room room : rooms) {
-            if (room.getRoom() > Application.STUDENTS_LAST_ROOM) {
+            if (room.getRoom() > studentsLastRoom) {
                 continue;
             }
 

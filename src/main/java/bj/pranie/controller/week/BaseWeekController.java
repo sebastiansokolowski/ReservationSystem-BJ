@@ -16,6 +16,7 @@ import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.Model;
@@ -28,7 +29,9 @@ import java.util.*;
  * Created by Sebastian Sokolowski on 22.10.17.
  */
 public abstract class BaseWeekController {
-    private static final int RESET_TIME = 20;
+
+    @Value("${resetTime}")
+    int resetTime;
 
     static final DateTimeFormatter dateFormat = DateTimeFormat.forPattern("yyyy/MM/dd");
     static final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
@@ -68,7 +71,7 @@ public abstract class BaseWeekController {
 
         int time = dateTime.getHourOfDay();
         int today = dateTime.getDayOfWeek();
-        if (today == DateTimeConstants.SUNDAY && time >= RESET_TIME) {
+        if (today == DateTimeConstants.SUNDAY && time >= resetTime) {
             dateTime = dateTime.plusWeeks(1);
         }
 
