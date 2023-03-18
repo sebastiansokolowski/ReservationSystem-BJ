@@ -24,8 +24,6 @@ import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
-import static bj.pranie.Application.USER_TOKENS_PER_WEEK;
-
 /**
  * Created by Sebastian Sokolowski on 10.08.16.
  */
@@ -44,6 +42,9 @@ public class UserController {
 
     @Autowired
     private UserAuthenticatedService userAuthenticatedService;
+
+    @Value("${tokensPerWeek}")
+    int tokensPerWeek;
 
     @Value("${holidays}")
     private boolean holidays;
@@ -153,7 +154,7 @@ public class UserController {
             user.setRoom(room);
             user.setBlocked(false);
             user.setRole(UserRole.USER);
-            user.setTokens(USER_TOKENS_PER_WEEK);
+            user.setTokens(tokensPerWeek);
 
             userDao.save(user);
 

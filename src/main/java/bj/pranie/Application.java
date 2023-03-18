@@ -7,6 +7,7 @@ import bj.pranie.util.TimeUtil;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -22,12 +23,14 @@ import java.util.logging.Logger;
 public class Application {
     static Logger log = Logger.getLogger(Application.class.getName());
 
-    public final static int RESET_TIME = 20;
-    public final static int USER_TOKENS_PER_WEEK = 1;
-    public final static int STUDENTS_LAST_ROOM = 45;
-
     @Autowired
     private UserDao userDao;
+
+    @Value("${resetTime}")
+    int resetTime;
+
+    @Value("${tokensPerWeek}")
+    int tokensPerWeek;
 
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
@@ -60,7 +63,7 @@ public class Application {
         DateTime now = TimeUtil.getCalendar();
 
         DateTime nextReset = TimeUtil.getCalendar()
-                .withHourOfDay(RESET_TIME)
+                .withHourOfDay(resetTime)
                 .withMinuteOfHour(0)
                 .withSecondOfMinute(0);
 
@@ -68,7 +71,7 @@ public class Application {
 
         if (sunday > now.getDayOfWeek()) {
             nextReset = nextReset.plusDays(sunday - now.getDayOfWeek());
-        } else if (sunday == now.getDayOfWeek() && RESET_TIME <= now.getHourOfDay()) {
+        } else if (sunday == now.getDayOfWeek() && resetTime <= now.getHourOfDay()) {
             nextReset = nextReset.plusWeeks(1);
         }
 
@@ -81,7 +84,7 @@ public class Application {
             if (user.getRole() == UserRole.GROUP) {
                 user.setTokens(user.getRoom().getPeoples());
             } else {
-                user.setTokens(USER_TOKENS_PER_WEEK);
+                user.setTokens(tokensPerWeek);
             }
         }
 
