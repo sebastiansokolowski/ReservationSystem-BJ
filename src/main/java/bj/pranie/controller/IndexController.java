@@ -18,6 +18,9 @@ public class IndexController {
     @Value("${holidays}")
     private boolean holidays;
 
+    @Value("${message:#{''}}")
+    private String message;
+
     @Autowired
     private UserAuthenticatedService userAuthenticatedService;
 
@@ -28,6 +31,9 @@ public class IndexController {
         }
         ModelAndView modelAndView = new ModelAndView("index");
         modelAndView.addObject("holidays", holidays);
+        if (message != null && !message.isEmpty()){
+            modelAndView.addObject("message", message);
+        }
         return modelAndView;
     }
 }

@@ -32,6 +32,10 @@
                     <a href="/user/regulations">Utwórz konto</a><br/>
                 </fieldset>
                 <br/>
+                <div align="center" th:if="${message}">
+                    <font color="red">UWAGA!</font><br/>
+                    <span th:text="${message}" />
+                </div>
                 <div align="center" th:if="${holidays}">
                     <font color="red">UWAGA!</font><br/>
                     Na okres wakacji zostały wprowadzone małe zmiany.<br/>
