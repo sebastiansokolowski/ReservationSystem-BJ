@@ -27,9 +27,6 @@ public class AdminRoomsController {
     private static Logger LOG = Logger.getLogger(AdminRoomsController.class.getName());
 
     @Autowired
-    private ReservationDao reservationDao;
-
-    @Autowired
     private RoomDao roomDao;
 
     @Autowired

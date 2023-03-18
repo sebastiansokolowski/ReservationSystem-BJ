@@ -98,9 +98,7 @@ public class Application {
 
     private void resetUsersTokens() {
         Iterable<User> iterable = userDao.findAll();
-        Iterator<User> iterator = iterable.iterator();
-        while (iterator.hasNext()) {
-            User user = iterator.next();
+        for (User user : iterable) {
             if (user.getRole() == UserRole.GROUP) {
                 user.setTokens(user.getRoom().getPeoples());
             } else {

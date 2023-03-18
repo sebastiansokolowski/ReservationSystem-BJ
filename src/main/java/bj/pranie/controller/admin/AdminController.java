@@ -1,10 +1,8 @@
 package bj.pranie.controller.admin;
 
 import bj.pranie.Application;
-import bj.pranie.dao.ReservationDao;
 import bj.pranie.dao.RoomDao;
 import bj.pranie.dao.UserDao;
-import bj.pranie.entity.Reservation;
 import bj.pranie.entity.Room;
 import bj.pranie.entity.User;
 import bj.pranie.entity.myEnum.RoomType;
@@ -16,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -31,9 +28,6 @@ public class AdminController {
 
     @Autowired
     private RoomDao roomDao;
-
-    @Autowired
-    private ReservationDao reservationDao;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -102,10 +96,7 @@ public class AdminController {
 
     private void removeAllStudentsAccounts() {
         Iterable<User> iterable = userDao.findAll();
-        Iterator<User> iterator = iterable.iterator();
-        while (iterator.hasNext()) {
-            User user = iterator.next();
-
+        for (User user : iterable) {
             if (user.getRole() == UserRole.ADMIN) {
                 continue;
             }
