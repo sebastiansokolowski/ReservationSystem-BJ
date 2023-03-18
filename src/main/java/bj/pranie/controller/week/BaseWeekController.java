@@ -1,10 +1,11 @@
 package bj.pranie.controller.week;
 
 import bj.pranie.dao.ReservationDao;
-import bj.pranie.dao.WashTimeDao;
+import bj.pranie.dao.ReservationTimeDao;
 import bj.pranie.entity.Reservation;
 import bj.pranie.entity.User;
-import bj.pranie.entity.WashTime;
+import bj.pranie.entity.ReservationTime;
+import bj.pranie.entity.myEnum.DeviceType;
 import bj.pranie.model.TimeWeekModel;
 import bj.pranie.service.UserAuthenticatedService;
 import bj.pranie.util.ColorUtil;
@@ -15,7 +16,6 @@ import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.Model;
@@ -27,7 +27,7 @@ import java.util.*;
 /**
  * Created by Sebastian Sokolowski on 22.10.17.
  */
-public class BaseWeekController {
+public abstract class BaseWeekController {
     private static final int RESET_TIME = 20;
 
     static final DateTimeFormatter dateFormat = DateTimeFormat.forPattern("yyyy/MM/dd");
@@ -37,20 +37,25 @@ public class BaseWeekController {
     ReservationDao reservationDao;
 
     @Autowired
-    WashTimeDao washTimeDao;
+    ReservationTimeDao reservationTimeDao;
 
     @Autowired
     private UserAuthenticatedService userAuthenticatedService;
 
-    @Value("${wmCount}")
-    int wmCount;
+    public abstract DeviceType getDeviceType();
 
-    void setModel(String weekId, Model model) throws ParseException {
+    public abstract int getDevicesCount();
+
+    String getWeekView() {
+        return "week/" + getDeviceType().getPathName();
+    }
+
+    public void setModel(String weekId, Model model) throws ParseException {
         model.addAttribute("weekId", weekId);
         model.addAttribute("weekFrame", getWeekFrame(weekId));
 
         List<TimeWeekModel> timeWeekModels = getTimeWeekModels(weekId);
-        model.addAttribute("wmFree", getWmFree(timeWeekModels));
+        model.addAttribute("freeDevices", getFreeDevices(timeWeekModels));
         model.addAttribute("timesWeek", timeWeekModels);
         model.addAttribute("user", userAuthenticatedService.getAuthenticatedUser());
     }
@@ -87,7 +92,7 @@ public class BaseWeekController {
         PREV, NEXT
     }
 
-    String getSpecificWeekId(String weekId, UserWeekController.WEEK_TYPE week_type) {
+    String getSpecificWeekId(String weekId, BaseUserWeekController.WEEK_TYPE week_type) {
         LocalDate localDate = getLocalDateByWeekId(weekId);
 
         switch (week_type) {
@@ -107,34 +112,31 @@ public class BaseWeekController {
 
         List<LocalDate> weekDays = getWeekDays(weekId);
 
-        Iterator<WashTime> washTimeIterator = washTimeDao.findAll().iterator();
-        while (washTimeIterator.hasNext()) {
-            WashTime washTime = washTimeIterator.next();
-
+        for (ReservationTime reservationTime : reservationTimeDao.findAll()) {
             TimeWeekModel timeWeekModel = new TimeWeekModel();
-            timeWeekModel.setTime(timeFormat.format(washTime.getFromTime()) + " - " + timeFormat.format(washTime.getToTime()));
+            timeWeekModel.setTime(timeFormat.format(reservationTime.getFromTime()) + " - " + timeFormat.format(reservationTime.getToTime()));
 
-            List<TimeWeekModel.WmDate> wmDates = new ArrayList<>();
+            List<TimeWeekModel.Date> dates = new ArrayList<>();
             for (LocalDate localDate : weekDays) {
-                TimeWeekModel.WmDate wmDate = timeWeekModel.new WmDate();
-                wmDate.setDate(localDate.toString(dateFormat));
+                TimeWeekModel.Date date = timeWeekModel.new Date();
+                date.setDate(localDate.toString(dateFormat));
 
-                boolean isPast = TimeUtil.isPast(washTime.getFromTime(), localDate);
+                boolean isPast = TimeUtil.isPast(reservationTime.getFromTime(), localDate);
 
-                List<Reservation> reservations = getReservationsByWashTimeAndDate(washTime.getId(), localDate);
+                List<Reservation> reservations = getReservationsByReservationTimeAndDate(reservationTime.getId(), localDate, getDeviceType());
 
-                int wmFree = wmCount;
+                int freeDevices = getDevicesCount();
                 if (isPast) {
-                    wmFree = 0;
+                    freeDevices = 0;
                 } else {
-                    wmFree -= reservations.size();
+                    freeDevices -= reservations.size();
                 }
-                wmDate.setWmFree(wmFree);
-                wmDate.setColor(getCellColor(wmFree, isPast, isUserAuthenticatedReservation(reservations)));
+                date.setFreeDevices(freeDevices);
+                date.setColor(getCellColor(freeDevices, isPast, isUserAuthenticatedReservation(reservations)));
 
-                wmDates.add(wmDate);
+                dates.add(date);
             }
-            timeWeekModel.setDates(wmDates);
+            timeWeekModel.setDates(dates);
 
             timeWeekModels.add(timeWeekModel);
         }
@@ -147,16 +149,16 @@ public class BaseWeekController {
 
         LocalDate localDate = getLocalDateByWeekId(weekId).withDayOfWeek(DateTimeConstants.MONDAY);
 
-        for (int i = 0; i < 7; i++) {
+        for (int i = 0; i < 6; i++) {
             daysOfWeek.add(localDate.plusDays(i));
         }
 
         return daysOfWeek;
     }
 
-    List<Reservation> getReservationsByWashTimeAndDate(long washTimeId, LocalDate date) throws ParseException {
+    List<Reservation> getReservationsByReservationTimeAndDate(long reservationTimeId, LocalDate date, DeviceType deviceType) throws ParseException {
         java.sql.Date sqlDate = new java.sql.Date(date.toDate().getTime());
-        return reservationDao.findByWashTimeIdAndDate(washTimeId, sqlDate);
+        return reservationDao.findByReservationTimeIdAndDateAndDeviceType(reservationTimeId, sqlDate, deviceType);
     }
 
     boolean isUserAuthenticatedReservation(List<Reservation> reservationUser) {
@@ -172,14 +174,14 @@ public class BaseWeekController {
         return false;
     }
 
-    int getWmFree(List<TimeWeekModel> timeWeekModels) {
-        int freeWm = 0;
+    int getFreeDevices(List<TimeWeekModel> timeWeekModels) {
+        int freeDevices = 0;
         for (TimeWeekModel timeWeekModel : timeWeekModels) {
-            for (TimeWeekModel.WmDate wmDate : timeWeekModel.getDates()) {
-                freeWm += wmDate.getWmFree();
+            for (TimeWeekModel.Date date : timeWeekModel.getDates()) {
+                freeDevices += date.getFreeDevices();
             }
         }
-        return freeWm;
+        return freeDevices;
     }
 
     String getCellColor(int freeSpace, boolean past, boolean myReservation) {
@@ -189,7 +191,7 @@ public class BaseWeekController {
             return ColorUtil.RESERVATION_MY_COLOR;
         }
 
-        if (freeSpace > 2 && freeSpace <= wmCount) {
+        if (freeSpace > 2 && freeSpace <= getDevicesCount()) {
             return ColorUtil.RESERVATION_FREE_COLOR;
         }
 

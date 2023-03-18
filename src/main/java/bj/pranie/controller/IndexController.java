@@ -18,16 +18,22 @@ public class IndexController {
     @Value("${holidays}")
     private boolean holidays;
 
+    @Value("${message:#{''}}")
+    private String message;
+
     @Autowired
     private UserAuthenticatedService userAuthenticatedService;
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public ModelAndView index() {
         if (userAuthenticatedService.isAuthenticatedUser()) {
-            return new ModelAndView("redirect:/week");
+            return new ModelAndView("redirect:/type");
         }
         ModelAndView modelAndView = new ModelAndView("index");
         modelAndView.addObject("holidays", holidays);
+        if (message != null && !message.isEmpty()){
+            modelAndView.addObject("message", message);
+        }
         return modelAndView;
     }
 }

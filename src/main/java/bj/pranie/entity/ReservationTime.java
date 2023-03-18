@@ -8,8 +8,8 @@ import java.sql.Time;
  * Created by Sebastian Sokolowski on 06.09.17.
  */
 @Entity
-@Table(name = "wash_times")
-public class WashTime {
+@Table(name = "reservation_times")
+public class ReservationTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -49,14 +49,14 @@ public class WashTime {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        WashTime washTime = (WashTime) o;
+        ReservationTime reservationTime = (ReservationTime) o;
 
-        return id == washTime.id;
+        return id == reservationTime.id;
     }
 
     @Override
     public String toString() {
-        return "WashTime{" +
+        return "ReservationTime{" +
                 "id=" + id +
                 ", fromTime=" + fromTime +
                 ", toTime=" + toTime +

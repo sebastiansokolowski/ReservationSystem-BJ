@@ -25,9 +25,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 .antMatchers("/",
+                        "/type",
                         "/logout",
-                        "/week", "/week/*",
+                        "/*/week", "/*/week/*",
                         "/wm/*/*/*/*/",
+                        "/td/*/*/*/*/",
                         "/user/regulations", "/user/registration", "/user/rodo", "/user/restorePassword", "/user/resetPassword", "/user/invalidToken",
                         "/images/*",
                         "/favicon.ico",
@@ -41,7 +43,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .formLogin()
                 .loginPage("/login")
-                .defaultSuccessUrl("/week")
+                .defaultSuccessUrl("/type")
                 .permitAll()
                 .and()
                 .logout()

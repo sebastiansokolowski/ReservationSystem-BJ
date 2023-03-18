@@ -1,14 +1,17 @@
 package bj.pranie.model;
 
 import bj.pranie.entity.User;
+import bj.pranie.entity.myEnum.DeviceType;
 
 /**
  * Created by Sebastian Sokolowski on 14.09.17.
  */
-public class WmModel {
+public class DeviceModel {
     public enum TYPE {
         UNAVAILABLE, PAST, RESERVED, FREE, MY
     }
+
+    private DeviceType deviceType;
 
     private TYPE type;
 
@@ -17,6 +20,14 @@ public class WmModel {
     private long reservationId;
 
     private String color;
+
+    public DeviceType getDeviceType() {
+        return deviceType;
+    }
+
+    public void setDeviceType(DeviceType deviceType) {
+        this.deviceType = deviceType;
+    }
 
     public User getUser() {
         return user;

@@ -1,24 +1,16 @@
 package bj.pranie;
 
-import bj.pranie.dao.ReservationDao;
 import bj.pranie.dao.UserDao;
-import bj.pranie.dao.WashTimeDao;
-import bj.pranie.entity.Reservation;
 import bj.pranie.entity.User;
-import bj.pranie.entity.WashTime;
-import bj.pranie.entity.myEnum.ReservationType;
 import bj.pranie.entity.myEnum.UserRole;
 import bj.pranie.util.TimeUtil;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import javax.annotation.PostConstruct;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Logger;
@@ -33,20 +25,9 @@ public class Application {
     public final static int RESET_TIME = 20;
     public final static int USER_TOKENS_PER_WEEK = 1;
     public final static int STUDENTS_LAST_ROOM = 45;
-    public final static int SUNDAY_RESERVATIONS_AVAILABLE_FROM = 10;
-    public final static int SUNDAY_RESERVATIONS_AVAILABLE_TO = 20;
 
     @Autowired
     private UserDao userDao;
-
-    @Autowired
-    private ReservationDao reservationDao;
-
-    @Autowired
-    private WashTimeDao washTimeDao;
-
-    @Value("${wmCount}")
-    private int wmCount;
 
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
@@ -71,7 +52,6 @@ public class Application {
             public void run() {
                 resetUsersTokens();
                 startTimerToResetUsersTokens();
-                blockNotAvailableRegistrationsOnSunday();
             }
         }, delay);
     }
@@ -97,9 +77,7 @@ public class Application {
 
     private void resetUsersTokens() {
         Iterable<User> iterable = userDao.findAll();
-        Iterator<User> iterator = iterable.iterator();
-        while (iterator.hasNext()) {
-            User user = iterator.next();
+        for (User user : iterable) {
             if (user.getRole() == UserRole.GROUP) {
                 user.setTokens(user.getRoom().getPeoples());
             } else {
@@ -108,32 +86,5 @@ public class Application {
         }
 
         userDao.save(iterable);
-    }
-
-    private void blockNotAvailableRegistrationsOnSunday() {
-        List<User> admins = userDao.findByRole(UserRole.ADMIN);
-        if (admins.isEmpty()) {
-            log.info("blockNotAvailableRegistrationsOnSunday: no admin accounts have found!");
-            return;
-        }
-        User user = admins.get(0);
-        DateTime nextSunday = TimeUtil.getCalendar().plusWeeks(1);
-        java.sql.Date nextSundayDate = new java.sql.Date(nextSunday.toDate().getTime());
-        List<WashTime> washTimes = washTimeDao.findAllByOrderByIdAsc();
-        for (WashTime washTime : washTimes) {
-            if (washTime.getFromTime().getHours() <= SUNDAY_RESERVATIONS_AVAILABLE_FROM ||
-                    washTime.getFromTime().getHours() >= SUNDAY_RESERVATIONS_AVAILABLE_TO) {
-                for (int wmNumber = 0; wmNumber != wmCount; wmNumber++) {
-                    Reservation reservation = new Reservation();
-                    reservation.setDate(nextSundayDate);
-                    reservation.setUser(user);
-                    reservation.setWashTime(washTime);
-                    reservation.setWm(wmNumber);
-                    reservation.setType(ReservationType.BLOCKED);
-
-                    reservationDao.save(reservation);
-                }
-            }
-        }
     }
 }

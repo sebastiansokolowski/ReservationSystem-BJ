@@ -8,7 +8,7 @@
             <h2>Zapisy na pranie w DS Bursa Jagiellońska</h2>
             <img src="/images/logo.jpg"/>
             <div style="margin-left:35%;margin-right:35%;">
-                <form action="/week" method="get">
+                <form action="/type" method="get">
                     <input class="btn" type="submit" value="Lista bez logowania"/>
                 </form>
                 <br/>
@@ -32,6 +32,10 @@
                     <a href="/user/regulations">Utwórz konto</a><br/>
                 </fieldset>
                 <br/>
+                <div align="center" th:if="${message}">
+                    <font color="red">UWAGA!</font><br/>
+                    <span th:text="${message}" />
+                </div>
                 <div align="center" th:if="${holidays}">
                     <font color="red">UWAGA!</font><br/>
                     Na okres wakacji zostały wprowadzone małe zmiany.<br/>

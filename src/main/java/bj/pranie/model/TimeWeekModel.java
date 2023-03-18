@@ -8,7 +8,7 @@ import java.util.List;
 public class TimeWeekModel {
 
     private String time;
-    private List<WmDate> dates;
+    private List<Date> dates;
 
     public String getTime() {
         return time;
@@ -18,18 +18,18 @@ public class TimeWeekModel {
         this.time = time;
     }
 
-    public List<WmDate> getDates() {
+    public List<Date> getDates() {
         return dates;
     }
 
-    public void setDates(List<WmDate> dates) {
+    public void setDates(List<Date> dates) {
         this.dates = dates;
     }
 
-    public class WmDate {
+    public class Date {
         String date;
         String color;
-        int wmFree;
+        int freeDevices;
 
         public String getDate() {
             return date;
@@ -47,12 +47,12 @@ public class TimeWeekModel {
             this.color = color;
         }
 
-        public int getWmFree() {
-            return wmFree;
+        public int getFreeDevices() {
+            return freeDevices;
         }
 
-        public void setWmFree(int wmFree) {
-            this.wmFree = wmFree;
+        public void setFreeDevices(int freeDevices) {
+            this.freeDevices = freeDevices;
         }
     }
 }

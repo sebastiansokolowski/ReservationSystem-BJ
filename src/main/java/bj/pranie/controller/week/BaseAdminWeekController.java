@@ -2,12 +2,11 @@ package bj.pranie.controller.week;
 
 import bj.pranie.dao.UserDao;
 import bj.pranie.entity.Reservation;
+import bj.pranie.entity.ReservationTime;
 import bj.pranie.entity.User;
-import bj.pranie.entity.WashTime;
 import bj.pranie.entity.myEnum.ReservationType;
 import bj.pranie.service.UserAuthenticatedService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,15 +16,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.sql.Date;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
  * Created by Sebastian Sokolowski on 07.09.17.
  */
-@Controller
-@RequestMapping("/admin/week")
-public class AdminWeekController extends BaseWeekController {
+public abstract class BaseAdminWeekController extends BaseWeekController {
 
     @Autowired
     private UserDao userDao;
@@ -38,43 +34,43 @@ public class AdminWeekController extends BaseWeekController {
         String weekId = getCurrentWeekId();
 
         setModel(weekId, model);
-        return "wm/week";
+        return getWeekView();
     }
 
     @RequestMapping(path = "/{weekId}", method = RequestMethod.GET)
     public String week(@PathVariable String weekId, Model model) throws ParseException {
         setModel(weekId, model);
 
-        return "wm/week";
+        return getWeekView();
     }
 
     @RequestMapping(path = "/{weekId}/block", method = RequestMethod.POST)
     public String blockDay(@PathVariable String weekId,
                            @RequestParam String date,
-                           @RequestParam(defaultValue = "") String[] wmValues,
+                           @RequestParam(defaultValue = "") String[] deviceValues,
                            Model model) throws ParseException {
         java.sql.Date sqlDate = new java.sql.Date(dateFormat.parseDateTime(date).getMillis());
 
-        List<Integer> wmToBlock = parseStringArratToIntegerList(wmValues);
+        List<Integer> devicesToBlock = parseStringArratToIntegerList(deviceValues);
 
-        removeUsersRegistrations(sqlDate, wmToBlock);
-        makeReservations(sqlDate, wmToBlock);
+        removeUsersRegistrations(sqlDate, devicesToBlock);
+        makeReservations(sqlDate, devicesToBlock);
 
         setModel(weekId, model);
-        return "wm/week";
+        return getWeekView();
     }
 
     @RequestMapping(path = "/{weekId}/unblock", method = RequestMethod.POST)
     public String unblockDay(@PathVariable String weekId,
                              @RequestParam String date,
-                             @RequestParam(defaultValue = "") String[] wmValues,
+                             @RequestParam(defaultValue = "") String[] deviceValues,
                              Model model) throws ParseException {
         java.sql.Date sqlDate = new java.sql.Date(dateFormat.parseDateTime(date).getMillis());
 
-        List<Integer> wmToUnlock = parseStringArratToIntegerList(wmValues);
+        List<Integer> devicesToUnlock = parseStringArratToIntegerList(deviceValues);
 
-        for (Integer wm : wmToUnlock) {
-            List<Reservation> reservations = reservationDao.findByDateAndWm(sqlDate, wm);
+        for (Integer deviceNumber : devicesToUnlock) {
+            List<Reservation> reservations = reservationDao.findByDateAndDeviceNumber(sqlDate, deviceNumber);
             for (Reservation reservation : reservations) {
                 if (reservation.getType() == ReservationType.BLOCKED) {
                     reservationDao.delete(reservation.getId());
@@ -83,15 +79,15 @@ public class AdminWeekController extends BaseWeekController {
         }
 
         setModel(weekId, model);
-        return "wm/week";
+        return getWeekView();
     }
 
-    void setModel(String weekId, Model model) throws ParseException {
+    public void setModel(String weekId, Model model) throws ParseException {
         super.setModel(weekId, model);
 
         model.addAttribute("nextWeekId", getSpecificWeekId(weekId, WEEK_TYPE.NEXT));
         model.addAttribute("prevWeekId", getSpecificWeekId(weekId, WEEK_TYPE.PREV));
-        model.addAttribute("wmCount", wmCount);
+        model.addAttribute("devicesCount", getDevicesCount());
     }
 
     // private
@@ -105,9 +101,9 @@ public class AdminWeekController extends BaseWeekController {
         return result;
     }
 
-    private void removeUsersRegistrations(Date sqlDate, List<Integer> wmToBlock) throws ParseException {
-        for (Integer wm : wmToBlock) {
-            List<Reservation> reservations = reservationDao.findByDateAndWm(sqlDate, wm);
+    private void removeUsersRegistrations(Date sqlDate, List<Integer> devicesToBlock) throws ParseException {
+        for (Integer deviceNumber : devicesToBlock) {
+            List<Reservation> reservations = reservationDao.findByDateAndDeviceNumber(sqlDate, deviceNumber);
 
             for (Reservation reservation : reservations) {
                 giveBackUserToken(reservation.getUser());
@@ -122,24 +118,23 @@ public class AdminWeekController extends BaseWeekController {
         userDao.save(user);
     }
 
-    private void makeReservations(Date sqlDate, List<Integer> wmToBlock) {
+    private void makeReservations(Date sqlDate, List<Integer> devicesToBlock) {
         User admin = userAuthenticatedService.getAuthenticatedUser();
 
-        Iterator<WashTime> washTimes = washTimeDao.findAll().iterator();
-        while (washTimes.hasNext()) {
-            WashTime washTime = washTimes.next();
-            for (Integer wm : wmToBlock) {
-                makeReservation(admin, sqlDate, washTime.getId(), wm, ReservationType.BLOCKED);
+        for (ReservationTime reservationTime : reservationTimeDao.findAll()) {
+            for (Integer deviceNumber : devicesToBlock) {
+                makeReservation(admin, sqlDate, reservationTime.getId(), deviceNumber, ReservationType.BLOCKED);
             }
         }
     }
 
-    private void makeReservation(User user, java.sql.Date date, long washTimeId, int wmNumber, ReservationType reservationType) {
+    private void makeReservation(User user, java.sql.Date date, long reservationTimeId, int deviceNumber, ReservationType reservationType) {
         Reservation reservation = new Reservation();
         reservation.setDate(date);
         reservation.setUser(user);
-        reservation.setWashTime(washTimeDao.findOne(washTimeId));
-        reservation.setWm(wmNumber);
+        reservation.setReservationTime(reservationTimeDao.findOne(reservationTimeId));
+        reservation.setDeviceType(getDeviceType());
+        reservation.setDeviceNumber(deviceNumber);
         reservation.setType(reservationType);
 
         reservationDao.save(reservation);
