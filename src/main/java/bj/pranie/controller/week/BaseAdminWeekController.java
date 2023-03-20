@@ -70,7 +70,7 @@ public abstract class BaseAdminWeekController extends BaseWeekController {
         List<Integer> devicesToUnlock = parseStringArratToIntegerList(deviceValues);
 
         for (Integer deviceNumber : devicesToUnlock) {
-            List<Reservation> reservations = reservationDao.findByDateAndDeviceNumber(sqlDate, deviceNumber);
+            List<Reservation> reservations = reservationDao.findByDateAndDeviceNumberAndDeviceType(sqlDate, deviceNumber, getDeviceType());
             for (Reservation reservation : reservations) {
                 if (reservation.getType() == ReservationType.BLOCKED) {
                     reservationDao.delete(reservation.getId());
@@ -103,7 +103,7 @@ public abstract class BaseAdminWeekController extends BaseWeekController {
 
     private void removeUsersRegistrations(Date sqlDate, List<Integer> devicesToBlock) throws ParseException {
         for (Integer deviceNumber : devicesToBlock) {
-            List<Reservation> reservations = reservationDao.findByDateAndDeviceNumber(sqlDate, deviceNumber);
+            List<Reservation> reservations = reservationDao.findByDateAndDeviceNumberAndDeviceType(sqlDate, deviceNumber, getDeviceType());
 
             for (Reservation reservation : reservations) {
                 giveBackUserToken(reservation.getUser());
