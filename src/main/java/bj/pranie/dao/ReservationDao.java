@@ -15,12 +15,10 @@ import java.util.List;
 @Transactional
 public interface ReservationDao extends CrudRepository<Reservation, Long> {
 
-    boolean existsByReservationTimeIdAndDateAndDeviceNumber(long reservationTimeId, Date date, int deviceNumber);
+    boolean existsByReservationTimeIdAndDateAndDeviceNumberAndDeviceType(long reservationTimeId, Date date, int deviceNumber, DeviceType deviceType);
 
     List<Reservation> findByReservationTimeIdAndDateAndDeviceType(long reservationTimeId, Date date, DeviceType deviceType);
 
-    List<Reservation> findByDate(Date date);
-
-    List<Reservation> findByDateAndDeviceNumber(Date date, int deviceNumber);
+    List<Reservation> findByDateAndDeviceNumberAndDeviceType(Date date, int deviceNumber, DeviceType deviceType);
 
 }

@@ -93,7 +93,7 @@ public abstract class BaseReservationController {
             }
         } catch (ReservationAlreadyBookedException reservationAlreadyBookedException) {
             reservationAlreadyBookedException.printStackTrace();
-            modelAndView.addObject("errorMessage", "Niestety pralka jest już zarezerwowana.");
+            modelAndView.addObject("errorMessage", "Niestety urządzenie jest już zarezerwowane.");
         }
 
         setModel(year, month, day, reservationTimeId, modelAndView);
@@ -216,7 +216,7 @@ public abstract class BaseReservationController {
         reservation.setDeviceNumber(deviceNumber);
         reservation.setType(reservationType);
 
-        if (reservationDao.existsByReservationTimeIdAndDateAndDeviceNumber(reservationTimeId, date, deviceNumber)) {
+        if (reservationDao.existsByReservationTimeIdAndDateAndDeviceNumberAndDeviceType(reservationTimeId, date, deviceNumber, getDeviceType())) {
             LOG.info("reservation EXIST " + reservation);
             throw new ReservationAlreadyBookedException();
         }
