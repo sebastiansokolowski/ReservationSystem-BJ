@@ -34,7 +34,7 @@ public class UserResetPassword {
     public String resetPasswordPorm(@RequestParam String resetPasswordKey,
                                     Model model) {
 
-        if (checkResetKeyIsInvalid(resetPasswordKey)) {
+        if (!isResetKeyValid(resetPasswordKey)) {
             return "user/invalidToken";
         }
         model.addAttribute("resetPasswordKey", resetPasswordKey);
@@ -49,7 +49,7 @@ public class UserResetPassword {
                                       BindingResult bindingResult) throws MessagingException {
         ModelAndView modelAndView = new ModelAndView();
 
-        if (checkResetKeyIsInvalid(resetPasswordKey)) {
+        if (!isResetKeyValid(resetPasswordKey)) {
             modelAndView.setViewName("user/invalidToken");
             return modelAndView;
         }
@@ -75,7 +75,7 @@ public class UserResetPassword {
         return modelAndView;
     }
 
-    private boolean checkResetKeyIsInvalid(String resetPasswordKey) {
+    private boolean isResetKeyValid(String resetPasswordKey) {
         User user = userDao.findByResetPasswordKey(resetPasswordKey);
         return user != null;
     }
