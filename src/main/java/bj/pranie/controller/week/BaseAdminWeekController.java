@@ -116,7 +116,9 @@ public abstract class BaseAdminWeekController extends BaseWeekController {
             if (!deviceIdsToBlock.contains(reservation.getDevice().getId())) {
                 continue;
             }
-            giveBackUserToken(reservation.getUser());
+            if (reservation.getType() == ReservationType.USER){
+                giveBackUserToken(reservation.getUser());
+            }
             reservationDao.delete(reservation.getId());
         }
     }
