@@ -1,11 +1,11 @@
 package bj.pranie.entity;
 
-import bj.pranie.entity.myEnum.DeviceType;
 import bj.pranie.entity.myEnum.ReservationType;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.sql.Date;
+import java.util.Objects;
 
 /**
  * Created by Sebastian Sokolowski on 15.10.16.
@@ -17,12 +17,10 @@ public class Reservation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "device_id")
     @NotNull
-    private int deviceNumber;
-
-    @Enumerated(EnumType.ORDINAL)
-    @NotNull
-    private DeviceType deviceType;
+    private Device device;
 
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
@@ -49,20 +47,12 @@ public class Reservation {
         this.id = id;
     }
 
-    public int getDeviceNumber() {
-        return deviceNumber;
+    public Device getDevice() {
+        return device;
     }
 
-    public void setDeviceNumber(int deviceNumber) {
-        this.deviceNumber = deviceNumber;
-    }
-
-    public DeviceType getDeviceType() {
-        return deviceType;
-    }
-
-    public void setDeviceType(DeviceType deviceType) {
-        this.deviceType = deviceType;
+    public void setDevice(Device device) {
+        this.device = device;
     }
 
     public User getUser() {
@@ -101,27 +91,24 @@ public class Reservation {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         Reservation that = (Reservation) o;
+        return id == that.id && Objects.equals(device, that.device) && Objects.equals(user, that.user) && type == that.type && Objects.equals(date, that.date) && Objects.equals(reservationTime, that.reservationTime);
+    }
 
-        return id == that.id;
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, device, user, type, date, reservationTime);
     }
 
     @Override
     public String toString() {
         return "Reservation{" +
                 "id=" + id +
-                ", deviceNumber=" + deviceNumber +
-                ", deviceType=" + deviceType +
+                ", device=" + device +
                 ", user=" + user +
                 ", type=" + type +
                 ", date=" + date +
                 ", reservationTime=" + reservationTime +
                 '}';
-    }
-
-    @Override
-    public int hashCode() {
-        return (int) (id ^ (id >>> 32));
     }
 }

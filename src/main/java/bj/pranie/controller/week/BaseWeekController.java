@@ -1,11 +1,14 @@
 package bj.pranie.controller.week;
 
+import bj.pranie.dao.DeviceDao;
 import bj.pranie.dao.ReservationDao;
 import bj.pranie.dao.ReservationTimeDao;
+import bj.pranie.entity.Device;
 import bj.pranie.entity.Reservation;
 import bj.pranie.entity.User;
 import bj.pranie.entity.ReservationTime;
 import bj.pranie.entity.myEnum.DeviceType;
+import bj.pranie.model.DeviceModel;
 import bj.pranie.model.TimeWeekModel;
 import bj.pranie.service.UserAuthenticatedService;
 import bj.pranie.util.ColorUtil;
@@ -24,6 +27,7 @@ import org.springframework.ui.Model;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by Sebastian Sokolowski on 22.10.17.
@@ -43,11 +47,12 @@ public abstract class BaseWeekController {
     ReservationTimeDao reservationTimeDao;
 
     @Autowired
+    DeviceDao deviceDao;
+
+    @Autowired
     private UserAuthenticatedService userAuthenticatedService;
 
     public abstract DeviceType getDeviceType();
-
-    public abstract int getDevicesCount();
 
     String getWeekView() {
         return "week/" + getDeviceType().getPathName();
@@ -61,6 +66,22 @@ public abstract class BaseWeekController {
         model.addAttribute("freeDevices", getFreeDevices(timeWeekModels));
         model.addAttribute("timesWeek", timeWeekModels);
         model.addAttribute("user", userAuthenticatedService.getAuthenticatedUser());
+    }
+
+    public int getDevicesCount(){
+        return deviceDao.findByDeviceType(getDeviceType()).size();
+    }
+
+    public List<DeviceModel> getDeviceModels() {
+        List<DeviceModel> results = new ArrayList<>();
+        for (Device device : deviceDao.findByDeviceType(getDeviceType())) {
+            DeviceModel deviceModel = new DeviceModel();
+            deviceModel.setId(device.getId());
+            deviceModel.setDeviceType(device.getDeviceType());
+            deviceModel.setName(device.getName());
+            results.add(deviceModel);
+        }
+        return results;
     }
 
     /*
@@ -110,10 +131,11 @@ public abstract class BaseWeekController {
         return localDate.getWeekyear() + "-" + localDate.getWeekOfWeekyear();
     }
 
-    List<TimeWeekModel> getTimeWeekModels(String weekId) throws ParseException {
+    List<TimeWeekModel> getTimeWeekModels(String weekId) {
         final List<TimeWeekModel> timeWeekModels = new ArrayList<>();
 
         List<LocalDate> weekDays = getWeekDays(weekId);
+        int devicesCount = getDevicesCount();
 
         for (ReservationTime reservationTime : reservationTimeDao.findAll()) {
             TimeWeekModel timeWeekModel = new TimeWeekModel();
@@ -126,16 +148,16 @@ public abstract class BaseWeekController {
 
                 boolean isPast = TimeUtil.isPast(reservationTime.getFromTime(), localDate);
 
-                List<Reservation> reservations = getReservationsByReservationTimeAndDate(reservationTime.getId(), localDate, getDeviceType());
+                List<Reservation> reservations = getReservationsByReservationTimeAndDateAndDeviceType(reservationTime.getId(), localDate, getDeviceType());
 
-                int freeDevices = getDevicesCount();
+                int freeDevices = devicesCount;
                 if (isPast) {
                     freeDevices = 0;
                 } else {
                     freeDevices -= reservations.size();
                 }
                 date.setFreeDevices(freeDevices);
-                date.setColor(getCellColor(freeDevices, isPast, isUserAuthenticatedReservation(reservations)));
+                date.setColor(getCellColor(freeDevices, isPast, isUserAuthenticatedReservation(reservations), devicesCount));
 
                 dates.add(date);
             }
@@ -159,9 +181,12 @@ public abstract class BaseWeekController {
         return daysOfWeek;
     }
 
-    List<Reservation> getReservationsByReservationTimeAndDate(long reservationTimeId, LocalDate date, DeviceType deviceType) throws ParseException {
+    List<Reservation> getReservationsByReservationTimeAndDateAndDeviceType(long reservationTimeId, LocalDate date, DeviceType deviceType) {
         java.sql.Date sqlDate = new java.sql.Date(date.toDate().getTime());
-        return reservationDao.findByReservationTimeIdAndDateAndDeviceType(reservationTimeId, sqlDate, deviceType);
+        return reservationDao
+                .findByReservationTimeIdAndDate(reservationTimeId, sqlDate).stream()
+                .filter(reservation -> reservation.getDevice().getDeviceType() == deviceType)
+                .collect(Collectors.toList());
     }
 
     boolean isUserAuthenticatedReservation(List<Reservation> reservationUser) {
@@ -187,14 +212,14 @@ public abstract class BaseWeekController {
         return freeDevices;
     }
 
-    String getCellColor(int freeSpace, boolean past, boolean myReservation) {
+    String getCellColor(int freeSpace, boolean past, boolean myReservation, int devicesCount) {
         if (past) {
             return ColorUtil.RESERVATION_UNAVAILABLE_COLOR;
         } else if (myReservation) {
             return ColorUtil.RESERVATION_MY_COLOR;
         }
 
-        if (freeSpace > 2 && freeSpace <= getDevicesCount()) {
+        if (freeSpace > 2 && freeSpace <= devicesCount) {
             return ColorUtil.RESERVATION_FREE_COLOR;
         }
 

@@ -19,11 +19,11 @@
             <table>
                 <tbody>
                     <tr>
-                        <th th:each="reservation,i : ${reservations}" style="border-radius: 7px;vertical-align:top"
-                            th:bgcolor="${reservation.color}">
-                            <span th:text="${i.count}"/>
+                        <th th:each="device : ${devices}" style="border-radius: 7px;vertical-align:top"
+                            th:bgcolor="${device.color}">
+                            <span th:text="${device.name}"/>
                             <br/>
-                            <div th:switch="${reservation.deviceType.name()}">
+                            <div th:switch="${device.deviceType.name()}">
                                 <p th:case="WASHING_MACHINE">
                                     <img style="background-color:#FFFFFF;width: 200px" src="/images/washer.png"/>
                                 </p>
@@ -31,16 +31,16 @@
                                     <img style="background-color:#FFFFFF;width: 200px" src="/images/dryer.png"/>
                                 </p>
                             </div>
-                            <div th:switch="${reservation.type.name()}">
+                            <div th:switch="${device.type.name()}">
                                 <p th:case="RESERVED">
-                                    <span th:if="${reservation.user.name != null}" th:text="${reservation.user.name}"/>
+                                    <span th:if="${device.user.name != null}" th:text="${device.user.name}"/>
                                     <br/>
-                                    <span th:text="${reservation.user.room.room}+${reservation.user.room.type}"/>
+                                    <span th:text="${device.user.room.room}+${device.user.room.type}"/>
                                 </p>
                                 <p th:case="MY">
-                                    <span th:if="${reservation.user.name != null}" th:text="${reservation.user.name}"/>
+                                    <span th:if="${device.user.name != null}" th:text="${device.user.name}"/>
                                     <br/>
-                                    <span th:text="${reservation.user.room.room}+${reservation.user.room.type}"/>
+                                    <span th:text="${device.user.room.room}+${device.user.room.type}"/>
                                 </p>
                                 <p th:case="PAST">
                                     <span>-<br/>-</span>
@@ -52,19 +52,19 @@
                                     <span>BLOKADA<br/><br/></span>
                                 </p>
                             </div>
-                            <div th:switch="${reservation.type.name()}">
+                            <div th:switch="${device.type.name()}">
                                 <p th:case="FREE">
                                 <div sec:authorize="hasAnyAuthority('USER','ADMIN','GROUP')">
                                     <div th:if="${user.tokens &gt; 0}">
                                         <form th:action="@{register}" method="post">
-                                            <input type="text" name="deviceNumber" th:value="${i.index}" hidden="hidden"/>
+                                            <input type="text" name="deviceId" th:value="${device.id}" hidden="hidden"/>
                                             <input class="btn" type="submit" value="Zarezerwuj"/>
                                         </form>
                                     </div>
                                 </div>
                                 <div sec:authorize="hasAuthority('ADMIN')">
                                     <form th:action="@{block}" method="post">
-                                        <input type="text" name="deviceNumber" th:value="${i.index}" hidden="hidden"/>
+                                        <input type="text" name="deviceId" th:value="${device.id}" hidden="hidden"/>
                                         <input class="btn" type="submit" value="Blokada"/>
                                     </form>
                                 </div>
@@ -72,7 +72,7 @@
                                 <p th:case="MY">
                                 <div sec:authorize="hasAnyAuthority('USER','ADMIN')">
                                     <form th:action="@{unregister}" method="post">
-                                        <input type="text" name="reservationId" th:value="${reservation.reservationId}"
+                                        <input type="text" name="reservationId" th:value="${device.reservationId}"
                                                hidden="hidden"/>
                                         <input class="btn" type="submit" value="Wyrejestruj"/>
                                     </form>
@@ -81,7 +81,7 @@
                                 <p th:case="UNAVAILABLE">
                                 <div sec:authorize="hasAuthority('ADMIN')">
                                     <form th:action="@{remove}" method="post">
-                                        <input type="text" name="reservationId" th:value="${reservation.reservationId}"
+                                        <input type="text" name="reservationId" th:value="${device.reservationId}"
                                                hidden="hidden"/>
                                         <input class="btn" type="submit" value="Usuń"/>
                                     </form>
@@ -90,7 +90,7 @@
                                 <p th:case="RESERVED">
                                 <div sec:authorize="hasAuthority('ADMIN')">
                                     <form th:action="@{remove}" method="post">
-                                        <input type="text" name="reservationId" th:value="${reservation.reservationId}"
+                                        <input type="text" name="reservationId" th:value="${device.reservationId}"
                                                hidden="hidden"/>
                                         <input class="btn" type="submit" value="Usuń"/>
                                     </form>

@@ -55,9 +55,9 @@
                                     Blokowanie
                                     <form th:action="@{/admin/wm/week/__${weekId}__/block}" method="post">
                                         <input type="text" name="date" th:value="${dayDate.date}" hidden="hidden"/>
-                                        <span th:each="i: ${#numbers.sequence(0, devicesCount - 1)}">
-                                            <input type="checkbox" name="deviceValues" th:value="${i}"/>
-                                            <span th:text="${i}+1"/>
+                                        <span th:each="device: ${devices}">
+                                            <input type="checkbox" name="deviceIds" th:value="${device.id}"/>
+                                            <span th:text="${device.name}"/>
                                         </span>
                                         <br/>
                                         <input class="btn" type="submit" value="Wyslij"/>
@@ -67,9 +67,9 @@
                                     Odblokowanie
                                     <form th:action="@{/admin/wm/week/__${weekId}__/unblock}" method="post">
                                         <input type="text" name="date" th:value="${dayDate.date}" hidden="hidden"/>
-                                        <span th:each="i: ${#numbers.sequence(0, devicesCount - 1)}">
-                                            <input type="checkbox" name="deviceValues" th:value="${i}"/>
-                                            <span th:text="${i}+1"/>
+                                        <span th:each="device: ${devices}">
+                                            <input type="checkbox" name="deviceIds" th:value="${device.id}"/>
+                                            <span th:text="${device.name}"/>
                                         </span>
                                         <br/>
                                         <input class="btn" type="submit" value="Wyslij"/>

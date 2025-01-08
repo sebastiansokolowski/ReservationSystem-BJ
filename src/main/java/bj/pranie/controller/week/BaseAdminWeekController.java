@@ -1,6 +1,7 @@
 package bj.pranie.controller.week;
 
 import bj.pranie.dao.UserDao;
+import bj.pranie.entity.Device;
 import bj.pranie.entity.Reservation;
 import bj.pranie.entity.ReservationTime;
 import bj.pranie.entity.User;
@@ -47,14 +48,14 @@ public abstract class BaseAdminWeekController extends BaseWeekController {
     @RequestMapping(path = "/{weekId}/block", method = RequestMethod.POST)
     public String blockDay(@PathVariable String weekId,
                            @RequestParam String date,
-                           @RequestParam(defaultValue = "") String[] deviceValues,
+                           @RequestParam(defaultValue = "") String[] deviceIds,
                            Model model) throws ParseException {
         java.sql.Date sqlDate = new java.sql.Date(dateFormat.parseDateTime(date).getMillis());
 
-        List<Integer> devicesToBlock = parseStringArratToIntegerList(deviceValues);
+        List<Long> deviceIdsToBlock = parseStringArratToLongList(deviceIds);
 
-        removeUsersRegistrations(sqlDate, devicesToBlock);
-        makeReservations(sqlDate, devicesToBlock);
+        removeUsersRegistrations(sqlDate, deviceIdsToBlock);
+        makeReservations(sqlDate, deviceIdsToBlock);
 
         setModel(weekId, model);
         return getWeekView();
@@ -63,19 +64,24 @@ public abstract class BaseAdminWeekController extends BaseWeekController {
     @RequestMapping(path = "/{weekId}/unblock", method = RequestMethod.POST)
     public String unblockDay(@PathVariable String weekId,
                              @RequestParam String date,
-                             @RequestParam(defaultValue = "") String[] deviceValues,
+                             @RequestParam(defaultValue = "") String[] deviceIds,
                              Model model) throws ParseException {
         java.sql.Date sqlDate = new java.sql.Date(dateFormat.parseDateTime(date).getMillis());
 
-        List<Integer> devicesToUnlock = parseStringArratToIntegerList(deviceValues);
+        List<Long> deviceIdsToUnlock = parseStringArratToLongList(deviceIds);
 
-        for (Integer deviceNumber : devicesToUnlock) {
-            List<Reservation> reservations = reservationDao.findByDateAndDeviceNumberAndDeviceType(sqlDate, deviceNumber, getDeviceType());
-            for (Reservation reservation : reservations) {
-                if (reservation.getType() == ReservationType.BLOCKED) {
-                    reservationDao.delete(reservation.getId());
-                }
+        List<Reservation> reservations = reservationDao.findByDate(sqlDate);
+        for (Reservation reservation : reservations) {
+            if (reservation.getDevice().getDeviceType() != getDeviceType()) {
+                continue;
             }
+            if (!deviceIdsToUnlock.contains(reservation.getDevice().getId())) {
+                continue;
+            }
+            if (reservation.getType() != ReservationType.BLOCKED) {
+                continue;
+            }
+            reservationDao.delete(reservation.getId());
         }
 
         setModel(weekId, model);
@@ -87,28 +93,31 @@ public abstract class BaseAdminWeekController extends BaseWeekController {
 
         model.addAttribute("nextWeekId", getSpecificWeekId(weekId, WEEK_TYPE.NEXT));
         model.addAttribute("prevWeekId", getSpecificWeekId(weekId, WEEK_TYPE.PREV));
-        model.addAttribute("devicesCount", getDevicesCount());
+        model.addAttribute("devices", getDeviceModels());
     }
 
     // private
 
-    private List<Integer> parseStringArratToIntegerList(String[] array) {
-        List<Integer> result = new ArrayList<>();
+    private List<Long> parseStringArratToLongList(String[] array) {
+        List<Long> result = new ArrayList<>();
         for (int i = 0; i != array.length; i++) {
-            result.add(Integer.parseInt(array[i]));
+            result.add(Long.parseLong(array[i]));
         }
 
         return result;
     }
 
-    private void removeUsersRegistrations(Date sqlDate, List<Integer> devicesToBlock) throws ParseException {
-        for (Integer deviceNumber : devicesToBlock) {
-            List<Reservation> reservations = reservationDao.findByDateAndDeviceNumberAndDeviceType(sqlDate, deviceNumber, getDeviceType());
-
-            for (Reservation reservation : reservations) {
-                giveBackUserToken(reservation.getUser());
-                reservationDao.delete(reservation.getId());
+    private void removeUsersRegistrations(Date sqlDate, List<Long> deviceIdsToBlock) {
+        List<Reservation> reservations = reservationDao.findByDate(sqlDate);
+        for (Reservation reservation : reservations) {
+            if (reservation.getDevice().getDeviceType() != getDeviceType()) {
+                continue;
             }
+            if (!deviceIdsToBlock.contains(reservation.getDevice().getId())) {
+                continue;
+            }
+            giveBackUserToken(reservation.getUser());
+            reservationDao.delete(reservation.getId());
         }
     }
 
@@ -118,23 +127,24 @@ public abstract class BaseAdminWeekController extends BaseWeekController {
         userDao.save(user);
     }
 
-    private void makeReservations(Date sqlDate, List<Integer> devicesToBlock) {
+    private void makeReservations(Date sqlDate, List<Long> devicesToBlock) {
         User admin = userAuthenticatedService.getAuthenticatedUser();
 
         for (ReservationTime reservationTime : reservationTimeDao.findAll()) {
-            for (Integer deviceNumber : devicesToBlock) {
-                makeReservation(admin, sqlDate, reservationTime.getId(), deviceNumber, ReservationType.BLOCKED);
+            for (Long deviceId : devicesToBlock) {
+                makeReservation(admin, sqlDate, reservationTime.getId(), deviceId, ReservationType.BLOCKED);
             }
         }
     }
 
-    private void makeReservation(User user, java.sql.Date date, long reservationTimeId, int deviceNumber, ReservationType reservationType) {
+    private void makeReservation(User user, java.sql.Date date, long reservationTimeId, long deviceId, ReservationType reservationType) {
+        Device device = deviceDao.findOne(deviceId);
+
         Reservation reservation = new Reservation();
         reservation.setDate(date);
         reservation.setUser(user);
         reservation.setReservationTime(reservationTimeDao.findOne(reservationTimeId));
-        reservation.setDeviceType(getDeviceType());
-        reservation.setDeviceNumber(deviceNumber);
+        reservation.setDevice(device);
         reservation.setType(reservationType);
 
         reservationDao.save(reservation);

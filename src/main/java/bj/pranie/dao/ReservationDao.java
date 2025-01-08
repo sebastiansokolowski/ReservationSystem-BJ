@@ -1,7 +1,6 @@
 package bj.pranie.dao;
 
 import bj.pranie.entity.Reservation;
-import bj.pranie.entity.myEnum.DeviceType;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,10 +14,10 @@ import java.util.List;
 @Transactional
 public interface ReservationDao extends CrudRepository<Reservation, Long> {
 
-    boolean existsByReservationTimeIdAndDateAndDeviceNumberAndDeviceType(long reservationTimeId, Date date, int deviceNumber, DeviceType deviceType);
+    boolean existsByReservationTimeIdAndDateAndDeviceId(long reservationTimeId, Date date, long deviceId);
 
-    List<Reservation> findByReservationTimeIdAndDateAndDeviceType(long reservationTimeId, Date date, DeviceType deviceType);
+    List<Reservation> findByReservationTimeIdAndDate(long reservationTimeId, Date date);
 
-    List<Reservation> findByDateAndDeviceNumberAndDeviceType(Date date, int deviceNumber, DeviceType deviceType);
+    List<Reservation> findByDate(Date date);
 
 }

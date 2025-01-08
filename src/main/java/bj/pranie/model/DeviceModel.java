@@ -11,7 +11,11 @@ public class DeviceModel {
         UNAVAILABLE, PAST, RESERVED, FREE, MY
     }
 
+    private long id;
+
     private DeviceType deviceType;
+
+    private String name;
 
     private TYPE type;
 
@@ -21,12 +25,28 @@ public class DeviceModel {
 
     private String color;
 
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
     public DeviceType getDeviceType() {
         return deviceType;
     }
 
     public void setDeviceType(DeviceType deviceType) {
         this.deviceType = deviceType;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public User getUser() {

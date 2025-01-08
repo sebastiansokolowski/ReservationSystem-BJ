@@ -1,8 +1,10 @@
 package bj.pranie.controller.reservation;
 
+import bj.pranie.dao.DeviceDao;
 import bj.pranie.dao.ReservationDao;
 import bj.pranie.dao.ReservationTimeDao;
 import bj.pranie.dao.UserDao;
+import bj.pranie.entity.Device;
 import bj.pranie.entity.Reservation;
 import bj.pranie.entity.ReservationTime;
 import bj.pranie.entity.User;
@@ -23,7 +25,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -31,6 +32,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * Created by Sebastian Sokolowski on 12.10.16.
@@ -56,15 +58,16 @@ public abstract class BaseReservationController {
     @Autowired
     private UserAuthenticatedService userAuthenticatedService;
 
-    public abstract DeviceType getDeviceType();
+    @Autowired
+    private DeviceDao deviceDao;
 
-    public abstract int getDevicesCount();
+    public abstract DeviceType getDeviceType();
 
     @RequestMapping(path = "/{year}/{month}/{day}/{reservationTimeId}", method = RequestMethod.GET)
     public ModelAndView reservation(@PathVariable int year,
                                     @PathVariable int month,
                                     @PathVariable int day,
-                                    @PathVariable long reservationTimeId) throws ParseException {
+                                    @PathVariable long reservationTimeId) {
         ModelAndView modelAndView = new ModelAndView("reservation");
         setModel(year, month, day, reservationTimeId, modelAndView);
         return modelAndView;
@@ -75,7 +78,7 @@ public abstract class BaseReservationController {
                                         @PathVariable int month,
                                         @PathVariable int day,
                                         @PathVariable long reservationTimeId,
-                                        @RequestParam int deviceNumber) throws ParseException {
+                                        @RequestParam long deviceId) {
         ModelAndView modelAndView = new ModelAndView("reservation");
 
         User user = userAuthenticatedService.getAuthenticatedUser();
@@ -84,7 +87,7 @@ public abstract class BaseReservationController {
             int userTokens = user.getTokens();
 
             if (userTokens > 0) {
-                makeReservation(user, year, month, day, reservationTimeId, deviceNumber, ReservationType.USER);
+                makeReservation(user, year, month, day, reservationTimeId, deviceId, ReservationType.USER);
 
                 user.setTokens(userTokens - 1);
                 userDao.save(user);
@@ -106,7 +109,7 @@ public abstract class BaseReservationController {
                                           @PathVariable int month,
                                           @PathVariable int day,
                                           @PathVariable long reservationTimeId,
-                                          @RequestParam long reservationId) throws ParseException {
+                                          @RequestParam long reservationId) {
         ModelAndView modelAndView = new ModelAndView("reservation");
 
         User user = userAuthenticatedService.getAuthenticatedUser();
@@ -136,7 +139,7 @@ public abstract class BaseReservationController {
                                           @PathVariable int month,
                                           @PathVariable int day,
                                           @PathVariable long reservationTimeId,
-                                          @RequestParam long reservationId) throws ParseException {
+                                          @RequestParam long reservationId) {
         ModelAndView modelAndView = new ModelAndView("reservation");
 
         Reservation reservation = reservationDao.findOne(reservationId);
@@ -159,13 +162,13 @@ public abstract class BaseReservationController {
                                     @PathVariable int month,
                                     @PathVariable int day,
                                     @PathVariable long reservationTimeId,
-                                    @RequestParam int deviceNumber) throws ParseException {
+                                    @RequestParam long deviceId) {
         ModelAndView modelAndView = new ModelAndView("reservation");
 
         User user = userAuthenticatedService.getAuthenticatedUser();
 
         try {
-            makeReservation(user, year, month, day, reservationTimeId, deviceNumber, ReservationType.BLOCKED);
+            makeReservation(user, year, month, day, reservationTimeId, deviceId, ReservationType.BLOCKED);
         } catch (ReservationAlreadyBookedException reservationAlreadyBookedException) {
             reservationAlreadyBookedException.printStackTrace();
             modelAndView.addObject("errorMessage", "Niestety termin jest już zajęty.");
@@ -173,6 +176,10 @@ public abstract class BaseReservationController {
 
         setModel(year, month, day, reservationTimeId, modelAndView);
         return modelAndView;
+    }
+
+    public int getDevicesCount(){
+        return deviceDao.findByDeviceType(getDeviceType()).size();
     }
 
     private boolean isUnregisterAvailable(Reservation reservation) {
@@ -189,11 +196,11 @@ public abstract class BaseReservationController {
         return now.isBefore(reservationDate);
     }
 
-    private void setModel(int year, int month, int day, long reservationTimeId, ModelAndView modelAndView) throws ParseException {
+    private void setModel(int year, int month, int day, long reservationTimeId, ModelAndView modelAndView) {
         LocalDate localDate = new LocalDate(year, month, day);
 
         ReservationTime reservationTime = reservationTimeDao.findOne(reservationTimeId);
-        List<Reservation> reservationList = reservationDao.findByReservationTimeIdAndDateAndDeviceType(reservationTimeId, new java.sql.Date(localDate.toDate().getTime()), getDeviceType());
+        List<Reservation> reservationList = getReservationsByReservationTimeAndDateAndDeviceType(reservationTimeId, localDate, getDeviceType());
         int freeDevices = getDevicesCount() - reservationList.size();
 
         modelAndView.addObject("dayName", getDayName(localDate));
@@ -201,22 +208,30 @@ public abstract class BaseReservationController {
         modelAndView.addObject("time", getReservationTime(reservationTime));
         modelAndView.addObject("backPath", "/" + getDeviceType().getPathName() + "/week");
         modelAndView.addObject("freeDevices", freeDevices);
-        modelAndView.addObject("reservations", getDeviceModels(reservationList, localDate, reservationTime));
+        modelAndView.addObject("devices", getDeviceModels(reservationList, localDate, reservationTime));
         modelAndView.addObject("user", userAuthenticatedService.getAuthenticatedUser());
     }
 
-    private synchronized void makeReservation(User user, int year, int month, int day, long reservationTimeId, int deviceNumber, ReservationType reservationType) throws ReservationAlreadyBookedException {
+    List<Reservation> getReservationsByReservationTimeAndDateAndDeviceType(long reservationTimeId, LocalDate date, DeviceType deviceType) {
+        java.sql.Date sqlDate = new java.sql.Date(date.toDate().getTime());
+        return reservationDao
+                .findByReservationTimeIdAndDate(reservationTimeId, sqlDate).stream()
+                .filter(reservation -> reservation.getDevice().getDeviceType() == deviceType)
+                .collect(Collectors.toList());
+    }
+
+    private synchronized void makeReservation(User user, int year, int month, int day, long reservationTimeId, long deviceId, ReservationType reservationType) throws ReservationAlreadyBookedException {
         java.sql.Date date = getSqlDate(year, month, day);
+        Device device = deviceDao.findOne(deviceId);
 
         Reservation reservation = new Reservation();
         reservation.setDate(date);
         reservation.setUser(user);
         reservation.setReservationTime(reservationTimeDao.findOne(reservationTimeId));
-        reservation.setDeviceType(getDeviceType());
-        reservation.setDeviceNumber(deviceNumber);
+        reservation.setDevice(device);
         reservation.setType(reservationType);
 
-        if (reservationDao.existsByReservationTimeIdAndDateAndDeviceNumberAndDeviceType(reservationTimeId, date, deviceNumber, getDeviceType())) {
+        if (reservationDao.existsByReservationTimeIdAndDateAndDeviceId(reservationTimeId, date, deviceId)) {
             LOG.info("reservation EXIST " + reservation);
             throw new ReservationAlreadyBookedException();
         }
@@ -239,14 +254,16 @@ public abstract class BaseReservationController {
 
         boolean isPast = TimeUtil.isPast(reservationTime.getFromTime(), date);
 
-        for (int i = 0; i != getDevicesCount(); i++) {
+        for (Device device : deviceDao.findByDeviceType(getDeviceType())) {
             DeviceModel deviceModel = new DeviceModel();
+            deviceModel.setId(device.getId());
             deviceModel.setDeviceType(getDeviceType());
+            deviceModel.setName(device.getName());
 
             Reservation currentReservation = null;
             for (Reservation reservation : reservationList
             ) {
-                if (reservation.getDeviceNumber() == i) {
+                if (reservation.getDevice().getId() == device.getId()) {
                     currentReservation = reservation;
                     break;
                 }
