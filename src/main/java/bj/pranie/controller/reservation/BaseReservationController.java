@@ -26,10 +26,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -296,7 +293,9 @@ public abstract class BaseReservationController {
             deviceModels.add(deviceModel);
         }
 
-        return deviceModels;
+        return deviceModels.stream()
+                .sorted(Comparator.comparing(DeviceModel::getName))
+                .collect(Collectors.toList());
     }
 
     private boolean isMyReservation(User reservationUser) {

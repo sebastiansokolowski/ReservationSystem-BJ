@@ -74,7 +74,10 @@ public abstract class BaseWeekController {
 
     public List<DeviceModel> getDeviceModels() {
         List<DeviceModel> results = new ArrayList<>();
-        for (Device device : deviceDao.findByDeviceType(getDeviceType())) {
+        List<Device> devices = deviceDao.findByDeviceType(getDeviceType())
+                .stream().sorted(Comparator.comparing(Device::getName))
+                .collect(Collectors.toList());
+        for (Device device : devices) {
             DeviceModel deviceModel = new DeviceModel();
             deviceModel.setId(device.getId());
             deviceModel.setDeviceType(device.getDeviceType());
