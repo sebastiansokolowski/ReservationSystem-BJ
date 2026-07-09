@@ -82,7 +82,7 @@ public class Application {
         Iterable<User> iterable = userDao.findAll();
         for (User user : iterable) {
             if (user.getRole() == UserRole.GROUP) {
-                user.setTokens(user.getRoom().getPeoples());
+                user.setTokens(user.getRoom().getPeoples() * tokensPerWeek);
             } else {
                 user.setTokens(tokensPerWeek);
             }
