@@ -131,7 +131,7 @@ public class AdminController {
             user.setRoom(room);
             user.setBlocked(false);
             user.setRole(UserRole.GROUP);
-            user.setTokens(room.getPeoples());
+            user.setTokens(room.getPeople());
 
             userDao.save(user);
         }

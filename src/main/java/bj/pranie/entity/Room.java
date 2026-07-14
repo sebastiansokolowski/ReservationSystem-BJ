@@ -26,15 +26,15 @@ public class Room {
     private boolean students;
 
     @NotNull
-    private int peoples;
+    private int people;
 
     public Room() {
     }
 
-    public Room(int room, RoomType type, boolean students, int peoples) {
+    public Room(int room, RoomType type, boolean students, int people) {
         this.room = room;
         this.type = type;
-        this.peoples = peoples;
+        this.people = people;
     }
 
     public long getId() {
@@ -69,12 +69,12 @@ public class Room {
         this.students = students;
     }
 
-    public int getPeoples() {
-        return peoples;
+    public int getPeople() {
+        return people;
     }
 
-    public void setPeoples(int peoples) {
-        this.peoples = peoples;
+    public void setPeople(int peoples) {
+        this.people = peoples;
     }
 
     @Override

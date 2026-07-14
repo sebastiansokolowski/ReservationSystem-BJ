@@ -138,7 +138,7 @@ public class UserController {
         Room room = roomDao.findOne(userRegistrationModel.getRoomId());
         if (room == null) {
             bindingResult.rejectValue("roomId", "error.userRegistrationModel", "Wybierz pokój z listy.");
-        } else if (userDao.findByRoom(room).size() >= room.getPeoples()) {
+        } else if (userDao.findByRoom(room).size() >= room.getPeople()) {
             bindingResult.rejectValue("roomId", "error.userRegistrationModel", "Brak miejsca w wybranym pokoju.");
         }
 

@@ -1,6 +1,5 @@
 package bj.pranie.controller.admin;
 
-import bj.pranie.dao.ReservationDao;
 import bj.pranie.dao.RoomDao;
 import bj.pranie.entity.Room;
 import bj.pranie.entity.myEnum.RoomType;
@@ -61,7 +60,7 @@ public class AdminRoomsController {
         roomEditModel.setId(room.getId());
         roomEditModel.setRoom(room.getRoom());
         roomEditModel.setStudents(room.isStudents());
-        roomEditModel.setPeoples(room.getPeoples());
+        roomEditModel.setPeoples(room.getPeople());
         roomEditModel.setTypeId(room.getType().ordinal());
 
         model.addAttribute("roomModel", roomEditModel);
@@ -83,7 +82,7 @@ public class AdminRoomsController {
         room.setType(RoomType.values()[roomEditModel.getTypeId()]);
         room.setRoom(roomEditModel.getRoom());
         room.setStudents(roomEditModel.getStudents());
-        room.setPeoples(roomEditModel.getPeoples());
+        room.setPeople(roomEditModel.getPeoples());
         roomDao.save(room);
 
         LOG.info("edit room data to " + room);
