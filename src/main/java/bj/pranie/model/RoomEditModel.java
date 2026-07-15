@@ -20,7 +20,7 @@ public class RoomEditModel {
     private Boolean students;
 
     @NotNull
-    private Integer peoples;
+    private Integer people;
 
     public Long getId() {
         return id;
@@ -54,11 +54,11 @@ public class RoomEditModel {
         this.students = students;
     }
 
-    public Integer getPeoples() {
-        return peoples;
+    public Integer getPeople() {
+        return people;
     }
 
-    public void setPeoples(Integer peoples) {
-        this.peoples = peoples;
+    public void setPeople(Integer people) {
+        this.people = people;
     }
 }

@@ -73,8 +73,8 @@ public class Room {
         return people;
     }
 
-    public void setPeople(int peoples) {
-        this.people = peoples;
+    public void setPeople(int people) {
+        this.people = people;
     }
 
     @Override

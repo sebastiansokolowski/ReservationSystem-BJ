@@ -60,7 +60,7 @@ public class AdminRoomsController {
         roomEditModel.setId(room.getId());
         roomEditModel.setRoom(room.getRoom());
         roomEditModel.setStudents(room.isStudents());
-        roomEditModel.setPeoples(room.getPeople());
+        roomEditModel.setPeople(room.getPeople());
         roomEditModel.setTypeId(room.getType().ordinal());
 
         model.addAttribute("roomModel", roomEditModel);
@@ -82,7 +82,7 @@ public class AdminRoomsController {
         room.setType(RoomType.values()[roomEditModel.getTypeId()]);
         room.setRoom(roomEditModel.getRoom());
         room.setStudents(roomEditModel.getStudents());
-        room.setPeople(roomEditModel.getPeoples());
+        room.setPeople(roomEditModel.getPeople());
         roomDao.save(room);
 
         LOG.info("edit room data to " + room);
