@@ -99,6 +99,7 @@ img {
 .ui-icon--cookie::before { content: "\f4ad"; }
 .ui-icon--rooms::before { content: "\f54d"; }
 .ui-icon--dryer::before { content: "\f56d"; }
+.ui-icon--document::before { content: "\f541"; }
 .ui-icon--home::before { content: "\f774"; }
 .ui-icon--residents::before { content: "\f788"; }
 .ui-icon--menu::before { content: "\f20d"; }

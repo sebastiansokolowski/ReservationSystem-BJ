@@ -39,6 +39,10 @@
                             <span class="topnav__icon ui-icon ui-icon--dryer" aria-hidden="true"></span>
                             <span th:text="#{nav.dryers}">Suszarki</span>
                         </a>
+                        <a class="topnav__link" th:href="@{/regulations}" href="/regulations">
+                            <span class="topnav__icon ui-icon ui-icon--document" aria-hidden="true"></span>
+                            <span th:text="#{nav.regulations}">Regulamin</span>
+                        </a>
                         <a class="topnav__link" sec:authorize="hasAnyAuthority('USER','ADMIN')"
                            th:href="@{/user/settings}" href="/user/settings">
                             <span class="topnav__icon ui-icon ui-icon--settings" aria-hidden="true"></span>
@@ -96,6 +100,10 @@
                             <a th:href="@{/td/week}" href="/td/week">
                                 <span class="mobile-menu__nav-icon ui-icon ui-icon--dryer" aria-hidden="true"></span>
                                 <span th:text="#{nav.dryerCalendar}">Kalendarz suszarek</span>
+                            </a>
+                            <a th:href="@{/regulations}" href="/regulations">
+                                <span class="mobile-menu__nav-icon ui-icon ui-icon--document" aria-hidden="true"></span>
+                                <span th:text="#{nav.regulations}">Regulamin</span>
                             </a>
                             <a sec:authorize="hasAnyAuthority('USER','ADMIN')" th:href="@{/user/settings}" href="/user/settings">
                                 <span class="mobile-menu__nav-icon ui-icon ui-icon--settings" aria-hidden="true"></span>

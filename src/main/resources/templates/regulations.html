@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="pl" th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+    <title th:text="#{title.regulations}">Regulamin | BJ Pralnia</title>
+    <th:block th:include="fragments/header :: header-css"></th:block>
+</head>
+<body>
+<div class="app-shell">
+    <div th:replace="fragments/header :: menu"></div>
+
+    <main class="page">
+        <div class="container">
+            <div class="page-head">
+                <div class="page-head__copy">
+                    <p class="eyebrow" th:text="#{brand.service}">Pralnia</p>
+                    <h1 th:text="#{regulations.heading}">Regulamin pralni</h1>
+                    <p class="lead" th:text="#{regulations.publicLead}">Zapoznaj się z aktualnymi zasadami korzystania z pralni.</p>
+                </div>
+            </div>
+
+            <section th:replace="user/regulations :: document"></section>
+        </div>
+    </main>
+
+    <div th:replace="fragments/footer :: footer"></div>
+</div>
+</body>
+</html>
