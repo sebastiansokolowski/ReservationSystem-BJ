@@ -1,0 +1,110 @@
+(function () {
+    "use strict";
+
+    function ready(callback) {
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", callback);
+        } else {
+            callback();
+        }
+    }
+
+    ready(function () {
+        var cookieBanner = document.querySelector("[data-cookie-banner]");
+        var cookieAccept = document.querySelector("[data-cookie-accept]");
+
+        if (cookieBanner && cookieAccept) {
+            var consentKey = "bj-cookie-consent";
+            var hasConsent = false;
+
+            try {
+                hasConsent = window.localStorage.getItem(consentKey) === "accepted";
+            } catch (error) {
+                hasConsent = document.cookie.indexOf("bj_cookie_consent=accepted") !== -1;
+            }
+
+            if (!hasConsent) {
+                cookieBanner.hidden = false;
+            }
+
+            cookieAccept.addEventListener("click", function () {
+                try {
+                    window.localStorage.setItem(consentKey, "accepted");
+                } catch (error) {
+                    document.cookie = "bj_cookie_consent=accepted; Max-Age=31536000; Path=/; SameSite=Lax";
+                }
+                cookieBanner.hidden = true;
+            });
+        }
+
+        var conditionalToggles = document.querySelectorAll("[data-enable-target]");
+        Array.prototype.forEach.call(conditionalToggles, function (toggle) {
+            var selectors = toggle.getAttribute("data-enable-target").split(",");
+            var update = function () {
+                selectors.forEach(function (selector) {
+                    var field = document.querySelector(selector.trim());
+                    if (field) {
+                        field.disabled = !toggle.checked;
+                    }
+                });
+            };
+            toggle.addEventListener("change", update);
+            update();
+        });
+
+        var forms = document.querySelectorAll("form[data-confirm]");
+        if (!forms.length) {
+            return;
+        }
+
+        var overlay = document.createElement("div");
+        overlay.className = "confirm-overlay";
+        overlay.setAttribute("role", "dialog");
+        overlay.setAttribute("aria-modal", "true");
+        overlay.innerHTML =
+            '<div class="confirm-box">' +
+                '<div class="confirm-box__icon">✓</div>' +
+                '<h2>Potwierdź operację</h2>' +
+                '<p class="muted" data-confirm-message></p>' +
+                '<div class="confirm-box__actions">' +
+                    '<button type="button" class="btn btn--secondary" data-confirm-cancel>Anuluj</button>' +
+                    '<button type="button" class="btn" data-confirm-submit>Potwierdź</button>' +
+                '</div>' +
+            '</div>';
+        document.body.appendChild(overlay);
+
+        var activeForm = null;
+        var message = overlay.querySelector("[data-confirm-message]");
+
+        Array.prototype.forEach.call(forms, function (form) {
+            form.addEventListener("submit", function (event) {
+                if (form.getAttribute("data-confirmed") === "true") {
+                    return;
+                }
+                event.preventDefault();
+                activeForm = form;
+                message.textContent = form.getAttribute("data-confirm");
+                overlay.classList.add("is-open");
+            });
+        });
+
+        overlay.querySelector("[data-confirm-cancel]").addEventListener("click", function () {
+            overlay.classList.remove("is-open");
+            activeForm = null;
+        });
+
+        overlay.querySelector("[data-confirm-submit]").addEventListener("click", function () {
+            if (activeForm) {
+                activeForm.setAttribute("data-confirmed", "true");
+                activeForm.submit();
+            }
+        });
+
+        overlay.addEventListener("click", function (event) {
+            if (event.target === overlay) {
+                overlay.classList.remove("is-open");
+                activeForm = null;
+            }
+        });
+    });
+}());

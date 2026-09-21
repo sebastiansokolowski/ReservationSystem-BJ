@@ -33,7 +33,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/user/regulations", "/user/registration", "/user/rodo", "/user/restorePassword", "/user/resetPassword", "/user/invalidToken",
                         "/images/*",
                         "/favicon.ico",
-                        "/js/*").permitAll()
+                        "/js/*",
+                        "/css/*").permitAll()
                 .antMatchers(
                         "/admin",
                         "/admin/*",
