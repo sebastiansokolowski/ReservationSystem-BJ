@@ -1139,19 +1139,27 @@ h3 {
     background: #fbfdff;
 }
 
-.summary-item span,
-.summary-item strong {
+.summary-item > span,
+.summary-item > strong,
+.summary-item > strong span {
     display: block;
 }
 
-.summary-item span {
+.summary-item > span {
     margin-bottom: 3px;
     color: var(--muted);
     font-size: 0.72rem;
 }
 
-.summary-item strong {
+.summary-item > strong {
     font-size: 0.9rem;
+    font-weight: 800;
+}
+
+.summary-item > strong span {
+    color: inherit;
+    font-size: inherit;
+    font-weight: inherit;
 }
 
 .device-grid {
