@@ -11,6 +11,8 @@ import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.Enumeration;
 import java.util.Locale;
 
 /**
@@ -19,14 +21,29 @@ import java.util.Locale;
 @Configuration
 public class MvcConfig extends WebMvcConfigurerAdapter {
 
+    private static final Locale POLISH = new Locale("pl");
+
     @Autowired
     private MessageSource messageSource;
 
     @Bean
     public LocaleResolver localeResolver() {
-        SessionLocaleResolver localeResolver = new SessionLocaleResolver();
-        localeResolver.setDefaultLocale(new Locale("pl"));
-        return localeResolver;
+        return new SessionLocaleResolver() {
+            @Override
+            protected Locale determineDefaultLocale(HttpServletRequest request) {
+                Enumeration<Locale> preferredLocales = request.getLocales();
+                while (preferredLocales.hasMoreElements()) {
+                    Locale locale = preferredLocales.nextElement();
+                    if (Locale.ENGLISH.getLanguage().equals(locale.getLanguage())) {
+                        return Locale.ENGLISH;
+                    }
+                    if (POLISH.getLanguage().equals(locale.getLanguage())) {
+                        return POLISH;
+                    }
+                }
+                return POLISH;
+            }
+        };
     }
 
     @Bean
