@@ -8,6 +8,7 @@ import bj.pranie.entity.User;
 import bj.pranie.entity.myEnum.ReservationType;
 import bj.pranie.service.UserAuthenticatedService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +23,7 @@ import java.util.List;
 /**
  * Created by Sebastian Sokolowski on 07.09.17.
  */
+@PreAuthorize("hasAuthority('ADMIN')")
 public abstract class BaseAdminWeekController extends BaseWeekController {
 
     @Autowired
@@ -153,4 +155,3 @@ public abstract class BaseAdminWeekController extends BaseWeekController {
     }
 
 }
-
