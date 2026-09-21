@@ -1,71 +1,60 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
-    <head>
-        <link rel="stylesheet"
-              href="//code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css"/>
-        <script src="//code.jquery.com/jquery-1.10.2.js"/>
-        <script src="//code.jquery.com/ui/1.11.2/jquery-ui.js"/>
-        <div th:include="fragments/header :: header-css"/>
-        <style>
-        table, th, td {
-            border: 1px solid #dddddd;
-            border-collapse: collapse;
-            text-align: left;
-            padding: 8px;
-        }
+<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Pokoje | BJ Pralnia</title>
+    <th:block th:include="fragments/header :: header-css"></th:block>
+</head>
+<body>
+<div class="app-shell">
+    <div th:replace="fragments/header :: menu"></div>
 
-        tr:nth-child(even) {
-          background-color: #dddddd;
-        }
+    <main class="page">
+        <div class="container">
+            <a class="link-back" th:href="@{/type}">Wróć do panelu</a>
+            <div class="page-head">
+                <div class="page-head__copy">
+                    <p class="eyebrow">Administracja</p>
+                    <h1>Pokoje</h1>
+                    <p class="lead">Zarządzaj pokojami i liczbą dostępnych miejsc dla mieszkańców.</p>
+                </div>
+                <span class="token-badge">Liczba pokojów: <strong th:text="${count}">0</strong></span>
+            </div>
 
-        .full-size{
-            width: 100%;
-            height: 100$;
-            display: inline-block;
-        }
+            <section class="surface table-card">
+                <div class="table-scroll">
+                    <table class="data-table">
+                        <thead>
+                        <tr>
+                            <th>Pokój</th>
+                            <th>Strefa</th>
+                            <th>Liczba miejsc</th>
+                            <th>Akcja</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="room : ${rooms}">
+                            <td><strong><span th:text="${room.room}">101</span><span th:text="${room.type}">A</span></strong></td>
+                            <td>
+                                <span class="status-pill" th:classappend="${room.students} ? '' : 'status-pill--danger'"
+                                      th:text="${room.students} ? 'Studencka' : 'Pozostała'">Studencka</span>
+                            </td>
+                            <td th:text="${room.people}">1</td>
+                            <td>
+                                <a class="btn btn--secondary btn--small"
+                                   th:href="@{/admin/rooms/edit/{id}(id=${room.id})}">Edytuj</a>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(rooms)}">
+                            <td colspan="4" class="muted">Brak pokojów do wyświetlenia.</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </main>
 
-
-        </style>
-    </head>
-    <body>
-        <div th:include="fragments/header :: menu"/>
-        <center>
-            <a th:href="@{/type}">Powrót</a>
-            <h1>
-                Lista pokojów
-            </h1>
-            <p>
-                Liczba pokojów: <span th:text="${count}"/>
-            </p>
-            <table style="margin-bottom: 100px;">
-                <tbody>
-                    <tr>
-                        <th align="center">Pokój</th>
-                        <th align="center">Część studencka</th>
-                        <th align="center">Liczba miejsc</th>
-                        <th align="center">Akcja</th>
-                    </tr>
-                    <tr class="room" th:each="room : ${rooms}">
-                        <th>
-                            <span th:text="${room.room}+${room.type}"/>
-                        </th>
-                        <th>
-                            <span th:text="${room.students}"/>
-                        </th>
-                        <th>
-                            <span th:text="${room.people}"/>
-                        </th>
-                        <th>
-                            <form th:action="@{/admin/rooms/edit/}+${room.id}" method="get">
-                                <input class="full-size" type="submit" value="Edytuj"/>
-                            </form>
-                        </th>
-                    </tr>
-                </tbody>
-            </table>
-        </center>
-    </body>
-    <footer>
-        <div th:replace="fragments/footer :: footer"/>
-    </footer>
+    <div th:replace="fragments/footer :: footer"></div>
+</div>
+</body>
 </html>

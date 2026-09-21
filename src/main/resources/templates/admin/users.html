@@ -1,125 +1,74 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
-    <head>
-        <link rel="stylesheet"
-              href="//code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css"/>
-        <script src="//code.jquery.com/jquery-1.10.2.js"/>
-        <script src="//code.jquery.com/ui/1.11.2/jquery-ui.js"/>
-        <div th:include="fragments/header :: header-css"/>
-        <style>
-        table, th, td {
-            border: 1px solid #dddddd;
-            border-collapse: collapse;
-            text-align: left;
-            padding: 8px;
-        }
+<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Użytkownicy | BJ Pralnia</title>
+    <th:block th:include="fragments/header :: header-css"></th:block>
+</head>
+<body>
+<div class="app-shell">
+    <div th:replace="fragments/header :: menu"></div>
 
-        tr:nth-child(even) {
-          background-color: #dddddd;
-        }
+    <main class="page">
+        <div class="container">
+            <a class="link-back" th:href="@{/type}">Wróć do panelu</a>
+            <div class="page-head">
+                <div class="page-head__copy">
+                    <p class="eyebrow">Administracja</p>
+                    <h1>Użytkownicy</h1>
+                    <p class="lead">Zarządzaj kontami mieszkańców, przydziałem pokojów i pulą tokenów.</p>
+                </div>
+                <span class="token-badge">Liczba kont: <strong th:text="${count}">0</strong></span>
+            </div>
 
-        .full-size{
-            width: 100%;
-            height: 100$;
-            display: inline-block;
-        }
-
-
-        </style>
-        <script>
-  $( function() {
-    $( ".delete" ).on( "click", function() {
-        var form = $( this ).closest("form");
-        var dialog = $( "#delete-confirm" ).dialog({
-              resizable: false,
-              height: "auto",
-              autoOpen: false,
-              width: 400,
-              modal: true,
-              buttons: {
-                "Usuń": function() {
-                  form.submit();
-                  $( this ).dialog( "close" );
-                },
-                "Anuluj" : function() {
-                  $( this ).dialog( "close" );
-                }
-              }
-        });
-
-        dialog.dialog( "open" );
-    });
-  } );
-
-
-        </script>
-    </head>
-    <body>
-        <div th:include="fragments/header :: menu"/>
-        <center>
-            <a th:href="@{/type}">Powrót</a>
-            <h1>
-                Lista użytkowników
-            </h1>
-            <p>
-                Liczba użytkowników: <span th:text="${count}"/>
-            </p>
-            <table style="margin-bottom: 100px;">
-                <tbody>
-                    <tr>
-                        <th align="center">Pokój</th>
-                        <th align="center">Imię</th>
-                        <th align="center">Nazwisko</th>
-                        <th align="center">Nazwa użytkownika</th>
-                        <th align="center">Email</th>
-                        <th align="center">Tokeny</th>
-                        <th align="center">Rola</th>
-                        <th align="center">Zablokowany</th>
-                        <th align="center">Akcja</th>
-                    </tr>
-                    <tr class="user" th:each="user : ${users}">
-                        <th>
-                            <span th:text="${user.room.room}+${user.room.type}"/>
-                        </th>
-                        <th>
-                            <span th:text="${user.name}"/>
-                        </th>
-                        <th>
-                            <span th:text="${user.surname}"/>
-                        </th>
-                        <th>
-                            <span th:text="${user.username}"/>
-                        </th>
-                        <th>
-                            <span th:text="${user.email}"/>
-                        </th>
-                        <th>
-                            <span th:text="${user.tokens}"/>
-                        </th>
-                        <th>
-                            <span th:text="${user.role}"/>
-                        </th>
-                        <th>
-                            <span th:text="${user.blocked}"/>
-                        </th>
-                        <th>
-                            <form th:action="@{/admin/users/delete/}+${user.id}" method="get">
-                                <input class="delete full-size" type="button" value="Usuń"/>
-                            </form>
-                            <form th:action="@{/admin/users/edit/}+${user.id}" method="get">
-                                <input class="full-size" type="submit" value="Edytuj"/>
-                            </form>
-                        </th>
-                    </tr>
-                </tbody>
-            </table>
-        </center>
-        <div id="delete-confirm" style="display: none" title="Usuwanie użytkownika">
-            <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>Czy na pewno
-                chcesz usunąć wybranego użytkownika?</p>
+            <section class="surface table-card">
+                <div class="table-scroll">
+                    <table class="data-table">
+                        <thead>
+                        <tr>
+                            <th>Pokój</th>
+                            <th>Imię i nazwisko</th>
+                            <th>Login</th>
+                            <th>E-mail</th>
+                            <th>Tokeny</th>
+                            <th>Rola</th>
+                            <th>Status</th>
+                            <th>Akcje</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="account : ${users}">
+                            <td><span th:text="${account.room.room}">101</span><span th:text="${account.room.type}">A</span></td>
+                            <td th:text="${account.name + ' ' + account.surname}">Jan Kowalski</td>
+                            <td th:text="${account.username}">login</td>
+                            <td th:text="${account.email}">email@example.com</td>
+                            <td><strong th:text="${account.tokens}">0</strong></td>
+                            <td th:text="${account.role}">USER</td>
+                            <td>
+                                <span class="status-pill" th:classappend="${account.blocked} ? 'status-pill--danger' : ''"
+                                      th:text="${account.blocked} ? 'Zablokowany' : 'Aktywny'">Aktywny</span>
+                            </td>
+                            <td>
+                                <div class="table-actions">
+                                    <a class="btn btn--secondary btn--small"
+                                       th:href="@{/admin/users/edit/{id}(id=${account.id})}">Edytuj</a>
+                                    <form th:action="@{/admin/users/delete/{id}(id=${account.id})}" method="get"
+                                          data-confirm="Czy na pewno chcesz usunąć tego użytkownika? Tej operacji nie można cofnąć.">
+                                        <button class="btn btn--danger btn--small" type="submit">Usuń</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(users)}">
+                            <td colspan="8" class="muted">Brak użytkowników do wyświetlenia.</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
         </div>
-    </body>
-    <footer>
-        <div th:replace="fragments/footer :: footer"/>
-    </footer>
+    </main>
+
+    <div th:replace="fragments/footer :: footer"></div>
+</div>
+</body>
 </html>
