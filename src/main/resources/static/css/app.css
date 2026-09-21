@@ -1349,6 +1349,16 @@ h3 {
     background: #fff;
 }
 
+.document-frame--expanded {
+    height: clamp(1800px, 430vw, 3600px);
+    overflow: hidden;
+}
+
+.document-frame--single-page {
+    height: clamp(760px, 145vw, 1220px);
+    overflow: hidden;
+}
+
 .legal-actions {
     position: sticky;
     bottom: 18px;

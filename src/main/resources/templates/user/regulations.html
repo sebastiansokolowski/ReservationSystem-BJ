@@ -19,10 +19,10 @@
             </div>
 
             <section class="surface panel" th:fragment="document">
-                <iframe class="document-frame"
+                <iframe class="document-frame document-frame--expanded"
                         title="Regulamin korzystania z pralni" th:title="#{regulations.documentTitle}"
                         src="https://docs.google.com/document/d/1UI-0DS33XgHRHhnsTIaK9tO7vb0ajt7g/preview"
-                        th:src="#{regulations.documentUrl}"></iframe>
+                        th:src="#{regulations.documentUrl}" scrolling="no"></iframe>
             </section>
 
             <form class="legal-actions" th:action="@{/user/rodo}" method="get">

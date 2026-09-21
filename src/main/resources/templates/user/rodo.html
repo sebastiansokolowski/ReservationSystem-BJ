@@ -20,10 +20,10 @@
             </div>
 
             <section class="surface panel">
-                <iframe class="document-frame"
+                <iframe class="document-frame document-frame--single-page"
                         title="Informacje RODO" th:title="#{privacy.documentTitle}"
                         src="https://docs.google.com/document/d/1xIxqpRonfvVgEbaKFVstjVxcJ1lSKuhg/preview"
-                        th:src="#{privacy.documentUrl}"></iframe>
+                        th:src="#{privacy.documentUrl}" scrolling="no"></iframe>
             </section>
 
             <form class="legal-actions" th:action="@{/user/registration}" method="get">
