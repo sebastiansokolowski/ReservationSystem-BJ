@@ -19,6 +19,8 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -58,6 +60,9 @@ public abstract class BaseReservationController {
     @Autowired
     private DeviceDao deviceDao;
 
+    @Autowired
+    private MessageSource messageSource;
+
     public abstract DeviceType getDeviceType();
 
     @RequestMapping(path = "/{year}/{month}/{day}/{reservationTimeId}", method = RequestMethod.GET)
@@ -89,11 +94,11 @@ public abstract class BaseReservationController {
                 user.setTokens(userTokens - 1);
                 userDao.save(user);
             } else {
-                modelAndView.addObject("errorMessage", "Brak tokenów.");
+                modelAndView.addObject("errorMessage", message("reservation.error.noTokens"));
             }
         } catch (ReservationAlreadyBookedException reservationAlreadyBookedException) {
             reservationAlreadyBookedException.printStackTrace();
-            modelAndView.addObject("errorMessage", "Niestety urządzenie jest już zarezerwowane.");
+            modelAndView.addObject("errorMessage", message("reservation.error.alreadyBooked"));
         }
 
         setModel(year, month, day, reservationTimeId, modelAndView);
@@ -121,7 +126,7 @@ public abstract class BaseReservationController {
                 user.setTokens(user.getTokens() + 1);
                 userDao.save(user);
             } else {
-                modelAndView.addObject("errorMessage", "Niestety jest już za późno aby się wyrejestrować.");
+                modelAndView.addObject("errorMessage", message("reservation.error.tooLate"));
                 LOG.info("cancel reservation too late " + reservation);
             }
         }
@@ -168,7 +173,7 @@ public abstract class BaseReservationController {
             makeReservation(user, year, month, day, reservationTimeId, deviceId, ReservationType.BLOCKED);
         } catch (ReservationAlreadyBookedException reservationAlreadyBookedException) {
             reservationAlreadyBookedException.printStackTrace();
-            modelAndView.addObject("errorMessage", "Niestety termin jest już zajęty.");
+            modelAndView.addObject("errorMessage", message("reservation.error.slotTaken"));
         }
 
         setModel(year, month, day, reservationTimeId, modelAndView);
@@ -310,22 +315,26 @@ public abstract class BaseReservationController {
     private String getDayName(LocalDate date) {
         switch (date.getDayOfWeek()) {
             case DateTimeConstants.MONDAY:
-                return "Poniedziałek";
+                return message("day.monday");
             case DateTimeConstants.TUESDAY:
-                return "Wtorek";
+                return message("day.tuesday");
             case DateTimeConstants.WEDNESDAY:
-                return "Środa";
+                return message("day.wednesday");
             case DateTimeConstants.THURSDAY:
-                return "Czwartek";
+                return message("day.thursday");
             case DateTimeConstants.FRIDAY:
-                return "Piątek";
+                return message("day.friday");
             case DateTimeConstants.SATURDAY:
-                return "Sobota";
+                return message("day.saturday");
             case DateTimeConstants.SUNDAY:
-                return "Niedziela";
+                return message("day.sunday");
             default:
                 return "Null";
 
         }
+    }
+
+    private String message(String code) {
+        return messageSource.getMessage(code, null, LocaleContextHolder.getLocale());
     }
 }

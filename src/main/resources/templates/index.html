@@ -1,34 +1,35 @@
 <!DOCTYPE html>
-<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<html lang="pl" th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org">
     <head>
-        <title>Logowanie | BJ Pralnia</title>
+        <title th:text="#{title.login}">Logowanie | BJ Pralnia</title>
         <th:block th:include="fragments/header :: header-css"></th:block>
     </head>
     <body>
         <main class="auth-page">
+            <div class="auth-language" th:replace="fragments/header :: language-switcher"></div>
             <section class="auth-shell" aria-labelledby="login-title">
                 <aside class="auth-visual">
                     <div class="auth-brand">
                         <span class="auth-brand__mark">
                             <img th:src="@{/images/logo-mark.jpg}" src="/images/logo-mark.jpg"
-                                 alt="Logo Bursy Jagiellońskiej"/>
+                                 alt="Logo Bursy Jagiellońskiej" th:alt="#{brand.logoAlt}"/>
                         </span>
-                        <span><strong>Bursa Jagiellońska</strong><span>Pralnia</span></span>
+                        <span><strong th:text="#{brand.name}">Bursa Jagiellońska</strong><span th:text="#{brand.service}">Pralnia</span></span>
                     </div>
                     <div class="auth-hero">
-                        <h1>Czyste ubrania.<br/>Lepsze jutro.</h1>
+                        <h1 th:utext="#{login.hero}">Czyste ubrania.<br/>Lepsze jutro.</h1>
                         <ul class="auth-benefits">
-                            <li><span class="benefit-icon">ϟ</span> Szybka rezerwacja w kilku kliknięciach</li>
-                            <li><span class="benefit-icon">◷</span> Dostęp do grafiku przez całą dobę</li>
-                            <li><span class="benefit-icon">⌂</span> Stworzone dla mieszkańców BJ</li>
+                            <li><span class="benefit-icon">ϟ</span> <span th:text="#{login.benefit.fast}">Szybka rezerwacja w kilku kliknięciach</span></li>
+                            <li><span class="benefit-icon">◷</span> <span th:text="#{login.benefit.access}">Dostęp do grafiku przez całą dobę</span></li>
+                            <li><span class="benefit-icon">⌂</span> <span th:text="#{login.benefit.residents}">Stworzone dla mieszkańców BJ</span></li>
                         </ul>
                     </div>
                 </aside>
 
                 <div class="auth-form-wrap">
-                    <p class="eyebrow">System rezerwacji</p>
-                    <h2 id="login-title">Zaloguj się</h2>
-                    <p class="muted">Wpisz swoje dane, aby przejść do kalendarza.</p>
+                    <p class="eyebrow" th:text="#{login.eyebrow}">System rezerwacji</p>
+                    <h2 id="login-title" th:text="#{login.heading}">Zaloguj się</h2>
+                    <p class="muted" th:text="#{login.lead}">Wpisz swoje dane, aby przejść do kalendarza.</p>
 
                     <div class="alert alert--danger"
                          th:if="${session[SPRING_SECURITY_LAST_EXCEPTION] != null and session[SPRING_SECURITY_LAST_EXCEPTION].message != null}"
@@ -38,28 +39,28 @@
 
                     <form class="form-stack" th:action="@{/login}" action="/login" method="post">
                         <div class="field">
-                            <label for="username">Login lub adres e-mail</label>
+                            <label for="username" th:text="#{login.username}">Login lub adres e-mail</label>
                             <input id="username" type="text" name="username" autocomplete="username"
-                                   placeholder="np. 17b" required="required" autofocus="autofocus"/>
+                                   placeholder="np. 17b" th:placeholder="#{login.usernamePlaceholder}" required="required" autofocus="autofocus"/>
                         </div>
                         <div class="field">
-                            <label for="password">Hasło</label>
+                            <label for="password" th:text="#{login.password}">Hasło</label>
                             <input id="password" type="password" name="password" autocomplete="current-password"
-                                   placeholder="Wpisz hasło" required="required"/>
+                                   placeholder="Wpisz hasło" th:placeholder="#{login.passwordPlaceholder}" required="required"/>
                         </div>
-                        <button class="btn btn--block" type="submit">Zaloguj się →</button>
+                        <button class="btn btn--block" type="submit" th:text="#{login.submit}">Zaloguj się →</button>
                         <a class="guest-calendar-link" th:href="@{/type}" href="/type">
-                            Zobacz kalendarz bez logowania
+                            <span th:text="#{login.guest}">Zobacz kalendarz bez logowania</span>
                         </a>
                     </form>
 
                     <div class="auth-links">
-                        <a th:href="@{/user/restorePassword}" href="/user/restorePassword">Nie pamiętasz hasła?</a>
-                        <a th:href="@{/user/regulations}" href="/user/regulations">Utwórz konto</a>
+                        <a th:href="@{/user/restorePassword}" href="/user/restorePassword" th:text="#{login.forgot}">Nie pamiętasz hasła?</a>
+                        <a th:href="@{/user/regulations}" href="/user/regulations" th:text="#{login.create}">Utwórz konto</a>
                     </div>
 
                     <div class="alert alert--info" th:if="${message}" th:utext="${message}"></div>
-                    <div class="alert alert--info" th:if="${holidays}">
+                    <div class="alert alert--info" th:if="${holidays}" th:text="#{login.holidays}">
                         Tryb wakacyjny jest aktywny. Zaloguj się numerem pokoju; domyślne hasło to „bursa”.
                     </div>
                 </div>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="pl" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<html lang="pl" th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
     <head>
-        <title>Wybór urządzenia | BJ Pralnia</title>
+        <title th:text="#{title.deviceSelection}">Wybór urządzenia | BJ Pralnia</title>
         <th:block th:include="fragments/header :: header-css"></th:block>
     </head>
     <body>
@@ -9,21 +9,21 @@
             <div th:include="fragments/header :: menu"></div>
             <main class="page">
                 <div class="container">
-                    <a class="link-back" th:href="${backPath}" href="/type">Wróć do kalendarza</a>
+                    <a class="link-back" th:href="${backPath}" href="/type" th:text="#{reservation.back}">Wróć do kalendarza</a>
                     <div class="page-head">
                         <div class="page-head__copy">
-                            <p class="eyebrow">Dostępne urządzenia</p>
-                            <h1>Wybierz urządzenie</h1>
-                            <p class="lead">Sprawdź szczegóły terminu i zarezerwuj wolne urządzenie.</p>
+                            <p class="eyebrow" th:text="#{reservation.eyebrow}">Dostępne urządzenia</p>
+                            <h1 th:text="#{reservation.heading}">Wybierz urządzenie</h1>
+                            <p class="lead" th:text="#{reservation.lead}">Sprawdź szczegóły terminu i zarezerwuj wolne urządzenie.</p>
                         </div>
-                        <div class="token-badge">Wolne urządzenia: <span th:text="${freeDevices}">0</span></div>
+                        <div class="token-badge"><span th:text="#{reservation.freeDevices}">Wolne urządzenia:</span> <span th:text="${freeDevices}">0</span></div>
                     </div>
 
                     <section class="surface panel">
-                        <h2>Wybrany termin</h2>
+                        <h2 th:text="#{reservation.selected}">Wybrany termin</h2>
                         <div class="reservation-summary">
-                            <div class="summary-item"><span>Dzień</span><strong><span th:text="${dayName}">Poniedziałek</span><span th:text="${date}">2026/09/21</span></strong></div>
-                            <div class="summary-item"><span>Godzina</span><strong th:text="${time}">18:00 - 19:00</strong></div>
+                            <div class="summary-item"><span th:text="#{reservation.day}">Dzień</span><strong><span th:text="${dayName}">Poniedziałek</span><span th:text="${date}">2026/09/21</span></strong></div>
+                            <div class="summary-item"><span th:text="#{reservation.time}">Godzina</span><strong th:text="${time}">18:00 - 19:00</strong></div>
                         </div>
                     </section>
 
@@ -31,62 +31,62 @@
                         <span th:text="${errorMessage}">Nie udało się wykonać operacji.</span>
                     </div>
 
-                    <section class="device-grid" aria-label="Urządzenia">
+                    <section class="device-grid" aria-label="Urządzenia" th:attr="aria-label=#{reservation.devices}">
                         <article class="device-card" th:each="device : ${devices}"
                                  th:classappend="${device.type.name() == 'FREE'} ? 'device-card--free' : (${device.type.name() == 'MY'} ? 'device-card--mine' : (${device.type.name() == 'PAST'} ? 'device-card--past' : (${device.type.name() == 'UNAVAILABLE'} ? 'device-card--unavailable' : 'device-card--busy'))) ">
                             <span class="device-card__status" th:switch="${device.type.name()}">
-                                <span th:case="FREE">Wolne</span>
-                                <span th:case="MY">Twój termin</span>
-                                <span th:case="RESERVED">Zajęte</span>
-                                <span th:case="PAST">Termin minął</span>
-                                <span th:case="UNAVAILABLE">Niedostępne</span>
+                                <span th:case="FREE" th:text="#{reservation.status.free}">Wolne</span>
+                                <span th:case="MY" th:text="#{reservation.status.mine}">Twój termin</span>
+                                <span th:case="RESERVED" th:text="#{reservation.status.reserved}">Zajęte</span>
+                                <span th:case="PAST" th:text="#{reservation.status.past}">Termin minął</span>
+                                <span th:case="UNAVAILABLE" th:text="#{reservation.status.unavailable}">Niedostępne</span>
                             </span>
 
                             <img class="device-card__image" th:if="${device.deviceType.name() == 'WASHING_MACHINE'}"
-                                 th:src="@{/images/washer.png}" src="/images/washer.png" alt="Pralka"/>
+                                 th:src="@{/images/washer.png}" src="/images/washer.png" alt="Pralka" th:alt="#{device.washer}"/>
                             <img class="device-card__image" th:if="${device.deviceType.name() == 'TUMBLE_DRYER'}"
-                                 th:src="@{/images/dryer.png}" src="/images/dryer.png" alt="Suszarka"/>
+                                 th:src="@{/images/dryer.png}" src="/images/dryer.png" alt="Suszarka" th:alt="#{device.dryer}"/>
 
                             <div class="device-card__name" th:text="${device.name}">Urządzenie</div>
                             <div class="device-card__owner" th:if="${device.user != null}">
                                 <span th:if="${device.user.name != null}" th:text="${device.user.name}">Mieszkaniec</span>
-                                <span th:if="${device.user.room != null}"> · pokój <span th:text="${device.user.room.room}">17</span><span th:text="${device.user.room.type}">B</span></span>
+                                <span th:if="${device.user.room != null}"> <span th:text="#{reservation.room}">· pokój</span> <span th:text="${device.user.room.room}">17</span><span th:text="${device.user.room.type}">B</span></span>
                             </div>
                             <div class="device-card__owner" th:if="${device.user == null}">
-                                <span th:if="${device.type.name() == 'FREE'}">Gotowe do rezerwacji</span>
-                                <span th:if="${device.type.name() == 'UNAVAILABLE'}">Zablokowane przez administrację</span>
+                                <span th:if="${device.type.name() == 'FREE'}" th:text="#{reservation.ready}">Gotowe do rezerwacji</span>
+                                <span th:if="${device.type.name() == 'UNAVAILABLE'}" th:text="#{reservation.blockedByAdmin}">Zablokowane przez administrację</span>
                             </div>
 
                             <div class="device-card__actions">
                                 <div th:if="${device.type.name() == 'FREE'}">
                                     <div sec:authorize="hasAnyAuthority('USER','ADMIN','GROUP')" th:if="${user.tokens > 0}">
-                                        <form th:action="@{register}" method="post" data-confirm="Potwierdzić rezerwację tego urządzenia w wybranym terminie?">
+                                        <form th:action="@{register}" method="post" data-confirm="Potwierdzić rezerwację tego urządzenia w wybranym terminie?" th:attr="data-confirm=#{reservation.confirm.book}">
                                             <input type="hidden" name="deviceId" th:value="${device.id}"/>
-                                            <button class="btn btn--block" type="submit">Zarezerwuj</button>
+                                            <button class="btn btn--block" type="submit" th:text="#{reservation.book}">Zarezerwuj</button>
                                         </form>
                                     </div>
                                     <div sec:authorize="isAnonymous()">
-                                        <a class="btn btn--block" th:href="@{/login}" href="/login">Zaloguj się, aby zarezerwować</a>
+                                        <a class="btn btn--block" th:href="@{/login}" href="/login" th:text="#{reservation.loginToBook}">Zaloguj się, aby zarezerwować</a>
                                     </div>
                                     <div sec:authorize="hasAuthority('ADMIN')">
-                                        <form th:action="@{block}" method="post" data-confirm="Zablokować to urządzenie w wybranym terminie?">
+                                        <form th:action="@{block}" method="post" data-confirm="Zablokować to urządzenie w wybranym terminie?" th:attr="data-confirm=#{reservation.confirm.block}">
                                             <input type="hidden" name="deviceId" th:value="${device.id}"/>
-                                            <button class="btn btn--danger btn--block" type="submit">Zablokuj termin</button>
+                                            <button class="btn btn--danger btn--block" type="submit" th:text="#{reservation.block}">Zablokuj termin</button>
                                         </form>
                                     </div>
                                 </div>
 
                                 <div th:if="${device.type.name() == 'MY'}" sec:authorize="hasAnyAuthority('USER','ADMIN')">
-                                    <form th:action="@{unregister}" method="post" data-confirm="Czy na pewno chcesz anulować tę rezerwację?">
+                                    <form th:action="@{unregister}" method="post" data-confirm="Czy na pewno chcesz anulować tę rezerwację?" th:attr="data-confirm=#{reservation.confirm.cancel}">
                                         <input type="hidden" name="reservationId" th:value="${device.reservationId}"/>
-                                        <button class="btn btn--danger btn--block" type="submit">Anuluj rezerwację</button>
+                                        <button class="btn btn--danger btn--block" type="submit" th:text="#{reservation.cancel}">Anuluj rezerwację</button>
                                     </form>
                                 </div>
 
                                 <div th:if="${device.type.name() == 'UNAVAILABLE' or device.type.name() == 'RESERVED'}" sec:authorize="hasAuthority('ADMIN')">
-                                    <form th:action="@{remove}" method="post" data-confirm="Usunąć tę rezerwację lub blokadę?">
+                                    <form th:action="@{remove}" method="post" data-confirm="Usunąć tę rezerwację lub blokadę?" th:attr="data-confirm=#{reservation.confirm.remove}">
                                         <input type="hidden" name="reservationId" th:value="${device.reservationId}"/>
-                                        <button class="btn btn--danger btn--block" type="submit">Usuń wpis</button>
+                                        <button class="btn btn--danger btn--block" type="submit" th:text="#{reservation.remove}">Usuń wpis</button>
                                     </form>
                                 </div>
                             </div>

@@ -5,6 +5,8 @@ import bj.pranie.dao.UserDao;
 import bj.pranie.entity.User;
 import bj.pranie.entity.myEnum.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -31,6 +33,9 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private MessageSource messageSource;
+
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String usernameOrEmail = authentication.getName();
@@ -39,15 +44,15 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         User user = getUser(usernameOrEmail);
 
         if (user == null) {
-            throw new BadCredentialsException("Nieprawidłowy login lub email");
+            throw new BadCredentialsException(message("auth.invalidUser"));
         }
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new BadCredentialsException("Nieprawidłowe hasło");
+            throw new BadCredentialsException(message("auth.invalidPassword"));
         }
 
         if (user.isBlocked()) {
-            throw new UserBlockedException("Konto zostało zablokowane");
+            throw new UserBlockedException(message("auth.blocked"));
         }
 
         return new UsernamePasswordAuthenticationToken(user, password, getUserGrantedAuthority(user));
@@ -84,5 +89,9 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     public boolean supports(Class<?> authentication) {
         return authentication.equals(
                 UsernamePasswordAuthenticationToken.class);
+    }
+
+    private String message(String code) {
+        return messageSource.getMessage(code, null, LocaleContextHolder.getLocale());
     }
 }

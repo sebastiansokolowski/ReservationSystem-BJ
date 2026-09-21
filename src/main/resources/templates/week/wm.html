@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="pl" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<html lang="pl" th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
     <head>
-        <title>Kalendarz pralek | BJ Pralnia</title>
+        <title th:text="#{title.washerCalendar}">Kalendarz pralek | BJ Pralnia</title>
         <th:block th:include="fragments/header :: header-css"></th:block>
     </head>
     <body>
@@ -9,29 +9,29 @@
             <div th:include="fragments/header :: menu"></div>
             <main class="page">
                 <div class="container">
-                    <a class="link-back" th:href="@{/type}" href="/type">Wybór urządzenia</a>
+                    <a class="link-back" th:href="@{/type}" href="/type" th:text="#{calendar.back}">Wybór urządzenia</a>
                     <div class="page-head">
                         <div class="page-head__copy">
-                            <p class="eyebrow">Kalendarz pralni</p>
-                            <h1>Wybierz termin prania</h1>
-                            <p class="lead">Tydzień <strong th:text="${weekFrame}">2026/09/21 - 2026/09/27</strong> · wolnych miejsc: <strong th:text="${freeDevices}">0</strong></p>
+                            <p class="eyebrow" th:text="#{calendar.eyebrow}">Kalendarz pralni</p>
+                            <h1 th:text="#{calendar.washerHeading}">Wybierz termin prania</h1>
+                            <p class="lead"><span th:text="#{calendar.week}">Tydzień</span> <strong th:text="${weekFrame}">2026/09/21 - 2026/09/27</strong> · <span th:text="#{calendar.freePlaces}">wolnych miejsc:</span> <strong th:text="${freeDevices}">0</strong></p>
                         </div>
-                        <div class="segmented" aria-label="Rodzaj urządzenia">
-                            <a class="is-active" th:href="@{/wm/week}" href="/wm/week">Pralki</a>
-                            <a th:href="@{/td/week}" href="/td/week">Suszarki</a>
+                        <div class="segmented" aria-label="Rodzaj urządzenia" th:attr="aria-label=#{calendar.deviceType}">
+                            <a class="is-active" th:href="@{/wm/week}" href="/wm/week" th:text="#{nav.washers}">Pralki</a>
+                            <a th:href="@{/td/week}" href="/td/week" th:text="#{nav.dryers}">Suszarki</a>
                         </div>
                     </div>
 
                     <div class="calendar-toolbar">
                         <div class="calendar-nav" sec:authorize="hasAuthority('ADMIN')">
-                            <a class="btn btn--secondary btn--small" th:href="@{/admin/wm/week/__${prevWeekId}__}">← Poprzedni</a>
-                            <a class="btn btn--secondary btn--small" th:href="@{/admin/wm/week/__${nextWeekId}__}">Następny →</a>
+                            <a class="btn btn--secondary btn--small" th:href="@{/admin/wm/week/__${prevWeekId}__}" th:text="#{calendar.previous}">← Poprzedni</a>
+                            <a class="btn btn--secondary btn--small" th:href="@{/admin/wm/week/__${nextWeekId}__}" th:text="#{calendar.next}">Następny →</a>
                         </div>
                         <div class="calendar-nav" sec:authorize="!hasAuthority('ADMIN')">
-                            <a class="btn btn--secondary btn--small" th:if="${prevWeekButton}" th:href="@{/wm/week/last}">← Poprzedni</a>
-                            <a class="btn btn--secondary btn--small" th:if="${nextWeekButton}" th:href="@{/wm/week/}">Następny →</a>
+                            <a class="btn btn--secondary btn--small" th:if="${prevWeekButton}" th:href="@{/wm/week/last}" th:text="#{calendar.previous}">← Poprzedni</a>
+                            <a class="btn btn--secondary btn--small" th:if="${nextWeekButton}" th:href="@{/wm/week/}" th:text="#{calendar.next}">Następny →</a>
                         </div>
-                        <span class="muted">Kliknij termin, aby zobaczyć dostępne pralki.</span>
+                        <span class="muted" th:text="#{calendar.washerHint}">Kliknij termin, aby zobaczyć dostępne pralki.</span>
                     </div>
 
                     <section class="surface calendar-card">
@@ -39,11 +39,11 @@
                             <table class="calendar-table">
                                 <thead>
                                     <tr>
-                                        <th>Godzina</th>
+                                        <th th:text="#{calendar.time}">Godzina</th>
                                         <th th:each="dayDate,day : ${timesWeek[0].dates}">
                                             <span th:switch="${day.index}">
-                                                <span th:case="0">Poniedziałek</span><span th:case="1">Wtorek</span><span th:case="2">Środa</span>
-                                                <span th:case="3">Czwartek</span><span th:case="4">Piątek</span><span th:case="5">Sobota</span>
+                                                <span th:case="0" th:text="#{day.monday}">Poniedziałek</span><span th:case="1" th:text="#{day.tuesday}">Wtorek</span><span th:case="2" th:text="#{day.wednesday}">Środa</span>
+                                                <span th:case="3" th:text="#{day.thursday}">Czwartek</span><span th:case="4" th:text="#{day.friday}">Piątek</span><span th:case="5" th:text="#{day.saturday}">Sobota</span>
                                             </span>
                                             <span class="calendar-table__date" th:text="${dayDate.date}">2026/09/21</span>
                                         </th>
@@ -56,10 +56,10 @@
                                             <form class="slot-form" th:action="@{/wm/__${date.date}__/__${i.count}__/}" method="get">
                                                 <button class="slot" type="submit"
                                                         th:classappend="${date.color == '#ffdb0c'} ? 'slot--mine' : (${date.freeDevices > 0} ? 'slot--free' : 'slot--busy')">
-                                                    <span class="slot__state" th:if="${date.color == '#ffdb0c'}">Twój termin</span>
-                                                    <span class="slot__state" th:if="${date.color != '#ffdb0c' and date.freeDevices > 0}">Wolne</span>
-                                                    <span class="slot__state" th:if="${date.color != '#ffdb0c' and date.freeDevices == 0}">Zajęte</span>
-                                                    <span class="slot__count" th:if="${date.freeDevices > 0}" th:text="${'Dostępne: ' + date.freeDevices}">Dostępne</span>
+                                                    <span class="slot__state" th:if="${date.color == '#ffdb0c'}" th:text="#{calendar.mine}">Twój termin</span>
+                                                    <span class="slot__state" th:if="${date.color != '#ffdb0c' and date.freeDevices > 0}" th:text="#{calendar.free}">Wolne</span>
+                                                    <span class="slot__state" th:if="${date.color != '#ffdb0c' and date.freeDevices == 0}" th:text="#{calendar.busy}">Zajęte</span>
+                                                    <span class="slot__count" th:if="${date.freeDevices > 0}" th:text="#{calendar.available(${date.freeDevices})}">Dostępne</span>
                                                 </button>
                                             </form>
                                         </td>
@@ -70,30 +70,30 @@
                     </section>
 
                     <div class="legend">
-                        <span class="legend__item"><span class="legend__swatch legend__swatch--free"></span> Wolny termin</span>
-                        <span class="legend__item"><span class="legend__swatch legend__swatch--busy"></span> Zajęty lub nieaktualny</span>
-                        <span class="legend__item" sec:authorize="isAuthenticated()"><span class="legend__swatch legend__swatch--mine"></span> Twój termin</span>
+                        <span class="legend__item"><span class="legend__swatch legend__swatch--free"></span> <span th:text="#{calendar.legend.free}">Wolny termin</span></span>
+                        <span class="legend__item"><span class="legend__swatch legend__swatch--busy"></span> <span th:text="#{calendar.legend.busy}">Zajęty lub nieaktualny</span></span>
+                        <span class="legend__item" sec:authorize="isAuthenticated()"><span class="legend__swatch legend__swatch--mine"></span> <span th:text="#{calendar.legend.mine}">Twój termin</span></span>
                     </div>
 
                     <section sec:authorize="hasAuthority('ADMIN')" class="admin-tools">
-                        <h2>Zarządzanie dostępnością</h2>
-                        <p class="muted">Zablokuj lub odblokuj wybrane pralki na cały dzień.</p>
+                        <h2 th:text="#{calendar.availability}">Zarządzanie dostępnością</h2>
+                        <p class="muted" th:text="#{calendar.washerAdminHint}">Zablokuj lub odblokuj wybrane pralki na cały dzień.</p>
                         <div class="admin-day-grid">
                             <details class="admin-day" th:each="dayDate : ${timesWeek[0].dates}">
                                 <summary th:text="${dayDate.date}">Data</summary>
-                                <form th:action="@{/admin/wm/week/__${weekId}__/block}" method="post" data-confirm="Zablokować wybrane pralki na cały dzień?">
+                                <form th:action="@{/admin/wm/week/__${weekId}__/block}" method="post" data-confirm="Zablokować wybrane pralki na cały dzień?" th:attr="data-confirm=#{calendar.confirm.blockWashers}">
                                     <input type="hidden" name="date" th:value="${dayDate.date}"/>
                                     <div class="device-checks">
                                         <label th:each="device : ${devices}"><input type="checkbox" name="deviceIds" th:value="${device.id}"/> <span th:text="${device.name}">Urządzenie</span></label>
                                     </div>
-                                    <button class="btn btn--danger btn--small" type="submit">Zablokuj</button>
+                                    <button class="btn btn--danger btn--small" type="submit" th:text="#{calendar.block}">Zablokuj</button>
                                 </form>
-                                <form th:action="@{/admin/wm/week/__${weekId}__/unblock}" method="post" data-confirm="Odblokować wybrane pralki?">
+                                <form th:action="@{/admin/wm/week/__${weekId}__/unblock}" method="post" data-confirm="Odblokować wybrane pralki?" th:attr="data-confirm=#{calendar.confirm.unblockWashers}">
                                     <div class="device-checks">
                                         <input type="hidden" name="date" th:value="${dayDate.date}"/>
                                         <label th:each="device : ${devices}"><input type="checkbox" name="deviceIds" th:value="${device.id}"/> <span th:text="${device.name}">Urządzenie</span></label>
                                     </div>
-                                    <button class="btn btn--secondary btn--small" type="submit">Odblokuj</button>
+                                    <button class="btn btn--secondary btn--small" type="submit" th:text="#{calendar.unblock}">Odblokuj</button>
                                 </form>
                             </details>
                         </div>

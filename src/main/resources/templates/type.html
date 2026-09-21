@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="pl" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<html lang="pl" th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
     <head>
-        <title>Rezerwacje | BJ Pralnia</title>
+        <title th:text="#{title.reservations}">Rezerwacje | BJ Pralnia</title>
         <th:block th:include="fragments/header :: header-css"></th:block>
     </head>
     <body>
@@ -11,46 +11,46 @@
                 <div class="container">
                     <div class="welcome-strip">
                         <div>
-                            <p class="eyebrow">Rezerwacje pralni</p>
-                            <h1 sec:authorize="isAuthenticated()" th:if="${user != null and user.name != null}">Dzień dobry, <span th:text="${user.name}">Mieszkańcu</span>! 👋</h1>
-                            <h1 sec:authorize="isAuthenticated()" th:if="${user != null and user.name == null and user.room != null}">Dzień dobry, <span th:text="${user.room.room}">17</span><span th:text="${user.room.type}">B</span>! 👋</h1>
-                            <h1 sec:authorize="isAnonymous()">Znajdź dogodny termin</h1>
-                            <p class="lead">Wybierz rodzaj urządzenia, a następnie wolną godzinę w tygodniowym kalendarzu.</p>
+                            <p class="eyebrow" th:text="#{type.eyebrow}">Rezerwacje pralni</p>
+                            <h1 sec:authorize="isAuthenticated()" th:if="${user != null and user.name != null}"><span th:text="#{type.greeting}">Dzień dobry</span>, <span th:text="${user.name}">Mieszkańcu</span>! 👋</h1>
+                            <h1 sec:authorize="isAuthenticated()" th:if="${user != null and user.name == null and user.room != null}"><span th:text="#{type.greeting}">Dzień dobry</span>, <span th:text="${user.room.room}">17</span><span th:text="${user.room.type}">B</span>! 👋</h1>
+                            <h1 sec:authorize="isAnonymous()" th:text="#{type.guestHeading}">Znajdź dogodny termin</h1>
+                            <p class="lead" th:text="#{type.lead}">Wybierz rodzaj urządzenia, a następnie wolną godzinę w tygodniowym kalendarzu.</p>
                         </div>
                         <div sec:authorize="isAuthenticated()" th:if="${user != null}" class="token-badge">
-                            Dostępne tokeny: <span th:text="${user.tokens}">0</span>
+                            <span th:text="#{type.availableTokens}">Dostępne tokeny:</span> <span th:text="${user.tokens}">0</span>
                         </div>
                     </div>
 
-                    <section class="service-grid" aria-label="Wybór urządzenia">
+                    <section class="service-grid" aria-label="Wybór urządzenia" th:attr="aria-label=#{type.deviceChoice}">
                         <a class="service-card" th:href="@{/wm/week}" href="/wm/week">
                             <div>
-                                <span class="eyebrow">Rezerwacja</span>
-                                <h2>Pralki <span class="service-card__arrow">→</span></h2>
-                                <span class="muted">Sprawdź dostępne pralki i wybierz godzinę.</span>
-                                <span class="service-card__meta">● Zobacz tygodniowy grafik</span>
+                                <span class="eyebrow" th:text="#{type.reservation}">Rezerwacja</span>
+                                <h2><span th:text="#{type.washers}">Pralki</span> <span class="service-card__arrow">→</span></h2>
+                                <span class="muted" th:text="#{type.washersLead}">Sprawdź dostępne pralki i wybierz godzinę.</span>
+                                <span class="service-card__meta" th:text="#{type.weekSchedule}">● Zobacz tygodniowy grafik</span>
                             </div>
                             <span class="service-card__icon-wrap">
-                                <img class="service-card__icon" th:src="@{/images/washer.png}" src="/images/washer.png" alt="Pralka"/>
+                                <img class="service-card__icon" th:src="@{/images/washer.png}" src="/images/washer.png" alt="Pralka" th:alt="#{device.washer}"/>
                             </span>
                         </a>
                         <a class="service-card" th:href="@{/td/week}" href="/td/week">
                             <div>
-                                <span class="eyebrow">Rezerwacja</span>
-                                <h2>Suszarki <span class="service-card__arrow">→</span></h2>
-                                <span class="muted">Znajdź wolną suszarkę po zakończeniu prania.</span>
-                                <span class="service-card__meta">● Zobacz tygodniowy grafik</span>
+                                <span class="eyebrow" th:text="#{type.reservation}">Rezerwacja</span>
+                                <h2><span th:text="#{type.dryers}">Suszarki</span> <span class="service-card__arrow">→</span></h2>
+                                <span class="muted" th:text="#{type.dryersLead}">Znajdź wolną suszarkę po zakończeniu prania.</span>
+                                <span class="service-card__meta" th:text="#{type.weekSchedule}">● Zobacz tygodniowy grafik</span>
                             </div>
                             <span class="service-card__icon-wrap">
-                                <img class="service-card__icon" th:src="@{/images/dryer.png}" src="/images/dryer.png" alt="Suszarka"/>
+                                <img class="service-card__icon" th:src="@{/images/dryer.png}" src="/images/dryer.png" alt="Suszarka" th:alt="#{device.dryer}"/>
                             </span>
                         </a>
                     </section>
 
-                    <section class="feature-strip" aria-label="Najważniejsze możliwości">
-                        <div class="feature-tile"><strong>Pełny tydzień</strong><span>Wszystkie terminy na jednym ekranie.</span></div>
-                        <div class="feature-tile"><strong>Szybka rezerwacja</strong><span>Wybierasz termin i urządzenie.</span></div>
-                        <div class="feature-tile"><strong>Wygodnie na telefonie</strong><span>Responsywny widok zawsze pod ręką.</span></div>
+                    <section class="feature-strip" aria-label="Najważniejsze możliwości" th:attr="aria-label=#{type.features}">
+                        <div class="feature-tile"><strong th:text="#{type.feature.week}">Pełny tydzień</strong><span th:text="#{type.feature.weekText}">Wszystkie terminy na jednym ekranie.</span></div>
+                        <div class="feature-tile"><strong th:text="#{type.feature.fast}">Szybka rezerwacja</strong><span th:text="#{type.feature.fastText}">Wybierasz termin i urządzenie.</span></div>
+                        <div class="feature-tile"><strong th:text="#{type.feature.mobile}">Wygodnie na telefonie</strong><span th:text="#{type.feature.mobileText}">Responsywny widok zawsze pod ręką.</span></div>
                     </section>
                 </div>
             </main>
