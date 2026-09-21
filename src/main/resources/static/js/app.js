@@ -64,14 +64,21 @@
         overlay.innerHTML =
             '<div class="confirm-box">' +
                 '<div class="confirm-box__icon">✓</div>' +
-                '<h2>Potwierdź operację</h2>' +
+                '<h2 data-confirm-title></h2>' +
                 '<p class="muted" data-confirm-message></p>' +
                 '<div class="confirm-box__actions">' +
-                    '<button type="button" class="btn btn--secondary" data-confirm-cancel>Anuluj</button>' +
-                    '<button type="button" class="btn" data-confirm-submit>Potwierdź</button>' +
+                    '<button type="button" class="btn btn--secondary" data-confirm-cancel></button>' +
+                    '<button type="button" class="btn" data-confirm-submit></button>' +
                 '</div>' +
             '</div>';
         document.body.appendChild(overlay);
+
+        var confirmTitle = document.querySelector('meta[name="i18n-confirm-title"]');
+        var confirmCancel = document.querySelector('meta[name="i18n-confirm-cancel"]');
+        var confirmSubmit = document.querySelector('meta[name="i18n-confirm-submit"]');
+        overlay.querySelector("[data-confirm-title]").textContent = confirmTitle ? confirmTitle.content : "Confirm action";
+        overlay.querySelector("[data-confirm-cancel]").textContent = confirmCancel ? confirmCancel.content : "Cancel";
+        overlay.querySelector("[data-confirm-submit]").textContent = confirmSubmit ? confirmSubmit.content : "Confirm";
 
         var activeForm = null;
         var message = overlay.querySelector("[data-confirm-message]");

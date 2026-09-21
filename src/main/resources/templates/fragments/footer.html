@@ -1,24 +1,24 @@
 <!DOCTYPE html>
-<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<html lang="pl" th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org">
     <body>
         <footer th:fragment="footer" class="site-footer">
-            <span>BJ Pranie — czysto, wygodnie, po studencku.</span>
+            <span th:text="#{footer.tagline}">BJ Pranie — czysto, wygodnie, po studencku.</span>
             <span class="icon-credit">
-                Ikony:
-                <a href="https://www.flaticon.com/free-icons/washer" target="_blank" rel="noopener noreferrer">pralka — xnimrodx / Flaticon</a>,
-                <a href="https://www.flaticon.com/free-icons/dryer" target="_blank" rel="noopener noreferrer">suszarka — photo3idea_studio / Flaticon</a>.
+                <span th:text="#{footer.icons}">Ikony:</span>
+                <a href="https://www.flaticon.com/free-icons/washer" target="_blank" rel="noopener noreferrer" th:text="#{footer.washerCredit}">pralka — xnimrodx / Flaticon</a>,
+                <a href="https://www.flaticon.com/free-icons/dryer" target="_blank" rel="noopener noreferrer" th:text="#{footer.dryerCredit}">suszarka — photo3idea_studio / Flaticon</a>.
             </span>
 
             <aside class="cookie-banner" data-cookie-banner="data-cookie-banner" role="dialog"
-                   aria-label="Informacja o plikach cookie" aria-live="polite" hidden="hidden">
+                   aria-label="Informacja o plikach cookie" th:attr="aria-label=#{cookie.aria}" aria-live="polite" hidden="hidden">
                 <div class="cookie-banner__content">
                     <div class="cookie-banner__icon" aria-hidden="true">🍪</div>
                     <div class="cookie-banner__copy">
-                        <strong>Ta strona korzysta z plików cookie</strong>
-                        <span>Używamy wyłącznie niezbędnych plików cookie do logowania i obsługi rezerwacji.</span>
+                        <strong th:text="#{cookie.title}">Ta strona korzysta z plików cookie</strong>
+                        <span th:text="#{cookie.text}">Używamy wyłącznie niezbędnych plików cookie do logowania, wyboru języka i obsługi rezerwacji.</span>
                     </div>
                     <button class="btn btn--small cookie-banner__accept" type="button" data-cookie-accept="data-cookie-accept">
-                        Rozumiem i akceptuję
+                        <span th:text="#{cookie.accept}">Rozumiem i akceptuję</span>
                     </button>
                 </div>
             </aside>

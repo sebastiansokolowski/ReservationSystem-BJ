@@ -26,6 +26,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .antMatchers("/",
                         "/type",
+                        "/language",
                         "/logout",
                         "/*/week", "/*/week/*",
                         "/wm/*/*/*/*/",

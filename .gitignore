@@ -29,6 +29,7 @@ hs_err_pid*
 
 #Properties
 *.properties
+!src/main/resources/messages*.properties
 
 #Build files
 build/

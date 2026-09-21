@@ -355,6 +355,35 @@ h3 {
     color: var(--blue-700);
 }
 
+.language-switcher {
+    display: inline-flex;
+    flex: 0 0 auto;
+    gap: 2px;
+    padding: 3px;
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    background: #f7faff;
+}
+
+.language-switcher a {
+    display: grid;
+    min-width: 29px;
+    min-height: 29px;
+    place-items: center;
+    padding: 3px 6px;
+    border-radius: 6px;
+    color: var(--muted);
+    font-size: 0.7rem;
+    font-weight: 850;
+}
+
+.language-switcher a:hover,
+.language-switcher a.is-active {
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(20, 54, 98, 0.1);
+    color: var(--blue-700);
+}
+
 .user-chip {
     display: flex;
     align-items: center;
@@ -411,6 +440,7 @@ h3 {
 
 /* Authentication */
 .auth-page {
+    position: relative;
     display: grid;
     min-height: 100vh;
     place-items: center;
@@ -418,6 +448,13 @@ h3 {
     background:
         radial-gradient(circle at 75% 10%, rgba(31, 142, 255, 0.13), transparent 28rem),
         #eff5fc;
+}
+
+.auth-language {
+    position: absolute;
+    z-index: 2;
+    top: 22px;
+    right: 22px;
 }
 
 .auth-shell {
@@ -1433,6 +1470,7 @@ h3 {
 
     .topbar__inner {
         min-height: 62px;
+        gap: 10px;
     }
 
     .user-chip__text {
@@ -1441,6 +1479,11 @@ h3 {
 
     .logout-button {
         display: none;
+    }
+
+    .auth-language {
+        top: 14px;
+        right: 14px;
     }
 
     .user-chip {
