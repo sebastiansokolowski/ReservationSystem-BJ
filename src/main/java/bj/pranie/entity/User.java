@@ -104,6 +104,25 @@ public class User {
         this.surname = surname;
     }
 
+    @Transient
+    public String getInitials() {
+        StringBuilder initials = new StringBuilder(2);
+        appendInitial(initials, name);
+        appendInitial(initials, surname);
+        return initials.length() == 0 ? "BJ" : initials.toString();
+    }
+
+    private void appendInitial(StringBuilder initials, String value) {
+        if (value == null) {
+            return;
+        }
+
+        String trimmedValue = value.trim();
+        if (!trimmedValue.isEmpty()) {
+            initials.appendCodePoint(Character.toUpperCase(trimmedValue.codePointAt(0)));
+        }
+    }
+
     public int getTokens() {
         return tokens;
     }

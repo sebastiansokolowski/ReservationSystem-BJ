@@ -63,7 +63,7 @@
                     <div th:replace="fragments/header :: language-switcher"></div>
 
                     <div sec:authorize="isAuthenticated()" class="user-chip">
-                        <span class="user-chip__avatar">BJ</span>
+                        <span class="user-chip__avatar" sec:authentication="principal.initials">BJ</span>
                         <span class="user-chip__text" th:if="${user != null}">
                             <span class="user-chip__name" th:if="${user.name != null}"
                                   th:text="${user.name + ' ' + user.surname}">Mieszkaniec</span>
@@ -82,7 +82,7 @@
                         </summary>
                         <div id="mobile-menu-drawer" class="mobile-menu__drawer">
                             <div class="mobile-menu__profile" th:if="${user != null}">
-                                <span class="user-chip__avatar">BJ</span>
+                                <span class="user-chip__avatar" sec:authentication="principal.initials">BJ</span>
                                 <span>
                                     <strong th:if="${user.name != null}" th:text="${user.name + ' ' + user.surname}">Mieszkaniec</strong>
                                     <strong th:if="${user.name == null and user.room != null}"><span th:text="#{nav.room}">Pokój</span> <span th:text="${user.room.room}">17</span><span th:text="${user.room.type}">B</span></strong>
