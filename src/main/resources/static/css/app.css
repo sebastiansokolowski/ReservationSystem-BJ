@@ -449,6 +449,7 @@ h3 {
     display: grid;
     width: 37px;
     height: 37px;
+    flex: 0 0 37px;
     place-items: center;
     border-radius: 50%;
     background: linear-gradient(145deg, #dceeff, #9fd1ff);
