@@ -372,7 +372,11 @@ h3 {
 
 .topnav {
     display: flex;
+    min-width: 0;
+    flex: 1 1 auto;
+    flex-wrap: wrap;
     align-items: center;
+    justify-content: center;
     gap: 4px;
 }
 
@@ -385,6 +389,7 @@ h3 {
     color: #40506a;
     font-size: 0.86rem;
     font-weight: 700;
+    white-space: nowrap;
 }
 
 .topnav__icon {
@@ -1689,14 +1694,23 @@ h3 {
         backdrop-filter: blur(12px);
     }
 
-    .mobile-nav a {
+    .mobile-nav a,
+    .mobile-nav button {
         display: grid;
         place-items: center;
         align-content: center;
         gap: 2px;
+        padding: 0;
+        border: 0;
+        background: transparent;
         color: #63718a;
         font-size: 0.63rem;
         font-weight: 750;
+    }
+
+    .mobile-nav button.is-active {
+        background: var(--blue-50);
+        color: var(--blue-700);
     }
 
     .mobile-nav__icon {

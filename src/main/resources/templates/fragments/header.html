@@ -43,11 +43,6 @@
                             <span class="topnav__icon ui-icon ui-icon--document" aria-hidden="true"></span>
                             <span th:text="#{nav.regulations}">Regulamin</span>
                         </a>
-                        <a class="topnav__link" sec:authorize="hasAnyAuthority('USER','ADMIN')"
-                           th:href="@{/user/settings}" href="/user/settings">
-                            <span class="topnav__icon ui-icon ui-icon--settings" aria-hidden="true"></span>
-                            <span th:text="#{nav.settings}">Ustawienia</span>
-                        </a>
                         <a class="topnav__link" sec:authorize="hasAuthority('ADMIN')"
                            th:href="@{/admin/users}" href="/admin/users">
                             <span class="topnav__icon ui-icon ui-icon--users" aria-hidden="true"></span>
@@ -57,6 +52,11 @@
                            th:href="@{/admin/rooms}" href="/admin/rooms">
                             <span class="topnav__icon ui-icon ui-icon--rooms" aria-hidden="true"></span>
                             <span th:text="#{nav.rooms}">Pokoje</span>
+                        </a>
+                        <a class="topnav__link" sec:authorize="hasAnyAuthority('USER','ADMIN')"
+                           th:href="@{/user/settings}" href="/user/settings">
+                            <span class="topnav__icon ui-icon ui-icon--settings" aria-hidden="true"></span>
+                            <span th:text="#{nav.settings}">Ustawienia</span>
                         </a>
                     </nav>
 
@@ -76,11 +76,11 @@
                                 onclick="document.getElementById('logout-form').submit()" th:text="#{nav.logout}">Wyloguj</button>
                     </div>
 
-                    <details sec:authorize="isAuthenticated()" class="mobile-menu">
+                    <details sec:authorize="isAuthenticated()" class="mobile-menu" data-mobile-menu="data-mobile-menu">
                         <summary aria-label="Otwórz menu" th:attr="aria-label=#{nav.openMenu}">
                             <span class="mobile-menu__trigger-icon ui-icon ui-icon--menu" aria-hidden="true"></span>
                         </summary>
-                        <div class="mobile-menu__drawer">
+                        <div id="mobile-menu-drawer" class="mobile-menu__drawer">
                             <div class="mobile-menu__profile" th:if="${user != null}">
                                 <span class="user-chip__avatar">BJ</span>
                                 <span>
@@ -105,10 +105,6 @@
                                 <span class="mobile-menu__nav-icon ui-icon ui-icon--document" aria-hidden="true"></span>
                                 <span th:text="#{nav.regulations}">Regulamin</span>
                             </a>
-                            <a sec:authorize="hasAnyAuthority('USER','ADMIN')" th:href="@{/user/settings}" href="/user/settings">
-                                <span class="mobile-menu__nav-icon ui-icon ui-icon--settings" aria-hidden="true"></span>
-                                <span th:text="#{nav.accountSettings}">Ustawienia konta</span>
-                            </a>
                             <a sec:authorize="hasAuthority('ADMIN')" th:href="@{/admin/users}" href="/admin/users">
                                 <span class="mobile-menu__nav-icon ui-icon ui-icon--users" aria-hidden="true"></span>
                                 <span th:text="#{nav.users}">Użytkownicy</span>
@@ -116,6 +112,10 @@
                             <a sec:authorize="hasAuthority('ADMIN')" th:href="@{/admin/rooms}" href="/admin/rooms">
                                 <span class="mobile-menu__nav-icon ui-icon ui-icon--rooms" aria-hidden="true"></span>
                                 <span th:text="#{nav.rooms}">Pokoje</span>
+                            </a>
+                            <a sec:authorize="hasAnyAuthority('USER','ADMIN')" th:href="@{/user/settings}" href="/user/settings">
+                                <span class="mobile-menu__nav-icon ui-icon ui-icon--settings" aria-hidden="true"></span>
+                                <span th:text="#{nav.accountSettings}">Ustawienia konta</span>
                             </a>
                             <button type="button" onclick="document.getElementById('logout-form').submit()">
                                 <span class="mobile-menu__nav-icon ui-icon ui-icon--logout" aria-hidden="true"></span>
@@ -143,10 +143,12 @@
                     <span class="mobile-nav__icon"><span class="mobile-nav__image ui-icon ui-icon--dryer" aria-hidden="true"></span></span>
                     <span th:text="#{nav.dryers}">Suszarki</span>
                 </a>
-                <a sec:authorize="hasAnyAuthority('USER','ADMIN')" th:href="@{/user/settings}" href="/user/settings">
+                <button sec:authorize="hasAnyAuthority('USER','ADMIN')" type="button"
+                        data-mobile-menu-toggle="data-mobile-menu-toggle"
+                        aria-controls="mobile-menu-drawer" aria-expanded="false">
                     <span class="mobile-nav__icon"><span class="mobile-nav__image ui-icon ui-icon--menu" aria-hidden="true"></span></span>
                     <span th:text="#{nav.more}">Więcej</span>
-                </a>
+                </button>
                 <a sec:authorize="hasAuthority('GROUP')" href="javascript:document.getElementById('logout-form').submit()">
                     <span class="mobile-nav__icon"><span class="mobile-nav__image ui-icon ui-icon--logout" aria-hidden="true"></span></span>
                     <span th:text="#{nav.logout}">Wyloguj</span>
