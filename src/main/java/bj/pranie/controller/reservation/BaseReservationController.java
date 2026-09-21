@@ -26,6 +26,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -80,9 +81,8 @@ public abstract class BaseReservationController {
                                         @PathVariable int month,
                                         @PathVariable int day,
                                         @PathVariable long reservationTimeId,
-                                        @RequestParam long deviceId) {
-        ModelAndView modelAndView = new ModelAndView("reservation");
-
+                                        @RequestParam long deviceId,
+                                        RedirectAttributes redirectAttributes) {
         User user = userAuthenticatedService.getAuthenticatedUser();
 
         try {
@@ -94,15 +94,14 @@ public abstract class BaseReservationController {
                 user.setTokens(userTokens - 1);
                 userDao.save(user);
             } else {
-                modelAndView.addObject("errorMessage", message("reservation.error.noTokens"));
+                redirectAttributes.addFlashAttribute("errorMessage", message("reservation.error.noTokens"));
             }
         } catch (ReservationAlreadyBookedException reservationAlreadyBookedException) {
             reservationAlreadyBookedException.printStackTrace();
-            modelAndView.addObject("errorMessage", message("reservation.error.alreadyBooked"));
+            redirectAttributes.addFlashAttribute("errorMessage", message("reservation.error.alreadyBooked"));
         }
 
-        setModel(year, month, day, reservationTimeId, modelAndView);
-        return modelAndView;
+        return redirectToReservation(year, month, day, reservationTimeId);
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
@@ -111,9 +110,8 @@ public abstract class BaseReservationController {
                                           @PathVariable int month,
                                           @PathVariable int day,
                                           @PathVariable long reservationTimeId,
-                                          @RequestParam long reservationId) {
-        ModelAndView modelAndView = new ModelAndView("reservation");
-
+                                          @RequestParam long reservationId,
+                                          RedirectAttributes redirectAttributes) {
         User user = userAuthenticatedService.getAuthenticatedUser();
         Reservation reservation = reservationDao.findOne(reservationId);
 
@@ -126,13 +124,12 @@ public abstract class BaseReservationController {
                 user.setTokens(user.getTokens() + 1);
                 userDao.save(user);
             } else {
-                modelAndView.addObject("errorMessage", message("reservation.error.tooLate"));
+                redirectAttributes.addFlashAttribute("errorMessage", message("reservation.error.tooLate"));
                 LOG.info("cancel reservation too late " + reservation);
             }
         }
 
-        setModel(year, month, day, reservationTimeId, modelAndView);
-        return modelAndView;
+        return redirectToReservation(year, month, day, reservationTimeId);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
@@ -142,8 +139,6 @@ public abstract class BaseReservationController {
                                           @PathVariable int day,
                                           @PathVariable long reservationTimeId,
                                           @RequestParam long reservationId) {
-        ModelAndView modelAndView = new ModelAndView("reservation");
-
         Reservation reservation = reservationDao.findOne(reservationId);
         reservationDao.delete(reservationId);
         LOG.info("remove reservation " + reservation);
@@ -154,8 +149,7 @@ public abstract class BaseReservationController {
             userDao.save(user);
         }
 
-        setModel(year, month, day, reservationTimeId, modelAndView);
-        return modelAndView;
+        return redirectToReservation(year, month, day, reservationTimeId);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
@@ -164,20 +158,18 @@ public abstract class BaseReservationController {
                                     @PathVariable int month,
                                     @PathVariable int day,
                                     @PathVariable long reservationTimeId,
-                                    @RequestParam long deviceId) {
-        ModelAndView modelAndView = new ModelAndView("reservation");
-
+                                    @RequestParam long deviceId,
+                                    RedirectAttributes redirectAttributes) {
         User user = userAuthenticatedService.getAuthenticatedUser();
 
         try {
             makeReservation(user, year, month, day, reservationTimeId, deviceId, ReservationType.BLOCKED);
         } catch (ReservationAlreadyBookedException reservationAlreadyBookedException) {
             reservationAlreadyBookedException.printStackTrace();
-            modelAndView.addObject("errorMessage", message("reservation.error.slotTaken"));
+            redirectAttributes.addFlashAttribute("errorMessage", message("reservation.error.slotTaken"));
         }
 
-        setModel(year, month, day, reservationTimeId, modelAndView);
-        return modelAndView;
+        return redirectToReservation(year, month, day, reservationTimeId);
     }
 
     public int getDevicesCount(){
@@ -196,6 +188,12 @@ public abstract class BaseReservationController {
                 .plus(TIME_BEFORE_BLOCK_USER_UNREGISTER);
 
         return now.isBefore(reservationDate);
+    }
+
+    private ModelAndView redirectToReservation(int year, int month, int day, long reservationTimeId) {
+        String path = String.format("redirect:/%s/%d/%d/%d/%d/",
+                getDeviceType().getPathName(), year, month, day, reservationTimeId);
+        return new ModelAndView(path);
     }
 
     private void setModel(int year, int month, int day, long reservationTimeId, ModelAndView modelAndView) {
