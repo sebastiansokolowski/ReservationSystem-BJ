@@ -37,7 +37,7 @@
                             <td>
                                 <span class="status-pill" th:classappend="${room.students} ? '' : 'status-pill--danger'">
                                     <span th:if="${room.students}" th:text="#{admin.zone.student}">Studencka</span>
-                                    <span th:unless="${room.students}" th:text="#{admin.zone.other}">Pozostała</span>
+                                    <span th:unless="${room.students}" th:text="#{admin.zone.other}">Asystencka</span>
                                 </span>
                             </td>
                             <td th:text="${room.people}">1</td>
