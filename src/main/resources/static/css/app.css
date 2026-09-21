@@ -1,3 +1,11 @@
+@font-face {
+    font-family: "BJ UIcons";
+    src: url("../fonts/uicons-thin-straight.woff2") format("woff2");
+    font-display: block;
+    font-style: normal;
+    font-weight: 400;
+}
+
 :root {
     --navy-950: #071633;
     --navy-900: #0a2149;
@@ -72,6 +80,32 @@ input[type="button"] {
 img {
     max-width: 100%;
 }
+
+.ui-icon::before {
+    display: block;
+    font-family: "BJ UIcons";
+    font-style: normal;
+    font-variant: normal;
+    font-weight: 400;
+    line-height: 1;
+    text-transform: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.ui-icon--bolt::before { content: "\f258"; }
+.ui-icon--calendar::before { content: "\f308"; }
+.ui-icon--clock::before { content: "\fcdb"; }
+.ui-icon--cookie::before { content: "\f4ad"; }
+.ui-icon--rooms::before { content: "\f54d"; }
+.ui-icon--dryer::before { content: "\f56d"; }
+.ui-icon--home::before { content: "\f774"; }
+.ui-icon--residents::before { content: "\f788"; }
+.ui-icon--menu::before { content: "\f20d"; }
+.ui-icon--settings::before { content: "\f697"; }
+.ui-icon--logout::before { content: "\fb4f"; }
+.ui-icon--users::before { content: "\fda9"; }
+.ui-icon--washer::before { content: "\fdde"; }
 
 .app-shell {
     min-height: 100vh;
@@ -342,11 +376,24 @@ h3 {
 }
 
 .topnav__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     padding: 10px 12px;
     border-radius: 9px;
     color: #40506a;
     font-size: 0.86rem;
     font-weight: 700;
+}
+
+.topnav__icon {
+    display: grid;
+    width: 17px;
+    height: 17px;
+    flex: 0 0 17px;
+    place-items: center;
+    font-size: 17px;
+    opacity: 0.78;
 }
 
 .topnav__link:hover,
@@ -709,10 +756,14 @@ h3 {
     transition: border-color 160ms ease, background 160ms ease, transform 160ms ease;
 }
 
-.guest-calendar-link::before {
+.guest-calendar-link__icon {
+    display: grid;
+    width: 22px;
+    height: 22px;
+    place-items: center;
     margin-right: 8px;
-    content: "▦";
-    font-size: 1rem;
+    font-size: 22px;
+    opacity: 0.92;
 }
 
 .guest-calendar-link:hover {
@@ -797,10 +848,12 @@ h3 {
 }
 
 .service-card__icon {
+    display: grid;
     width: 100%;
     height: 100%;
-    object-fit: contain;
-    filter: invert(29%) sepia(98%) saturate(1972%) hue-rotate(196deg) brightness(92%) contrast(103%);
+    place-items: center;
+    color: #111;
+    font-size: 132px;
 }
 
 .service-card__meta {
@@ -1155,13 +1208,16 @@ h3 {
 }
 
 .device-card__image {
+    display: grid;
     width: 120px;
     height: 120px;
+    place-items: center;
     margin: 16px 0;
     padding: 0;
     border: 0;
     background: #fff;
-    object-fit: contain;
+    color: #111;
+    font-size: 104px;
     opacity: 0.86;
 }
 
@@ -1450,6 +1506,10 @@ h3 {
         height: 116px;
     }
 
+    .service-card__icon {
+        font-size: 94px;
+    }
+
     .admin-day-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
@@ -1513,6 +1573,15 @@ h3 {
         font-size: 1.25rem;
         font-weight: 800;
         list-style: none;
+    }
+
+    .mobile-menu__trigger-icon {
+        display: grid;
+        width: 21px;
+        height: 21px;
+        place-items: center;
+        font-size: 21px;
+        opacity: 0.72;
     }
 
     .mobile-menu summary::-webkit-details-marker {
@@ -1584,6 +1653,17 @@ h3 {
         color: var(--blue-700);
     }
 
+    .mobile-menu__nav-icon,
+    .mobile-nav__image {
+        display: grid;
+        width: 24px;
+        height: 24px;
+        flex: 0 0 24px;
+        place-items: center;
+        font-size: 24px;
+        opacity: 0.68;
+    }
+
     .mobile-menu__drawer > button {
         margin-top: auto;
         color: var(--danger);
@@ -1619,6 +1699,10 @@ h3 {
     }
 
     .mobile-nav__icon {
+        display: grid;
+        width: 24px;
+        height: 24px;
+        place-items: center;
         font-size: 1.15rem;
     }
 
@@ -1703,6 +1787,10 @@ h3 {
         width: 92px;
         height: 92px;
         padding: 2px;
+    }
+
+    .service-card__icon {
+        font-size: 74px;
     }
 
     .feature-strip {

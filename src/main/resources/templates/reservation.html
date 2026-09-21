@@ -42,10 +42,10 @@
                                 <span th:case="UNAVAILABLE" th:text="#{reservation.status.unavailable}">Niedostępne</span>
                             </span>
 
-                            <img class="device-card__image" th:if="${device.deviceType.name() == 'WASHING_MACHINE'}"
-                                 th:src="@{/images/washer.png}" src="/images/washer.png" alt="Pralka" th:alt="#{device.washer}"/>
-                            <img class="device-card__image" th:if="${device.deviceType.name() == 'TUMBLE_DRYER'}"
-                                 th:src="@{/images/dryer.png}" src="/images/dryer.png" alt="Suszarka" th:alt="#{device.dryer}"/>
+                            <span class="device-card__image ui-icon ui-icon--washer"
+                                  th:if="${device.deviceType.name() == 'WASHING_MACHINE'}" aria-hidden="true"></span>
+                            <span class="device-card__image ui-icon ui-icon--dryer"
+                                  th:if="${device.deviceType.name() == 'TUMBLE_DRYER'}" aria-hidden="true"></span>
 
                             <div class="device-card__name" th:text="${device.name}">Urządzenie</div>
                             <div class="device-card__owner" th:if="${device.user != null}">

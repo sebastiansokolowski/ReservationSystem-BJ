@@ -31,7 +31,7 @@
                                 <span class="service-card__meta" th:text="#{type.weekSchedule}">● Zobacz tygodniowy grafik</span>
                             </div>
                             <span class="service-card__icon-wrap">
-                                <img class="service-card__icon" th:src="@{/images/washer.png}" src="/images/washer.png" alt="Pralka" th:alt="#{device.washer}"/>
+                                <span class="service-card__icon ui-icon ui-icon--washer" aria-hidden="true"></span>
                             </span>
                         </a>
                         <a class="service-card" th:href="@{/td/week}" href="/td/week">
@@ -42,7 +42,7 @@
                                 <span class="service-card__meta" th:text="#{type.weekSchedule}">● Zobacz tygodniowy grafik</span>
                             </div>
                             <span class="service-card__icon-wrap">
-                                <img class="service-card__icon" th:src="@{/images/dryer.png}" src="/images/dryer.png" alt="Suszarka" th:alt="#{device.dryer}"/>
+                                <span class="service-card__icon ui-icon ui-icon--dryer" aria-hidden="true"></span>
                             </span>
                         </a>
                     </section>

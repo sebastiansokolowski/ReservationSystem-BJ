@@ -27,15 +27,33 @@
                     </a>
 
                     <nav class="topnav" aria-label="Główna nawigacja" th:attr="aria-label=#{nav.main}">
-                        <a class="topnav__link" th:href="@{/type}" href="/type" th:text="#{nav.start}">Start</a>
-                        <a class="topnav__link" th:href="@{/wm/week}" href="/wm/week" th:text="#{nav.washers}">Pralki</a>
-                        <a class="topnav__link" th:href="@{/td/week}" href="/td/week" th:text="#{nav.dryers}">Suszarki</a>
+                        <a class="topnav__link" th:href="@{/type}" href="/type">
+                            <span class="topnav__icon ui-icon ui-icon--home" aria-hidden="true"></span>
+                            <span th:text="#{nav.start}">Start</span>
+                        </a>
+                        <a class="topnav__link" th:href="@{/wm/week}" href="/wm/week">
+                            <span class="topnav__icon ui-icon ui-icon--washer" aria-hidden="true"></span>
+                            <span th:text="#{nav.washers}">Pralki</span>
+                        </a>
+                        <a class="topnav__link" th:href="@{/td/week}" href="/td/week">
+                            <span class="topnav__icon ui-icon ui-icon--dryer" aria-hidden="true"></span>
+                            <span th:text="#{nav.dryers}">Suszarki</span>
+                        </a>
                         <a class="topnav__link" sec:authorize="hasAnyAuthority('USER','ADMIN')"
-                           th:href="@{/user/settings}" href="/user/settings" th:text="#{nav.settings}">Ustawienia</a>
+                           th:href="@{/user/settings}" href="/user/settings">
+                            <span class="topnav__icon ui-icon ui-icon--settings" aria-hidden="true"></span>
+                            <span th:text="#{nav.settings}">Ustawienia</span>
+                        </a>
                         <a class="topnav__link" sec:authorize="hasAuthority('ADMIN')"
-                           th:href="@{/admin/users}" href="/admin/users" th:text="#{nav.users}">Użytkownicy</a>
+                           th:href="@{/admin/users}" href="/admin/users">
+                            <span class="topnav__icon ui-icon ui-icon--users" aria-hidden="true"></span>
+                            <span th:text="#{nav.users}">Użytkownicy</span>
+                        </a>
                         <a class="topnav__link" sec:authorize="hasAuthority('ADMIN')"
-                           th:href="@{/admin/rooms}" href="/admin/rooms" th:text="#{nav.rooms}">Pokoje</a>
+                           th:href="@{/admin/rooms}" href="/admin/rooms">
+                            <span class="topnav__icon ui-icon ui-icon--rooms" aria-hidden="true"></span>
+                            <span th:text="#{nav.rooms}">Pokoje</span>
+                        </a>
                     </nav>
 
                     <div th:replace="fragments/header :: language-switcher"></div>
@@ -55,7 +73,9 @@
                     </div>
 
                     <details sec:authorize="isAuthenticated()" class="mobile-menu">
-                        <summary aria-label="Otwórz menu" th:attr="aria-label=#{nav.openMenu}">☰</summary>
+                        <summary aria-label="Otwórz menu" th:attr="aria-label=#{nav.openMenu}">
+                            <span class="mobile-menu__trigger-icon ui-icon ui-icon--menu" aria-hidden="true"></span>
+                        </summary>
                         <div class="mobile-menu__drawer">
                             <div class="mobile-menu__profile" th:if="${user != null}">
                                 <span class="user-chip__avatar">BJ</span>
@@ -65,13 +85,34 @@
                                     <small><span th:text="#{nav.tokens}">Tokeny</span>: <span th:text="${user.tokens}">0</span></small>
                                 </span>
                             </div>
-                            <a th:href="@{/type}" href="/type">⌂ <span th:text="#{nav.home}">Strona główna</span></a>
-                            <a th:href="@{/wm/week}" href="/wm/week">▦ <span th:text="#{nav.washerCalendar}">Kalendarz pralek</span></a>
-                            <a th:href="@{/td/week}" href="/td/week">◷ <span th:text="#{nav.dryerCalendar}">Kalendarz suszarek</span></a>
-                            <a sec:authorize="hasAnyAuthority('USER','ADMIN')" th:href="@{/user/settings}" href="/user/settings">⚙ <span th:text="#{nav.accountSettings}">Ustawienia konta</span></a>
-                            <a sec:authorize="hasAuthority('ADMIN')" th:href="@{/admin/users}" href="/admin/users">♙ <span th:text="#{nav.users}">Użytkownicy</span></a>
-                            <a sec:authorize="hasAuthority('ADMIN')" th:href="@{/admin/rooms}" href="/admin/rooms">⌂ <span th:text="#{nav.rooms}">Pokoje</span></a>
-                            <button type="button" onclick="document.getElementById('logout-form').submit()">↪ <span th:text="#{nav.logoutFull}">Wyloguj się</span></button>
+                            <a th:href="@{/type}" href="/type">
+                                <span class="mobile-menu__nav-icon ui-icon ui-icon--home" aria-hidden="true"></span>
+                                <span th:text="#{nav.home}">Strona główna</span>
+                            </a>
+                            <a th:href="@{/wm/week}" href="/wm/week">
+                                <span class="mobile-menu__nav-icon ui-icon ui-icon--washer" aria-hidden="true"></span>
+                                <span th:text="#{nav.washerCalendar}">Kalendarz pralek</span>
+                            </a>
+                            <a th:href="@{/td/week}" href="/td/week">
+                                <span class="mobile-menu__nav-icon ui-icon ui-icon--dryer" aria-hidden="true"></span>
+                                <span th:text="#{nav.dryerCalendar}">Kalendarz suszarek</span>
+                            </a>
+                            <a sec:authorize="hasAnyAuthority('USER','ADMIN')" th:href="@{/user/settings}" href="/user/settings">
+                                <span class="mobile-menu__nav-icon ui-icon ui-icon--settings" aria-hidden="true"></span>
+                                <span th:text="#{nav.accountSettings}">Ustawienia konta</span>
+                            </a>
+                            <a sec:authorize="hasAuthority('ADMIN')" th:href="@{/admin/users}" href="/admin/users">
+                                <span class="mobile-menu__nav-icon ui-icon ui-icon--users" aria-hidden="true"></span>
+                                <span th:text="#{nav.users}">Użytkownicy</span>
+                            </a>
+                            <a sec:authorize="hasAuthority('ADMIN')" th:href="@{/admin/rooms}" href="/admin/rooms">
+                                <span class="mobile-menu__nav-icon ui-icon ui-icon--rooms" aria-hidden="true"></span>
+                                <span th:text="#{nav.rooms}">Pokoje</span>
+                            </a>
+                            <button type="button" onclick="document.getElementById('logout-form').submit()">
+                                <span class="mobile-menu__nav-icon ui-icon ui-icon--logout" aria-hidden="true"></span>
+                                <span th:text="#{nav.logoutFull}">Wyloguj się</span>
+                            </button>
                         </div>
                     </details>
 
@@ -82,14 +123,25 @@
             <form sec:authorize="isAuthenticated()" id="logout-form" th:action="@{/logout}" action="/logout" method="post" hidden="hidden"></form>
 
             <nav sec:authorize="isAuthenticated()" class="mobile-nav" aria-label="Nawigacja mobilna" th:attr="aria-label=#{nav.mobile}">
-                <a th:href="@{/type}" href="/type"><span class="mobile-nav__icon">⌂</span><span th:text="#{nav.start}">Start</span></a>
-                <a th:href="@{/wm/week}" href="/wm/week"><span class="mobile-nav__icon">▦</span><span th:text="#{nav.washers}">Pralki</span></a>
-                <a th:href="@{/td/week}" href="/td/week"><span class="mobile-nav__icon">◷</span><span th:text="#{nav.dryers}">Suszarki</span></a>
+                <a th:href="@{/type}" href="/type">
+                    <span class="mobile-nav__icon"><span class="mobile-nav__image ui-icon ui-icon--home" aria-hidden="true"></span></span>
+                    <span th:text="#{nav.start}">Start</span>
+                </a>
+                <a th:href="@{/wm/week}" href="/wm/week">
+                    <span class="mobile-nav__icon"><span class="mobile-nav__image ui-icon ui-icon--washer" aria-hidden="true"></span></span>
+                    <span th:text="#{nav.washers}">Pralki</span>
+                </a>
+                <a th:href="@{/td/week}" href="/td/week">
+                    <span class="mobile-nav__icon"><span class="mobile-nav__image ui-icon ui-icon--dryer" aria-hidden="true"></span></span>
+                    <span th:text="#{nav.dryers}">Suszarki</span>
+                </a>
                 <a sec:authorize="hasAnyAuthority('USER','ADMIN')" th:href="@{/user/settings}" href="/user/settings">
-                    <span class="mobile-nav__icon">☰</span><span th:text="#{nav.more}">Więcej</span>
+                    <span class="mobile-nav__icon"><span class="mobile-nav__image ui-icon ui-icon--menu" aria-hidden="true"></span></span>
+                    <span th:text="#{nav.more}">Więcej</span>
                 </a>
                 <a sec:authorize="hasAuthority('GROUP')" href="javascript:document.getElementById('logout-form').submit()">
-                    <span class="mobile-nav__icon">↪</span><span th:text="#{nav.logout}">Wyloguj</span>
+                    <span class="mobile-nav__icon"><span class="mobile-nav__image ui-icon ui-icon--logout" aria-hidden="true"></span></span>
+                    <span th:text="#{nav.logout}">Wyloguj</span>
                 </a>
             </nav>
         </th:block>

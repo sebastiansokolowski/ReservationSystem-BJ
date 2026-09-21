@@ -21,9 +21,9 @@
                     <div class="auth-hero">
                         <h1 th:utext="#{login.hero}">Czyste ubrania.<br/>Lepsze jutro.</h1>
                         <ul class="auth-benefits">
-                            <li><span class="benefit-icon">ϟ</span> <span th:text="#{login.benefit.fast}">Szybka rezerwacja w kilku kliknięciach</span></li>
-                            <li><span class="benefit-icon">◷</span> <span th:text="#{login.benefit.access}">Dostęp do grafiku przez całą dobę</span></li>
-                            <li><span class="benefit-icon">⌂</span> <span th:text="#{login.benefit.residents}">Stworzone dla mieszkańców BJ</span></li>
+                            <li><span class="benefit-icon ui-icon ui-icon--bolt" aria-hidden="true"></span> <span th:text="#{login.benefit.fast}">Szybka rezerwacja w kilku kliknięciach</span></li>
+                            <li><span class="benefit-icon ui-icon ui-icon--clock" aria-hidden="true"></span> <span th:text="#{login.benefit.access}">Dostęp do grafiku przez całą dobę</span></li>
+                            <li><span class="benefit-icon ui-icon ui-icon--residents" aria-hidden="true"></span> <span th:text="#{login.benefit.residents}">Stworzone dla mieszkańców BJ</span></li>
                         </ul>
                     </div>
                 </aside>
@@ -52,6 +52,7 @@
                         </div>
                         <button class="btn btn--block" type="submit" th:text="#{login.submit}">Zaloguj się →</button>
                         <a class="guest-calendar-link" th:href="@{/type}" href="/type">
+                            <span class="guest-calendar-link__icon ui-icon ui-icon--calendar" aria-hidden="true"></span>
                             <span th:text="#{login.guest}">Zobacz kalendarz bez logowania</span>
                         </a>
                     </form>
