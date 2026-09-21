@@ -116,12 +116,8 @@ public class UserController {
 
     @RequestMapping(value = "/registration", method = RequestMethod.GET)
     public String registrationForm(Model model) {
-        List<Room> rooms = roomDao.findAllByOrderByRoomAscTypeAsc();
-        if (holidays) {
-            rooms = removeStudentRooms(rooms);
-        }
         model.addAttribute("userRegistrationModel", new UserRegistrationModel());
-        model.addAttribute("rooms", rooms);
+        model.addAttribute("rooms", getRegistrationRooms());
         return "user/registration";
     }
 
@@ -141,7 +137,7 @@ public class UserController {
             bindingResult.rejectValue("passwordRepeat", "validation.password.mismatch");
         }
         Room room = roomDao.findOne(userRegistrationModel.getRoomId());
-        if (room == null) {
+        if (room == null || !isRoomAvailableForRegistration(room)) {
             bindingResult.rejectValue("roomId", "validation.room.select");
         } else if (userDao.findByRoom(room).size() >= room.getPeople()) {
             bindingResult.rejectValue("roomId", "validation.room.full");
@@ -165,10 +161,19 @@ public class UserController {
 
             modelAndView.addObject("successMessage", message("success.registration"));
         }
-        modelAndView.addObject("rooms", roomDao.findAll());
+        modelAndView.addObject("rooms", getRegistrationRooms());
 
         modelAndView.setViewName("user/registration");
         return modelAndView;
+    }
+
+    private List<Room> getRegistrationRooms() {
+        List<Room> rooms = roomDao.findAllByOrderByRoomAscTypeAsc();
+        return holidays ? removeStudentRooms(rooms) : rooms;
+    }
+
+    private boolean isRoomAvailableForRegistration(Room room) {
+        return !holidays || !room.isStudents();
     }
 
     private List<Room> removeStudentRooms(List<Room> rooms) {
