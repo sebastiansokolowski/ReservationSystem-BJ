@@ -4,6 +4,8 @@ import bj.pranie.dao.UserDao;
 import bj.pranie.entity.User;
 import bj.pranie.model.ResetPasswordModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -30,6 +32,9 @@ public class UserResetPassword {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private MessageSource messageSource;
+
     @RequestMapping(value = "/resetPassword", method = RequestMethod.GET)
     public String resetPasswordPorm(@RequestParam String resetPasswordKey,
                                     Model model) {
@@ -55,7 +60,7 @@ public class UserResetPassword {
         }
 
         if (!resetPasswordModel.getNewPassword().equals(resetPasswordModel.getNewPasswordRepeat())) {
-            bindingResult.rejectValue("newPasswordRepeat", "error.resetPasswordModel", "Powtórzone hasło jest różne od wpisanego.");
+            bindingResult.rejectValue("newPasswordRepeat", "validation.password.mismatch");
         }
 
         if (!bindingResult.hasErrors()) {
@@ -67,7 +72,7 @@ public class UserResetPassword {
 
             userDao.save(user);
 
-            modelAndView.addObject("successMessage", "Hasło zostało zmienione pomyślnie.");
+            modelAndView.addObject("successMessage", messageSource.getMessage("success.reset", null, LocaleContextHolder.getLocale()));
         }
 
         modelAndView.addObject("resetPasswordKey", resetPasswordKey);

@@ -10,6 +10,8 @@ import bj.pranie.model.UserSettingsModel;
 import bj.pranie.service.UserAuthenticatedService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -43,6 +45,9 @@ public class UserController {
     @Autowired
     private UserAuthenticatedService userAuthenticatedService;
 
+    @Autowired
+    private MessageSource messageSource;
+
     @Value("${tokensPerWeek}")
     int tokensPerWeek;
 
@@ -65,25 +70,25 @@ public class UserController {
         User user = userAuthenticatedService.getAuthenticatedUser();
 
         if (!passwordEncoder.matches(userSettingsModel.getPassword(), user.getPassword())) {
-            bindingResult.rejectValue("password", "error.userRegistrationModel", "Podane hasło jest nieprawidłowe.");
+            bindingResult.rejectValue("password", "validation.currentPassword.invalid");
         }
 
         User userExist;
         if (userSettingsModel.isSetNewUsername()) {
             userExist = userDao.findByUsername(userSettingsModel.getNewUsername());
             if (userExist != null) {
-                bindingResult.rejectValue("newUsername", "error.userSettingsModel", "Podana nazwa użytkownika istnieje już w bazie.");
+                bindingResult.rejectValue("newUsername", "validation.username.exists");
             }
         }
         if (userSettingsModel.isSetNewEmail()) {
             userExist = userDao.findByEmail(userSettingsModel.getNewEmail());
             if (userExist != null) {
-                bindingResult.rejectValue("newEmail", "error.userSettingsModel", "Podany adres email istnieje już w bazie.");
+                bindingResult.rejectValue("newEmail", "validation.email.exists");
             }
         }
         if (userSettingsModel.isSetNewPassword()) {
             if (!userSettingsModel.getNewPassword().equals(userSettingsModel.getNewPasswordRepeat())) {
-                bindingResult.rejectValue("newPasswordRepeat", "error.userRegistrationModel", "Powtórzone hasło jest różne od wpisanego.");
+                bindingResult.rejectValue("newPasswordRepeat", "validation.password.mismatch");
             }
         }
 
@@ -101,7 +106,7 @@ public class UserController {
 
             userDao.save(user);
 
-            modelAndView.addObject("successMessage", "Zmiany zostały zachowane pomyślnie.");
+            modelAndView.addObject("successMessage", message("success.settings"));
         }
 
         modelAndView.addObject("user", userAuthenticatedService.getAuthenticatedUser());
@@ -126,20 +131,20 @@ public class UserController {
 
         User userExist = userDao.findByEmail(userRegistrationModel.getEmail());
         if (userExist != null) {
-            bindingResult.rejectValue("email", "error.userRegistrationModel", "Podany adres email istnieje już w bazie.");
+            bindingResult.rejectValue("email", "validation.email.exists");
         }
         userExist = userDao.findByUsername(userRegistrationModel.getUsername());
         if (userExist != null) {
-            bindingResult.rejectValue("username", "error.userRegistrationModel", "Podana nazwa użytkownika istnieje już w bazie.");
+            bindingResult.rejectValue("username", "validation.username.exists");
         }
         if (!userRegistrationModel.getPassword().equals(userRegistrationModel.getPasswordRepeat())) {
-            bindingResult.rejectValue("passwordRepeat", "error.userRegistrationModel", "Powtórzone hasło jest różne od wpisanego.");
+            bindingResult.rejectValue("passwordRepeat", "validation.password.mismatch");
         }
         Room room = roomDao.findOne(userRegistrationModel.getRoomId());
         if (room == null) {
-            bindingResult.rejectValue("roomId", "error.userRegistrationModel", "Wybierz pokój z listy.");
+            bindingResult.rejectValue("roomId", "validation.room.select");
         } else if (userDao.findByRoom(room).size() >= room.getPeople()) {
-            bindingResult.rejectValue("roomId", "error.userRegistrationModel", "Brak miejsca w wybranym pokoju.");
+            bindingResult.rejectValue("roomId", "validation.room.full");
         }
 
         if (!bindingResult.hasErrors()) {
@@ -158,7 +163,7 @@ public class UserController {
 
             userDao.save(user);
 
-            modelAndView.addObject("successMessage", "Rejestracja przebiegła pomyślnie.");
+            modelAndView.addObject("successMessage", message("success.registration"));
         }
         modelAndView.addObject("rooms", roomDao.findAll());
 
@@ -175,5 +180,9 @@ public class UserController {
         }
 
         return newRooms;
+    }
+
+    private String message(String code) {
+        return messageSource.getMessage(code, null, LocaleContextHolder.getLocale());
     }
 }

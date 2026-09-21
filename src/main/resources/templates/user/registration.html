@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<html lang="pl" th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Rejestracja | BJ Pralnia</title>
+    <title th:text="#{title.registration}">Rejestracja | BJ Pralnia</title>
     <th:block th:include="fragments/header :: header-css"></th:block>
 </head>
 <body>
@@ -10,22 +10,22 @@
 
     <main class="page page--narrow">
         <div class="container">
-            <a class="link-back" th:href="@{/}">Wróć do logowania</a>
+            <a class="link-back" th:href="@{/}" th:text="#{registration.back}">Wróć do logowania</a>
 
             <div class="page-head">
                 <div class="page-head__copy">
-                    <p class="eyebrow">Nowe konto</p>
-                    <h1>Dołącz do systemu rezerwacji</h1>
-                    <p class="lead">Uzupełnij dane mieszkańca. Po rejestracji zalogujesz się i wybierzesz dogodny termin.</p>
+                    <p class="eyebrow" th:text="#{registration.eyebrow}">Nowe konto</p>
+                    <h1 th:text="#{registration.heading}">Dołącz do systemu rezerwacji</h1>
+                    <p class="lead" th:text="#{registration.lead}">Uzupełnij dane mieszkańca. Po rejestracji zalogujesz się i wybierzesz dogodny termin.</p>
                 </div>
             </div>
 
             <section class="surface form-card">
                 <form class="form-stack" th:object="${userRegistrationModel}" th:action="@{/user/registration}" method="post">
                     <div class="field">
-                        <label for="roomId">Pokój</label>
+                        <label for="roomId" th:text="#{common.room}">Pokój</label>
                         <select id="roomId" th:field="*{roomId}" required="required">
-                            <option value="">Wybierz pokój</option>
+                            <option value="" th:text="#{registration.selectRoom}">Wybierz pokój</option>
                             <option th:each="room : ${rooms}"
                                     th:value="${room.id}"
                                     th:text="${room.room}+${room.type}"></option>
@@ -35,13 +35,13 @@
 
                     <div class="form-row">
                         <div class="field">
-                            <label for="name">Imię</label>
+                            <label for="name" th:text="#{common.name}">Imię</label>
                             <input id="name" type="text" th:field="*{name}" minlength="2" maxlength="30"
                                    autocomplete="given-name" required="required"/>
                             <p class="field-error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></p>
                         </div>
                         <div class="field">
-                            <label for="surname">Nazwisko</label>
+                            <label for="surname" th:text="#{common.surname}">Nazwisko</label>
                             <input id="surname" type="text" th:field="*{surname}" minlength="2" maxlength="30"
                                    autocomplete="family-name" required="required"/>
                             <p class="field-error" th:if="${#fields.hasErrors('surname')}" th:errors="*{surname}"></p>
@@ -49,13 +49,13 @@
                     </div>
 
                     <div class="field">
-                        <label for="email">Adres e-mail</label>
+                        <label for="email" th:text="#{common.email}">Adres e-mail</label>
                         <input id="email" type="email" th:field="*{email}" autocomplete="email" required="required"/>
                         <p class="field-error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></p>
                     </div>
 
                     <div class="field">
-                        <label for="username">Login</label>
+                        <label for="username" th:text="#{common.username}">Login</label>
                         <input id="username" type="text" th:field="*{username}" minlength="3" maxlength="30"
                                autocomplete="username" required="required"/>
                         <p class="field-error" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></p>
@@ -63,13 +63,13 @@
 
                     <div class="form-row">
                         <div class="field">
-                            <label for="password">Hasło</label>
+                            <label for="password" th:text="#{common.password}">Hasło</label>
                             <input id="password" type="password" th:field="*{password}" minlength="5" maxlength="30"
                                    autocomplete="new-password" required="required"/>
                             <p class="field-error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></p>
                         </div>
                         <div class="field">
-                            <label for="passwordRepeat">Powtórz hasło</label>
+                            <label for="passwordRepeat" th:text="#{common.repeatPassword}">Powtórz hasło</label>
                             <input id="passwordRepeat" type="password" th:field="*{passwordRepeat}" minlength="5"
                                    maxlength="30" autocomplete="new-password" required="required"/>
                             <p class="field-error" th:if="${#fields.hasErrors('passwordRepeat')}"
@@ -78,7 +78,7 @@
                     </div>
 
                     <div class="alert alert--success" th:if="${successMessage}" th:text="${successMessage}"></div>
-                    <button class="btn btn--block" type="submit">Utwórz konto</button>
+                    <button class="btn btn--block" type="submit" th:text="#{registration.create}">Utwórz konto</button>
                 </form>
             </section>
         </div>

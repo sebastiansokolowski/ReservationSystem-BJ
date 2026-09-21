@@ -13,24 +13,24 @@ public class UserSettingsModel {
     @NotNull
     private boolean setNewUsername;
 
-    @Length(min = 3, max = 30, message = "Nazwa użytkownika musi być dłuższe niż 3 znaki i krótsza niż 30.")
+    @Length(min = 3, max = 30, message = "{validation.username.length}")
     private String newUsername;
 
     @NotNull
     private boolean setNewEmail;
 
-    @Email(message = "Błędny adres email.")
+    @Email(message = "{validation.email.invalid}")
     private String newEmail;
 
     @NotNull
     private boolean setNewPassword;
 
-    @Length(min = 5, max = 30, message = "Hasło musi być dłuższe niż 3 znaki i krótsze niż 30.")
+    @Length(min = 5, max = 30, message = "{validation.password.length}")
     private String newPassword;
 
     private String newPasswordRepeat;
 
-    @NotNull(message = "Proszę podać aktualnie używane hasło")
+    @NotNull(message = "{validation.currentPassword.required}")
     private String password;
 
     public boolean isSetNewUsername() {

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<html lang="pl" th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Edycja pokoju | BJ Pralnia</title>
+    <title th:text="#{title.editRoom}">Edycja pokoju | BJ Pralnia</title>
     <th:block th:include="fragments/header :: header-css"></th:block>
 </head>
 <body>
@@ -10,27 +10,27 @@
 
     <main class="page page--narrow">
         <div class="container">
-            <a class="link-back" th:href="@{/admin/rooms}">Wróć do pokojów</a>
+            <a class="link-back" th:href="@{/admin/rooms}" th:text="#{admin.room.back}">Wróć do pokojów</a>
             <div class="page-head">
                 <div class="page-head__copy">
-                    <p class="eyebrow">Administracja</p>
-                    <h1>Edytuj pokój</h1>
-                    <p class="lead">Pokój: <strong><span th:text="${roomModel.room}">101</span><span th:text="${roomTypes[roomModel.typeId]}">A</span></strong></p>
+                    <p class="eyebrow" th:text="#{common.administration}">Administracja</p>
+                    <h1 th:text="#{admin.room.edit}">Edytuj pokój</h1>
+                    <p class="lead"><span th:text="#{admin.room.current}">Pokój:</span> <strong><span th:text="${roomModel.room}">101</span><span th:text="${roomTypes[roomModel.typeId]}">A</span></strong></p>
                 </div>
             </div>
 
             <section class="surface form-card">
                 <form class="form-stack" th:object="${roomModel}"
                       th:action="@{/admin/rooms/edit/{id}(id=${roomModel.id})}" method="post"
-                      data-confirm="Czy na pewno chcesz zapisać zmiany danych tego pokoju?">
+                      data-confirm="Czy na pewno chcesz zapisać zmiany danych tego pokoju?" th:attr="data-confirm=#{admin.room.confirmSave}">
                     <div class="form-row">
                         <div class="field">
-                            <label for="room">Numer pokoju</label>
+                            <label for="room" th:text="#{admin.room.number}">Numer pokoju</label>
                             <input id="room" type="number" th:field="*{room}" min="1" max="999"
                                    required="required"/>
                         </div>
                         <div class="field">
-                            <label for="typeId">Typ pokoju</label>
+                            <label for="typeId" th:text="#{admin.room.type}">Typ pokoju</label>
                             <select id="typeId" th:field="*{typeId}" required="required">
                                 <option th:each="type, iteration : ${roomTypes}"
                                         th:value="${iteration.count - 1}" th:text="${type}"></option>
@@ -39,17 +39,17 @@
                     </div>
 
                     <div class="field">
-                        <label for="people">Liczba miejsc</label>
+                        <label for="people" th:text="#{admin.room.capacity}">Liczba miejsc</label>
                         <input id="people" type="number" th:field="*{people}" min="1" max="99"
                                required="required"/>
                     </div>
 
                     <label class="toggle-section check-row" for="students">
                         <input id="students" type="checkbox" th:field="*{students}"/>
-                        <span><strong>Część studencka</strong><br/><span class="muted">Pokój należy do części przeznaczonej dla studentów.</span></span>
+                        <span><strong th:text="#{admin.room.student}">Część studencka</strong><br/><span class="muted" th:text="#{admin.room.studentHint}">Pokój należy do części przeznaczonej dla studentów.</span></span>
                     </label>
 
-                    <button class="btn btn--block" type="submit">Zapisz zmiany</button>
+                    <button class="btn btn--block" type="submit" th:text="#{common.save}">Zapisz zmiany</button>
                 </form>
             </section>
         </div>

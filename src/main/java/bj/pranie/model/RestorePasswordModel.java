@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
  */
 public class RestorePasswordModel {
 
-    @Email(message = "Proszę podać prawidłowy adres email.")
+    @Email(message = "{validation.email.invalid}")
     @NotNull
     private String email;
 

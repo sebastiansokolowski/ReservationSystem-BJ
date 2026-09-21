@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<html lang="pl" th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Użytkownicy | BJ Pralnia</title>
+    <title th:text="#{title.users}">Użytkownicy | BJ Pralnia</title>
     <th:block th:include="fragments/header :: header-css"></th:block>
 </head>
 <body>
@@ -10,14 +10,14 @@
 
     <main class="page">
         <div class="container">
-            <a class="link-back" th:href="@{/type}">Wróć do panelu</a>
+            <a class="link-back" th:href="@{/type}" th:text="#{common.backToDashboard}">Wróć do panelu</a>
             <div class="page-head">
                 <div class="page-head__copy">
-                    <p class="eyebrow">Administracja</p>
-                    <h1>Użytkownicy</h1>
-                    <p class="lead">Zarządzaj kontami mieszkańców, przydziałem pokojów i pulą tokenów.</p>
+                    <p class="eyebrow" th:text="#{common.administration}">Administracja</p>
+                    <h1 th:text="#{admin.users.heading}">Użytkownicy</h1>
+                    <p class="lead" th:text="#{admin.users.lead}">Zarządzaj kontami mieszkańców, przydziałem pokojów i pulą tokenów.</p>
                 </div>
-                <span class="token-badge">Liczba kont: <strong th:text="${count}">0</strong></span>
+                <span class="token-badge"><span th:text="#{admin.users.count}">Liczba kont:</span> <strong th:text="${count}">0</strong></span>
             </div>
 
             <section class="surface table-card">
@@ -25,14 +25,14 @@
                     <table class="data-table">
                         <thead>
                         <tr>
-                            <th>Pokój</th>
-                            <th>Imię i nazwisko</th>
-                            <th>Login</th>
-                            <th>E-mail</th>
-                            <th>Tokeny</th>
-                            <th>Rola</th>
-                            <th>Status</th>
-                            <th>Akcje</th>
+                            <th th:text="#{common.room}">Pokój</th>
+                            <th th:text="#{admin.users.fullName}">Imię i nazwisko</th>
+                            <th th:text="#{common.username}">Login</th>
+                            <th th:text="#{common.email}">E-mail</th>
+                            <th th:text="#{nav.tokens}">Tokeny</th>
+                            <th th:text="#{admin.user.role}">Rola</th>
+                            <th th:text="#{admin.users.status}">Status</th>
+                            <th th:text="#{admin.users.actions}">Akcje</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -44,22 +44,24 @@
                             <td><strong th:text="${account.tokens}">0</strong></td>
                             <td th:text="${account.role}">USER</td>
                             <td>
-                                <span class="status-pill" th:classappend="${account.blocked} ? 'status-pill--danger' : ''"
-                                      th:text="${account.blocked} ? 'Zablokowany' : 'Aktywny'">Aktywny</span>
+                                <span class="status-pill" th:classappend="${account.blocked} ? 'status-pill--danger' : ''">
+                                    <span th:if="${account.blocked}" th:text="#{admin.users.blocked}">Zablokowany</span>
+                                    <span th:unless="${account.blocked}" th:text="#{admin.users.active}">Aktywny</span>
+                                </span>
                             </td>
                             <td>
                                 <div class="table-actions">
                                     <a class="btn btn--secondary btn--small"
-                                       th:href="@{/admin/users/edit/{id}(id=${account.id})}">Edytuj</a>
+                                       th:href="@{/admin/users/edit/{id}(id=${account.id})}" th:text="#{admin.users.edit}">Edytuj</a>
                                     <form th:action="@{/admin/users/delete/{id}(id=${account.id})}" method="get"
-                                          data-confirm="Czy na pewno chcesz usunąć tego użytkownika? Tej operacji nie można cofnąć.">
-                                        <button class="btn btn--danger btn--small" type="submit">Usuń</button>
+                                          data-confirm="Czy na pewno chcesz usunąć tego użytkownika? Tej operacji nie można cofnąć." th:attr="data-confirm=#{admin.users.confirmDelete}">
+                                        <button class="btn btn--danger btn--small" type="submit" th:text="#{admin.users.delete}">Usuń</button>
                                     </form>
                                 </div>
                             </td>
                         </tr>
                         <tr th:if="${#lists.isEmpty(users)}">
-                            <td colspan="8" class="muted">Brak użytkowników do wyświetlenia.</td>
+                            <td colspan="8" class="muted" th:text="#{admin.users.empty}">Brak użytkowników do wyświetlenia.</td>
                         </tr>
                         </tbody>
                     </table>

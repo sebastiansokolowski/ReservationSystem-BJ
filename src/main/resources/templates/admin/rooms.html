@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<html lang="pl" th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Pokoje | BJ Pralnia</title>
+    <title th:text="#{title.rooms}">Pokoje | BJ Pralnia</title>
     <th:block th:include="fragments/header :: header-css"></th:block>
 </head>
 <body>
@@ -10,14 +10,14 @@
 
     <main class="page">
         <div class="container">
-            <a class="link-back" th:href="@{/type}">Wróć do panelu</a>
+            <a class="link-back" th:href="@{/type}" th:text="#{common.backToDashboard}">Wróć do panelu</a>
             <div class="page-head">
                 <div class="page-head__copy">
-                    <p class="eyebrow">Administracja</p>
-                    <h1>Pokoje</h1>
-                    <p class="lead">Zarządzaj pokojami i liczbą dostępnych miejsc dla mieszkańców.</p>
+                    <p class="eyebrow" th:text="#{common.administration}">Administracja</p>
+                    <h1 th:text="#{admin.rooms.heading}">Pokoje</h1>
+                    <p class="lead" th:text="#{admin.rooms.lead}">Zarządzaj pokojami i liczbą dostępnych miejsc dla mieszkańców.</p>
                 </div>
-                <span class="token-badge">Liczba pokojów: <strong th:text="${count}">0</strong></span>
+                <span class="token-badge"><span th:text="#{admin.rooms.count}">Liczba pokojów:</span> <strong th:text="${count}">0</strong></span>
             </div>
 
             <section class="surface table-card">
@@ -25,27 +25,29 @@
                     <table class="data-table">
                         <thead>
                         <tr>
-                            <th>Pokój</th>
-                            <th>Strefa</th>
-                            <th>Liczba miejsc</th>
-                            <th>Akcja</th>
+                            <th th:text="#{common.room}">Pokój</th>
+                            <th th:text="#{admin.rooms.zone}">Strefa</th>
+                            <th th:text="#{admin.room.capacity}">Liczba miejsc</th>
+                            <th th:text="#{admin.rooms.action}">Akcja</th>
                         </tr>
                         </thead>
                         <tbody>
                         <tr th:each="room : ${rooms}">
                             <td><strong><span th:text="${room.room}">101</span><span th:text="${room.type}">A</span></strong></td>
                             <td>
-                                <span class="status-pill" th:classappend="${room.students} ? '' : 'status-pill--danger'"
-                                      th:text="${room.students} ? 'Studencka' : 'Pozostała'">Studencka</span>
+                                <span class="status-pill" th:classappend="${room.students} ? '' : 'status-pill--danger'">
+                                    <span th:if="${room.students}" th:text="#{admin.zone.student}">Studencka</span>
+                                    <span th:unless="${room.students}" th:text="#{admin.zone.other}">Pozostała</span>
+                                </span>
                             </td>
                             <td th:text="${room.people}">1</td>
                             <td>
                                 <a class="btn btn--secondary btn--small"
-                                   th:href="@{/admin/rooms/edit/{id}(id=${room.id})}">Edytuj</a>
+                                   th:href="@{/admin/rooms/edit/{id}(id=${room.id})}" th:text="#{admin.rooms.edit}">Edytuj</a>
                             </td>
                         </tr>
                         <tr th:if="${#lists.isEmpty(rooms)}">
-                            <td colspan="4" class="muted">Brak pokojów do wyświetlenia.</td>
+                            <td colspan="4" class="muted" th:text="#{admin.rooms.empty}">Brak pokojów do wyświetlenia.</td>
                         </tr>
                         </tbody>
                     </table>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<html lang="pl" th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Edycja użytkownika | BJ Pralnia</title>
+    <title th:text="#{title.editUser}">Edycja użytkownika | BJ Pralnia</title>
     <th:block th:include="fragments/header :: header-css"></th:block>
 </head>
 <body>
@@ -10,49 +10,49 @@
 
     <main class="page page--narrow">
         <div class="container">
-            <a class="link-back" th:href="@{/admin/users}">Wróć do użytkowników</a>
+            <a class="link-back" th:href="@{/admin/users}" th:text="#{admin.user.back}">Wróć do użytkowników</a>
             <div class="page-head">
                 <div class="page-head__copy">
-                    <p class="eyebrow">Administracja</p>
-                    <h1>Edytuj użytkownika</h1>
-                    <p class="lead">Konto: <strong th:text="${userModel.username}">login</strong></p>
+                    <p class="eyebrow" th:text="#{common.administration}">Administracja</p>
+                    <h1 th:text="#{admin.user.edit}">Edytuj użytkownika</h1>
+                    <p class="lead"><span th:text="#{admin.user.account}">Konto:</span> <strong th:text="${userModel.username}">login</strong></p>
                 </div>
             </div>
 
             <section class="surface form-card">
                 <form class="form-stack" th:object="${userModel}"
                       th:action="@{/admin/users/edit/{id}(id=${userModel.id})}" method="post"
-                      data-confirm="Czy na pewno chcesz zapisać zmiany danych tego użytkownika?">
+                      data-confirm="Czy na pewno chcesz zapisać zmiany danych tego użytkownika?" th:attr="data-confirm=#{admin.user.confirmSave}">
                     <div class="field">
-                        <label for="username">Login</label>
+                        <label for="username" th:text="#{common.username}">Login</label>
                         <input id="username" type="text" th:field="*{username}" minlength="2" maxlength="30"
                                required="required"/>
                     </div>
 
                     <div class="form-row">
                         <div class="field">
-                            <label for="name">Imię</label>
+                            <label for="name" th:text="#{common.name}">Imię</label>
                             <input id="name" type="text" th:field="*{name}" minlength="2" maxlength="30"/>
                         </div>
                         <div class="field">
-                            <label for="surname">Nazwisko</label>
+                            <label for="surname" th:text="#{common.surname}">Nazwisko</label>
                             <input id="surname" type="text" th:field="*{surname}" minlength="2" maxlength="30"/>
                         </div>
                     </div>
 
                     <div class="field">
-                        <label for="email">Adres e-mail</label>
+                        <label for="email" th:text="#{common.email}">Adres e-mail</label>
                         <input id="email" type="email" th:field="*{email}"/>
                     </div>
 
                     <div class="form-row">
                         <div class="field">
-                            <label for="tokens">Liczba tokenów</label>
+                            <label for="tokens" th:text="#{admin.user.tokens}">Liczba tokenów</label>
                             <input id="tokens" type="number" th:field="*{tokens}" min="0" max="99"
                                    required="required"/>
                         </div>
                         <div class="field">
-                            <label for="roomId">Pokój</label>
+                            <label for="roomId" th:text="#{common.room}">Pokój</label>
                             <select id="roomId" th:field="*{roomId}" required="required">
                                 <option th:each="room : ${rooms}" th:value="${room.id}"
                                         th:text="${room.room}+${room.type}"></option>
@@ -61,7 +61,7 @@
                     </div>
 
                     <div class="field">
-                        <label for="roleId">Rola</label>
+                        <label for="roleId" th:text="#{admin.user.role}">Rola</label>
                         <select id="roleId" th:field="*{roleId}" required="required">
                             <option th:each="role, iteration : ${userRoles}"
                                     th:value="${iteration.count - 1}" th:text="${role}"></option>
@@ -70,10 +70,10 @@
 
                     <label class="toggle-section check-row" for="blocked">
                         <input id="blocked" type="checkbox" th:field="*{blocked}"/>
-                        <span><strong>Zablokuj konto</strong><br/><span class="muted">Użytkownik nie będzie mógł zalogować się do systemu.</span></span>
+                        <span><strong th:text="#{admin.user.block}">Zablokuj konto</strong><br/><span class="muted" th:text="#{admin.user.blockHint}">Użytkownik nie będzie mógł zalogować się do systemu.</span></span>
                     </label>
 
-                    <button class="btn btn--block" type="submit">Zapisz zmiany</button>
+                    <button class="btn btn--block" type="submit" th:text="#{common.save}">Zapisz zmiany</button>
                 </form>
             </section>
         </div>

@@ -9,23 +9,23 @@ import javax.validation.constraints.NotNull;
  * Created by Sebastian Sokolowski on 13.09.17.
  */
 public class UserRegistrationModel {
-    @Length(min = 2, max = 30, message = "Imię musi być dłuższe niż 2 znaki i krótsze niż 30.")
+    @Length(min = 2, max = 30, message = "{validation.name.length}")
     @NotNull
     private String name;
 
-    @Length(min = 2, max = 30, message = "Nazwisko musi być dłuższe niż 2 znaki i krótsze niż 30.")
+    @Length(min = 2, max = 30, message = "{validation.surname.length}")
     @NotNull
     private String surname;
 
-    @Email(message = "Błędny adres email.")
+    @Email(message = "{validation.email.invalid}")
     @NotNull
     private String email;
 
-    @Length(min = 3, max = 30, message = "Nazwa użytkownika musi być dłuższe niż 3 znaki i krótsza niż 30.")
+    @Length(min = 3, max = 30, message = "{validation.username.length}")
     @NotNull
     private String username;
 
-    @Length(min = 5, max = 30, message = "Hasło musi być dłuższe niż 3 znaki i krótsze niż 30.")
+    @Length(min = 5, max = 30, message = "{validation.password.length}")
     @NotNull
     private String password;
 

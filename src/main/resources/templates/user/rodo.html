@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<html lang="pl" th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Zgody RODO | BJ Pralnia</title>
+    <title th:text="#{title.privacy}">Zgody RODO | BJ Pralnia</title>
     <th:block th:include="fragments/header :: header-css"></th:block>
 </head>
 <body>
@@ -10,30 +10,30 @@
 
     <main class="page">
         <div class="container">
-            <a class="link-back" th:href="@{/user/regulations}">Wróć do regulaminu</a>
+            <a class="link-back" th:href="@{/user/regulations}" th:text="#{privacy.back}">Wróć do regulaminu</a>
             <div class="page-head">
                 <div class="page-head__copy">
-                    <p class="eyebrow">Krok 2 z 2</p>
-                    <h1>Informacje o danych osobowych</h1>
-                    <p class="lead">Przeczytaj informacje dotyczące przetwarzania danych w systemie rezerwacji.</p>
+                    <p class="eyebrow" th:text="#{privacy.step}">Krok 2 z 2</p>
+                    <h1 th:text="#{privacy.heading}">Informacje o danych osobowych</h1>
+                    <p class="lead" th:text="#{privacy.lead}">Przeczytaj informacje dotyczące przetwarzania danych w systemie rezerwacji.</p>
                 </div>
             </div>
 
             <section class="surface panel">
                 <iframe class="document-frame"
-                        title="Informacje RODO"
+                        title="Informacje RODO" th:title="#{privacy.documentTitle}"
                         src="https://docs.google.com/document/d/1xIxqpRonfvVgEbaKFVstjVxcJ1lSKuhg/preview"></iframe>
                 <iframe class="document-frame"
-                        title="Zasady przetwarzania danych"
+                        title="Zasady przetwarzania danych" th:title="#{privacy.rulesTitle}"
                         src="https://docs.google.com/document/d/1o7BGmwhqZwBQ1P-eTNvNWNFxkmi6_GYT/preview"></iframe>
             </section>
 
             <form class="legal-actions" th:action="@{/user/registration}" method="get">
                 <label class="check-row" for="accept-rodo">
                     <input id="accept-rodo" type="checkbox" name="accept" value="accept" required="required"/>
-                    <strong>Zgadzam się na przetwarzanie danych</strong>
+                    <strong th:text="#{privacy.accept}">Zgadzam się na przetwarzanie danych</strong>
                 </label>
-                <button class="btn" type="submit">Przejdź do rejestracji</button>
+                <button class="btn" type="submit" th:text="#{privacy.next}">Przejdź do rejestracji</button>
             </form>
         </div>
     </main>

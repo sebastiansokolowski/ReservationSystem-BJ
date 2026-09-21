@@ -5,6 +5,8 @@ import bj.pranie.entity.User;
 import bj.pranie.model.RestorePasswordModel;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Controller;
@@ -21,6 +23,7 @@ import org.thymeleaf.context.Context;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import javax.validation.Valid;
+import java.util.Locale;
 
 /**
  * Created by Sebastian Sokolowski on 10.08.16.
@@ -37,6 +40,9 @@ public class UserRestorePassword {
 
     @Autowired
     private TemplateEngine templateEngine;
+
+    @Autowired
+    private MessageSource messageSource;
 
     @RequestMapping(value = "/restorePassword", method = RequestMethod.GET)
     public String restoreForm(Model model) {
@@ -58,11 +64,12 @@ public class UserRestorePassword {
                 user.setResetPasswordKey(resetPasswordKey);
                 userDao.save(user);
 
-                sendMail(user, resetPasswordKey, host);
+                Locale locale = LocaleContextHolder.getLocale();
+                sendMail(user, resetPasswordKey, host, locale);
                 modelAndView.addObject("host", host);
-                modelAndView.addObject("successMessage", "Link do resetowania hasła został wysłany na podany adres email.");
+                modelAndView.addObject("successMessage", messageSource.getMessage("success.restore", null, locale));
             } else {
-                bindingResult.rejectValue("email", "error.restorePasswordDto", "Podany adres email nie istnieje w bazie danych.");
+                bindingResult.rejectValue("email", "validation.email.notFound");
             }
         }
 
@@ -70,10 +77,10 @@ public class UserRestorePassword {
         return modelAndView;
     }
 
-    private void sendMail(User user, String resetPasswordKey, String host) throws MessagingException {
+    private void sendMail(User user, String resetPasswordKey, String host, Locale locale) throws MessagingException {
         MimeMessage mail = emailSender.createMimeMessage();
 
-        Context context = new Context();
+        Context context = new Context(locale);
         context.setVariable("host", host);
         context.setVariable("name", user.getName());
         context.setVariable("resetPasswordKey", resetPasswordKey);
@@ -84,7 +91,7 @@ public class UserRestorePassword {
         helper.setTo(user.getEmail());
         helper.setReplyTo("rm.bursa@samorzad.uj.edu.pl");
         helper.setFrom("rm.bursa@samorzad.uj.edu.pl");
-        helper.setSubject("Resetowanie hasła " + host);
+        helper.setSubject(messageSource.getMessage("email.reset.subject", new Object[]{host}, locale));
         helper.setText(body, true);
 
         emailSender.send(mail);

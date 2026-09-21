@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<html lang="pl" th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Regulamin | BJ Pralnia</title>
+    <title th:text="#{title.regulations}">Regulamin | BJ Pralnia</title>
     <th:block th:include="fragments/header :: header-css"></th:block>
 </head>
 <body>
@@ -12,27 +12,27 @@
         <div class="container">
             <div class="page-head">
                 <div class="page-head__copy">
-                    <p class="eyebrow">Krok 1 z 2</p>
-                    <h1>Regulamin pralni</h1>
-                    <p class="lead">Zapoznaj się z zasadami korzystania z pralni przed utworzeniem konta.</p>
+                    <p class="eyebrow" th:text="#{regulations.step}">Krok 1 z 2</p>
+                    <h1 th:text="#{regulations.heading}">Regulamin pralni</h1>
+                    <p class="lead" th:text="#{regulations.lead}">Zapoznaj się z zasadami korzystania z pralni przed utworzeniem konta.</p>
                 </div>
             </div>
 
             <section class="surface panel">
                 <iframe class="document-frame"
-                        title="Regulamin korzystania z pralni"
+                        title="Regulamin korzystania z pralni" th:title="#{regulations.documentTitle}"
                         src="https://docs.google.com/document/d/1UI-0DS33XgHRHhnsTIaK9tO7vb0ajt7g/preview"></iframe>
                 <iframe class="document-frame"
-                        title="Dodatkowe zasady korzystania z pralni"
+                        title="Dodatkowe zasady korzystania z pralni" th:title="#{regulations.additionalTitle}"
                         src="https://docs.google.com/document/d/1egQsALlbZo359mVThlxeOSddmOeLyUln/preview"></iframe>
             </section>
 
             <form class="legal-actions" th:action="@{/user/rodo}" method="get">
                 <label class="check-row" for="accept-regulations">
                     <input id="accept-regulations" type="checkbox" name="accept" value="accept" required="required"/>
-                    <strong>Akceptuję regulamin</strong>
+                    <strong th:text="#{regulations.accept}">Akceptuję regulamin</strong>
                 </label>
-                <button class="btn" type="submit">Dalej: zgody RODO</button>
+                <button class="btn" type="submit" th:text="#{regulations.next}">Dalej: zgody RODO</button>
             </form>
         </div>
     </main>

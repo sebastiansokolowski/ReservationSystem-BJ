@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<html lang="pl" th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Ustawienia konta | BJ Pralnia</title>
+    <title th:text="#{title.settings}">Ustawienia konta | BJ Pralnia</title>
     <th:block th:include="fragments/header :: header-css"></th:block>
 </head>
 <body>
@@ -10,13 +10,13 @@
 
     <main class="page page--narrow">
         <div class="container">
-            <a class="link-back" th:href="@{/type}">Wróć do panelu</a>
+            <a class="link-back" th:href="@{/type}" th:text="#{common.backToDashboard}">Wróć do panelu</a>
 
             <div class="page-head">
                 <div class="page-head__copy">
-                    <p class="eyebrow">Twoje konto</p>
-                    <h1>Ustawienia konta</h1>
-                    <p class="lead">Zaznacz dane, które chcesz zaktualizować, a następnie potwierdź zmianę obecnym hasłem.</p>
+                    <p class="eyebrow" th:text="#{settings.eyebrow}">Twoje konto</p>
+                    <h1 th:text="#{settings.heading}">Ustawienia konta</h1>
+                    <p class="lead" th:text="#{settings.lead}">Zaznacz dane, które chcesz zaktualizować, a następnie potwierdź zmianę obecnym hasłem.</p>
                 </div>
             </div>
 
@@ -26,11 +26,11 @@
                         <label class="check-row" for="setNewUsername">
                             <input id="setNewUsername" type="checkbox" th:field="*{setNewUsername}"
                                    data-enable-target="#newUsername"/>
-                            <strong>Zmień login</strong>
+                            <strong th:text="#{settings.changeUsername}">Zmień login</strong>
                         </label>
                         <div class="toggle-section__body">
                             <div class="field">
-                                <label for="newUsername">Nowy login</label>
+                                <label for="newUsername" th:text="#{settings.newUsername}">Nowy login</label>
                                 <input id="newUsername" type="text" th:field="*{newUsername}" minlength="3"
                                        maxlength="30" disabled="disabled" required="required"/>
                                 <p class="field-error" th:if="${#fields.hasErrors('newUsername')}"
@@ -43,11 +43,11 @@
                         <label class="check-row" for="setNewEmail">
                             <input id="setNewEmail" type="checkbox" th:field="*{setNewEmail}"
                                    data-enable-target="#newEmail"/>
-                            <strong>Zmień adres e-mail</strong>
+                            <strong th:text="#{settings.changeEmail}">Zmień adres e-mail</strong>
                         </label>
                         <div class="toggle-section__body">
                             <div class="field">
-                                <label for="newEmail">Nowy adres e-mail</label>
+                                <label for="newEmail" th:text="#{settings.newEmail}">Nowy adres e-mail</label>
                                 <input id="newEmail" type="email" th:field="*{newEmail}" disabled="disabled"
                                        required="required"/>
                                 <p class="field-error" th:if="${#fields.hasErrors('newEmail')}"
@@ -60,11 +60,11 @@
                         <label class="check-row" for="setNewPassword">
                             <input id="setNewPassword" type="checkbox" th:field="*{setNewPassword}"
                                    data-enable-target="#newPassword, #newPasswordRepeat"/>
-                            <strong>Zmień hasło</strong>
+                            <strong th:text="#{settings.changePassword}">Zmień hasło</strong>
                         </label>
                         <div class="toggle-section__body form-row">
                             <div class="field">
-                                <label for="newPassword">Nowe hasło</label>
+                                <label for="newPassword" th:text="#{common.newPassword}">Nowe hasło</label>
                                 <input id="newPassword" type="password" th:field="*{newPassword}" minlength="5"
                                        maxlength="30" autocomplete="new-password" disabled="disabled"
                                        required="required"/>
@@ -72,7 +72,7 @@
                                    th:errors="*{newPassword}"></p>
                             </div>
                             <div class="field">
-                                <label for="newPasswordRepeat">Powtórz nowe hasło</label>
+                                <label for="newPasswordRepeat" th:text="#{common.repeatNewPassword}">Powtórz nowe hasło</label>
                                 <input id="newPasswordRepeat" type="password" th:field="*{newPasswordRepeat}"
                                        minlength="5" maxlength="30" autocomplete="new-password" disabled="disabled"
                                        required="required"/>
@@ -84,18 +84,18 @@
 
                     <div class="form-section">
                         <div>
-                            <h2>Potwierdź zmiany</h2>
-                            <p class="muted">Ze względów bezpieczeństwa wpisz aktualne hasło.</p>
+                            <h2 th:text="#{settings.confirmHeading}">Potwierdź zmiany</h2>
+                            <p class="muted" th:text="#{settings.confirmLead}">Ze względów bezpieczeństwa wpisz aktualne hasło.</p>
                         </div>
                         <div class="field">
-                            <label for="password">Aktualne hasło</label>
+                            <label for="password" th:text="#{settings.currentPassword}">Aktualne hasło</label>
                             <input id="password" type="password" th:field="*{password}" autocomplete="current-password"
                                    required="required"/>
                             <p class="field-error" th:if="${#fields.hasErrors('password')}"
                                th:errors="*{password}"></p>
                         </div>
                         <div class="alert alert--success" th:if="${successMessage}" th:text="${successMessage}"></div>
-                        <button class="btn" type="submit">Zapisz ustawienia</button>
+                        <button class="btn" type="submit" th:text="#{settings.save}">Zapisz ustawienia</button>
                     </div>
                 </form>
             </section>

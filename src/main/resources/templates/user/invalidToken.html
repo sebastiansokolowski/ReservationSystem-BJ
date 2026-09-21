@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<html lang="pl" th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Link wygasł | BJ Pralnia</title>
+    <title th:text="#{title.invalidToken}">Link wygasł | BJ Pralnia</title>
     <th:block th:include="fragments/header :: header-css"></th:block>
 </head>
 <body>
@@ -11,12 +11,12 @@
     <main class="page page--narrow">
         <div class="container">
             <section class="surface form-card">
-                <p class="eyebrow">Nieaktualny link</p>
-                <h1>Link do resetowania hasła wygasł</h1>
-                <p class="lead">Dla bezpieczeństwa linki resetujące działają tylko przez określony czas. Poproś o nowy link i spróbuj ponownie.</p>
+                <p class="eyebrow" th:text="#{invalidToken.eyebrow}">Nieaktualny link</p>
+                <h1 th:text="#{invalidToken.heading}">Link do resetowania hasła wygasł</h1>
+                <p class="lead" th:text="#{invalidToken.lead}">Dla bezpieczeństwa linki resetujące działają tylko przez określony czas. Poproś o nowy link i spróbuj ponownie.</p>
                 <div class="form-section">
-                    <a class="btn" th:href="@{/user/restorePassword}">Wyślij nowy link</a>
-                    <a class="btn btn--secondary" th:href="@{/}">Wróć do logowania</a>
+                    <a class="btn" th:href="@{/user/restorePassword}" th:text="#{invalidToken.newLink}">Wyślij nowy link</a>
+                    <a class="btn btn--secondary" th:href="@{/}" th:text="#{common.backToLogin}">Wróć do logowania</a>
                 </div>
             </section>
         </div>

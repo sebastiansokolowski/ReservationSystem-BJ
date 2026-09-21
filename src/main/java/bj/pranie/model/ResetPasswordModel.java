@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
  */
 public class ResetPasswordModel {
 
-    @Length(min = 5, max = 30, message = "Hasło musi być dłuższe niż 3 znaki i krótsze niż 30.")
+    @Length(min = 5, max = 30, message = "{validation.password.length}")
     @NotNull
     private String newPassword;
 
