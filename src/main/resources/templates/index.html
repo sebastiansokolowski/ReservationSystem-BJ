@@ -6,8 +6,10 @@
     </head>
     <body>
         <main class="auth-page">
-            <div class="auth-language" th:replace="fragments/header :: language-switcher"></div>
             <section class="auth-shell" aria-labelledby="login-title">
+                <div class="auth-language">
+                    <nav th:replace="fragments/header :: language-switcher"></nav>
+                </div>
                 <aside class="auth-visual">
                     <div class="auth-brand">
                         <span class="auth-brand__mark">

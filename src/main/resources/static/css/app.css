@@ -453,11 +453,12 @@ h3 {
 .auth-language {
     position: absolute;
     z-index: 2;
-    top: 22px;
-    right: 22px;
+    top: 18px;
+    right: 18px;
 }
 
 .auth-shell {
+    position: relative;
     display: grid;
     width: min(980px, 100%);
     min-height: 610px;
@@ -1459,6 +1460,11 @@ h3 {
         padding-bottom: 66px;
     }
 
+    .topbar {
+        background: #fff;
+        backdrop-filter: none;
+    }
+
     .container,
     .page--narrow .container {
         width: min(100% - 28px, 620px);
@@ -1530,8 +1536,11 @@ h3 {
         gap: 3px;
         padding: 20px;
         border-left: 1px solid var(--line);
-        background: #fff;
+        overflow-y: auto;
+        background-color: #fff;
         box-shadow: -18px 22px 46px rgba(7, 30, 65, 0.18);
+        isolation: isolate;
+        opacity: 1;
     }
 
     .mobile-menu__profile {
