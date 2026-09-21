@@ -29,10 +29,20 @@ public class IndexController {
     private UserAuthenticatedService userAuthenticatedService;
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public ModelAndView index() {
+    public ModelAndView home() {
         if (userAuthenticatedService.isAuthenticatedUser()) {
             return new ModelAndView("redirect:/type");
         }
+
+        return new ModelAndView("redirect:/login");
+    }
+
+    @RequestMapping(value = "/login", method = RequestMethod.GET)
+    public ModelAndView login() {
+        if (userAuthenticatedService.isAuthenticatedUser()) {
+            return new ModelAndView("redirect:/type");
+        }
+
         ModelAndView modelAndView = new ModelAndView("index");
         modelAndView.addObject("holidays", holidays);
         String localizedMessage = "en".equals(LocaleContextHolder.getLocale().getLanguage()) ? messageEn : message;
