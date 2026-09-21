@@ -22,10 +22,8 @@
             <section class="surface panel">
                 <iframe class="document-frame"
                         title="Informacje RODO" th:title="#{privacy.documentTitle}"
-                        src="https://docs.google.com/document/d/1xIxqpRonfvVgEbaKFVstjVxcJ1lSKuhg/preview"></iframe>
-                <iframe class="document-frame"
-                        title="Zasady przetwarzania danych" th:title="#{privacy.rulesTitle}"
-                        src="https://docs.google.com/document/d/1o7BGmwhqZwBQ1P-eTNvNWNFxkmi6_GYT/preview"></iframe>
+                        src="https://docs.google.com/document/d/1xIxqpRonfvVgEbaKFVstjVxcJ1lSKuhg/preview"
+                        th:src="#{privacy.documentUrl}"></iframe>
             </section>
 
             <form class="legal-actions" th:action="@{/user/registration}" method="get">
