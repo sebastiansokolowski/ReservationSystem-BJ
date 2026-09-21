@@ -1,62 +1,60 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html lang="pl" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
     <head>
-        <link rel="stylesheet"
-              href="//code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css"/>
-        <script src="//code.jquery.com/jquery-1.10.2.js"/>
-        <script src="//code.jquery.com/ui/1.11.2/jquery-ui.js"/>
-        <div th:include="fragments/header :: header-css"/>
+        <title>Rezerwacje | BJ Pralnia</title>
+        <th:block th:include="fragments/header :: header-css"></th:block>
     </head>
     <body>
-        <div th:include="fragments/header :: menu"/>
-        <center>
-            <h1>Lista rezerwacji</h1>
-            <table class="aligncenter">
-                <tbody>
-                    <tr>
-                        <td class="type">
-                            <form action="/wm/week" method="get">
-                                <button type="submit" class="type"
-                                        style="outline: none; border:none; background-color: transparent; cursor:pointer;">
-                                    <img style="width: 200px" src="/images/washer.png"/>
-                                </button>
-                            </form>
-                        </td>
-                        <td>
-                            <form action="/td/week" method="get">
-                                <button type="submit" class="type"
-                                        style="outline: none; border:none; background-color: transparent; cursor:pointer;">
-                                    <img style="width: 200px" src="/images/dryer.png"/>
-                                </button>
-                            </form>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td align="center">Pranie</td>
-                        <td align="center">Suszenie</td>
-                    </tr>
-                </tbody>
-            </table>
-        </center>
-        <script type="text/javascript">
-            $(function () {
-                $('.type').mouseover(function () {
-                    $(this).animate({
-                        opacity: 0.5
-                    }, 20);
-                });
-                $('.type').mouseout(function () {
-                    $(this).animate({
-                        opacity: 1
-                    }, 20);
-                });
-            });
-        </script>
+        <div class="app-shell">
+            <div th:include="fragments/header :: menu"></div>
+            <main class="page">
+                <div class="container">
+                    <div class="welcome-strip">
+                        <div>
+                            <p class="eyebrow">Rezerwacje pralni</p>
+                            <h1 sec:authorize="isAuthenticated()" th:if="${user != null and user.name != null}">Dzień dobry, <span th:text="${user.name}">Mieszkańcu</span>! 👋</h1>
+                            <h1 sec:authorize="isAuthenticated()" th:if="${user != null and user.name == null and user.room != null}">Dzień dobry, <span th:text="${user.room.room}">17</span><span th:text="${user.room.type}">B</span>! 👋</h1>
+                            <h1 sec:authorize="isAnonymous()">Znajdź dogodny termin</h1>
+                            <p class="lead">Wybierz rodzaj urządzenia, a następnie wolną godzinę w tygodniowym kalendarzu.</p>
+                        </div>
+                        <div sec:authorize="isAuthenticated()" th:if="${user != null}" class="token-badge">
+                            Dostępne tokeny: <span th:text="${user.tokens}">0</span>
+                        </div>
+                    </div>
+
+                    <section class="service-grid" aria-label="Wybór urządzenia">
+                        <a class="service-card" th:href="@{/wm/week}" href="/wm/week">
+                            <div>
+                                <span class="eyebrow">Rezerwacja</span>
+                                <h2>Pralki <span class="service-card__arrow">→</span></h2>
+                                <span class="muted">Sprawdź dostępne pralki i wybierz godzinę.</span>
+                                <span class="service-card__meta">● Zobacz tygodniowy grafik</span>
+                            </div>
+                            <span class="service-card__icon-wrap">
+                                <img class="service-card__icon" th:src="@{/images/washer.png}" src="/images/washer.png" alt="Pralka"/>
+                            </span>
+                        </a>
+                        <a class="service-card" th:href="@{/td/week}" href="/td/week">
+                            <div>
+                                <span class="eyebrow">Rezerwacja</span>
+                                <h2>Suszarki <span class="service-card__arrow">→</span></h2>
+                                <span class="muted">Znajdź wolną suszarkę po zakończeniu prania.</span>
+                                <span class="service-card__meta">● Zobacz tygodniowy grafik</span>
+                            </div>
+                            <span class="service-card__icon-wrap">
+                                <img class="service-card__icon" th:src="@{/images/dryer.png}" src="/images/dryer.png" alt="Suszarka"/>
+                            </span>
+                        </a>
+                    </section>
+
+                    <section class="feature-strip" aria-label="Najważniejsze możliwości">
+                        <div class="feature-tile"><strong>Pełny tydzień</strong><span>Wszystkie terminy na jednym ekranie.</span></div>
+                        <div class="feature-tile"><strong>Szybka rezerwacja</strong><span>Wybierasz termin i urządzenie.</span></div>
+                        <div class="feature-tile"><strong>Wygodnie na telefonie</strong><span>Responsywny widok zawsze pod ręką.</span></div>
+                    </section>
+                </div>
+            </main>
+            <div th:replace="fragments/footer :: footer"></div>
+        </div>
     </body>
-    <footer>
-        <a href="https://www.flaticon.com/free-icons/washer" title="washer icons">Washer icons created by xnimrodx - Flaticon</a>
-        <br/>
-        <a href="https://www.flaticon.com/free-icons/dryer" title="dryer icons">Dryer icons created by photo3idea_studio - Flaticon</a>
-        <div th:replace="fragments/footer :: footer"/>
-    </footer>
 </html>

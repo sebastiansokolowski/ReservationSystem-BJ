@@ -1,12 +1,27 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.w3.org/1999/xhtml">
-    <div th:fragment="footer">
-        <script type="text/javascript" id="cookieinfo"
-                src="//cookieinfoscript.com/js/cookieinfo.min.js"
-                data-message="Ta strona korzysta z ciasteczek (cookies)"
-                data-linkmsg="Więcej informacji"
-                data-divlinkbg="#fdc800"
-                data-moreinfo="https://pl.wikipedia.org/wiki/HTTP_cookie">
-        </script>
-    </div>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+    <body>
+        <footer th:fragment="footer" class="site-footer">
+            <span>BJ Pranie — czysto, wygodnie, po studencku.</span>
+            <span class="icon-credit">
+                Ikony:
+                <a href="https://www.flaticon.com/free-icons/washer" target="_blank" rel="noopener noreferrer">pralka — xnimrodx / Flaticon</a>,
+                <a href="https://www.flaticon.com/free-icons/dryer" target="_blank" rel="noopener noreferrer">suszarka — photo3idea_studio / Flaticon</a>.
+            </span>
+
+            <aside class="cookie-banner" data-cookie-banner="data-cookie-banner" role="dialog"
+                   aria-label="Informacja o plikach cookie" aria-live="polite" hidden="hidden">
+                <div class="cookie-banner__content">
+                    <div class="cookie-banner__icon" aria-hidden="true">🍪</div>
+                    <div class="cookie-banner__copy">
+                        <strong>Ta strona korzysta z plików cookie</strong>
+                        <span>Używamy wyłącznie niezbędnych plików cookie do logowania i obsługi rezerwacji.</span>
+                    </div>
+                    <button class="btn btn--small cookie-banner__accept" type="button" data-cookie-accept="data-cookie-accept">
+                        Rozumiem i akceptuję
+                    </button>
+                </div>
+            </aside>
+        </footer>
+    </body>
 </html>

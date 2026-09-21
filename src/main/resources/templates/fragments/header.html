@@ -1,62 +1,92 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.w3.org/1999/xhtml">
+<html lang="pl" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
     <head>
-        <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Tangerine"/>
-        <div th:fragment="header-css">
+        <th:block th:fragment="header-css">
             <meta charset="UTF-8"/>
-            <title>DS Bursa Jagiellońska</title>
-            <style type="text/css">
-                .alignleft {
-                    float: left;
-                }
-
-                .alignright {
-                    float: right;
-                }
-                        footer {
-    text-align: center;
-    position: fixed;
-    bottom: 0;
-    padding-top: 20px;
-    padding-bottom: 20px;
-    width: 100%;
-                }
-.fieldset {
-  -moz-border-radius:10px;
-  border-radius: 10px;
-  -webkit-border-radius: 10px;
-}
-      * {
-        font-family: Ubuntu;
-      }
-            </style>
-        </div>
+            <meta name="viewport" content="width=device-width, initial-scale=1"/>
+            <meta name="theme-color" content="#071a3e"/>
+            <link rel="stylesheet" type="text/css" th:href="@{/css/app.css}" href="/css/app.css"/>
+            <script defer="defer" th:src="@{/js/app.js}" src="/js/app.js"></script>
+        </th:block>
     </head>
-    <div th:fragment="menu" class="alignleft">
-        <div sec:authorize="isAuthenticated()">
-            <div th:if="${user.name == null}">
-                <span th:text="${user.room.room}"/><span th:text="${user.room.type}"/>
-            </div>
-            <div th:unless="${user.name == null}">
-                <span th:text="${user.name}"/> <span th:text="${user.surname}"/>
-            </div>
-            Tokeny: <span th:text="${user.tokens}"/>
-            <div sec:authorize="hasAnyAuthority('USER','ADMIN')">
-                <a href="/user/settings">Ustawienia</a>
-            </div>
-            <div sec:authorize="hasAuthority('ADMIN')">
-                <a href="/admin/users">Użytkownicy</a>
-            </div>
-            <div sec:authorize="hasAuthority('ADMIN')">
-                <a href="/admin/rooms">Pokoje</a>
-            </div>
-            <a href="javascript: document.logoutForm.submit()">Wyloguj</a>
-            <form name="logoutForm" th:action="@{/logout}" method="post" th:hidden="true">
-                <input hidden="true" class="btn" type="submit" value="Logout"/>
-            </form>
-        </div>
-        <div sec:authorize="isAnonymous()">
-            <a href="/login">Logowanie</a>
-        </div>
-    </div>
+    <body>
+        <th:block th:fragment="menu">
+            <header class="topbar">
+                <div class="container topbar__inner">
+                    <a class="brand" th:href="@{/type}" href="/type">
+                        <span class="brand__mark">
+                            <img th:src="@{/images/logo-mark.jpg}" src="/images/logo-mark.jpg" alt="Logo Bursy Jagiellońskiej"/>
+                        </span>
+                        <span>
+                            <span class="brand__name">Bursa Jagiellońska</span>
+                            <span class="brand__sub">Pralnia</span>
+                        </span>
+                    </a>
+
+                    <nav class="topnav" aria-label="Główna nawigacja">
+                        <a class="topnav__link" th:href="@{/type}" href="/type">Start</a>
+                        <a class="topnav__link" th:href="@{/wm/week}" href="/wm/week">Pralki</a>
+                        <a class="topnav__link" th:href="@{/td/week}" href="/td/week">Suszarki</a>
+                        <a class="topnav__link" sec:authorize="hasAnyAuthority('USER','ADMIN')"
+                           th:href="@{/user/settings}" href="/user/settings">Ustawienia</a>
+                        <a class="topnav__link" sec:authorize="hasAuthority('ADMIN')"
+                           th:href="@{/admin/users}" href="/admin/users">Użytkownicy</a>
+                        <a class="topnav__link" sec:authorize="hasAuthority('ADMIN')"
+                           th:href="@{/admin/rooms}" href="/admin/rooms">Pokoje</a>
+                    </nav>
+
+                    <div sec:authorize="isAuthenticated()" class="user-chip">
+                        <span class="user-chip__avatar">BJ</span>
+                        <span class="user-chip__text" th:if="${user != null}">
+                            <span class="user-chip__name" th:if="${user.name != null}"
+                                  th:text="${user.name + ' ' + user.surname}">Mieszkaniec</span>
+                            <span class="user-chip__name" th:if="${user.name == null and user.room != null}">
+                                Pokój <span th:text="${user.room.room}">17</span><span th:text="${user.room.type}">B</span>
+                            </span>
+                            <span class="user-chip__meta">Tokeny: <strong th:text="${user.tokens}">0</strong></span>
+                        </span>
+                        <button class="logout-button" type="button" aria-label="Wyloguj"
+                                onclick="document.getElementById('logout-form').submit()">Wyloguj</button>
+                    </div>
+
+                    <details sec:authorize="isAuthenticated()" class="mobile-menu">
+                        <summary aria-label="Otwórz menu">☰</summary>
+                        <div class="mobile-menu__drawer">
+                            <div class="mobile-menu__profile" th:if="${user != null}">
+                                <span class="user-chip__avatar">BJ</span>
+                                <span>
+                                    <strong th:if="${user.name != null}" th:text="${user.name + ' ' + user.surname}">Mieszkaniec</strong>
+                                    <strong th:if="${user.name == null and user.room != null}">Pokój <span th:text="${user.room.room}">17</span><span th:text="${user.room.type}">B</span></strong>
+                                    <small>Tokeny: <span th:text="${user.tokens}">0</span></small>
+                                </span>
+                            </div>
+                            <a th:href="@{/type}" href="/type">⌂ <span>Strona główna</span></a>
+                            <a th:href="@{/wm/week}" href="/wm/week">▦ <span>Kalendarz pralek</span></a>
+                            <a th:href="@{/td/week}" href="/td/week">◷ <span>Kalendarz suszarek</span></a>
+                            <a sec:authorize="hasAnyAuthority('USER','ADMIN')" th:href="@{/user/settings}" href="/user/settings">⚙ <span>Ustawienia konta</span></a>
+                            <a sec:authorize="hasAuthority('ADMIN')" th:href="@{/admin/users}" href="/admin/users">♙ <span>Użytkownicy</span></a>
+                            <a sec:authorize="hasAuthority('ADMIN')" th:href="@{/admin/rooms}" href="/admin/rooms">⌂ <span>Pokoje</span></a>
+                            <button type="button" onclick="document.getElementById('logout-form').submit()">↪ <span>Wyloguj się</span></button>
+                        </div>
+                    </details>
+
+                    <a sec:authorize="isAnonymous()" class="btn btn--small" th:href="@{/login}" href="/login">Zaloguj się</a>
+                </div>
+            </header>
+
+            <form sec:authorize="isAuthenticated()" id="logout-form" th:action="@{/logout}" action="/logout" method="post" hidden="hidden"></form>
+
+            <nav sec:authorize="isAuthenticated()" class="mobile-nav" aria-label="Nawigacja mobilna">
+                <a th:href="@{/type}" href="/type"><span class="mobile-nav__icon">⌂</span><span>Start</span></a>
+                <a th:href="@{/wm/week}" href="/wm/week"><span class="mobile-nav__icon">▦</span><span>Pralki</span></a>
+                <a th:href="@{/td/week}" href="/td/week"><span class="mobile-nav__icon">◷</span><span>Suszarki</span></a>
+                <a sec:authorize="hasAnyAuthority('USER','ADMIN')" th:href="@{/user/settings}" href="/user/settings">
+                    <span class="mobile-nav__icon">☰</span><span>Więcej</span>
+                </a>
+                <a sec:authorize="hasAuthority('GROUP')" href="javascript:document.getElementById('logout-form').submit()">
+                    <span class="mobile-nav__icon">↪</span><span>Wyloguj</span>
+                </a>
+            </nav>
+        </th:block>
+    </body>
 </html>

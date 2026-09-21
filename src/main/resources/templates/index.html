@@ -1,56 +1,70 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html lang="pl" xmlns:th="http://www.thymeleaf.org">
     <head>
-        <div th:include="fragments/header :: header-css"/>
+        <title>Logowanie | BJ Pralnia</title>
+        <th:block th:include="fragments/header :: header-css"></th:block>
     </head>
     <body>
-        <center>
-            <h2>Zapisy na pranie w DS i HA Bursa Jagiellońska</h2>
-            <img src="/images/logo.jpg"/>
-            <div style="margin-left:35%;margin-right:35%;">
-                <form action="/type" method="get">
-                    <input class="btn" type="submit" value="Lista bez logowania"/>
-                </form>
-                <br/>
-                <fieldset class="fieldset">
-                    <div align="center">
-                        <form th:action="@{/login}" method="post">
-                            <p>Login lub email: <br/><input type="text" name="username" required="true"/></p>
-                            <p> Hasło: <br/><input type="password" name="password" required="true"/></p>
-                            <input class="btn" type="submit" value="Zaloguj się"/>
-                        </form>
+        <main class="auth-page">
+            <section class="auth-shell" aria-labelledby="login-title">
+                <aside class="auth-visual">
+                    <div class="auth-brand">
+                        <span class="auth-brand__mark">
+                            <img th:src="@{/images/logo-mark.jpg}" src="/images/logo-mark.jpg"
+                                 alt="Logo Bursy Jagiellońskiej"/>
+                        </span>
+                        <span><strong>Bursa Jagiellońska</strong><span>Pralnia</span></span>
                     </div>
-                    <div class="error"
+                    <div class="auth-hero">
+                        <h1>Czyste ubrania.<br/>Lepsze jutro.</h1>
+                        <ul class="auth-benefits">
+                            <li><span class="benefit-icon">ϟ</span> Szybka rezerwacja w kilku kliknięciach</li>
+                            <li><span class="benefit-icon">◷</span> Dostęp do grafiku przez całą dobę</li>
+                            <li><span class="benefit-icon">⌂</span> Stworzone dla mieszkańców BJ</li>
+                        </ul>
+                    </div>
+                </aside>
+
+                <div class="auth-form-wrap">
+                    <p class="eyebrow">System rezerwacji</p>
+                    <h2 id="login-title">Zaloguj się</h2>
+                    <p class="muted">Wpisz swoje dane, aby przejść do kalendarza.</p>
+
+                    <div class="alert alert--danger"
                          th:if="${session[SPRING_SECURITY_LAST_EXCEPTION] != null and session[SPRING_SECURITY_LAST_EXCEPTION].message != null}"
                          th:with="errorMsg=${session[SPRING_SECURITY_LAST_EXCEPTION].message}">
-                        <p style="color:red">
-                            <span th:text="${errorMsg}"/>
-                        </p>
+                        <span th:text="${errorMsg}">Nieprawidłowe dane logowania.</span>
                     </div>
-                    <br/>
-                    <a href="/user/restorePassword">Nie pamiętasz hasła?</a><br/>
-                    <a href="/user/regulations">Utwórz konto</a><br/>
-                </fieldset>
-                <br/>
-                <div align="center" th:if="${message}">
-                    <font color="red">UWAGA!</font><br/>
-                    <span th:utext="${message}" />
+
+                    <form class="form-stack" th:action="@{/login}" action="/login" method="post">
+                        <div class="field">
+                            <label for="username">Login lub adres e-mail</label>
+                            <input id="username" type="text" name="username" autocomplete="username"
+                                   placeholder="np. 17b" required="required" autofocus="autofocus"/>
+                        </div>
+                        <div class="field">
+                            <label for="password">Hasło</label>
+                            <input id="password" type="password" name="password" autocomplete="current-password"
+                                   placeholder="Wpisz hasło" required="required"/>
+                        </div>
+                        <button class="btn btn--block" type="submit">Zaloguj się →</button>
+                        <a class="guest-calendar-link" th:href="@{/type}" href="/type">
+                            Zobacz kalendarz bez logowania
+                        </a>
+                    </form>
+
+                    <div class="auth-links">
+                        <a th:href="@{/user/restorePassword}" href="/user/restorePassword">Nie pamiętasz hasła?</a>
+                        <a th:href="@{/user/regulations}" href="/user/regulations">Utwórz konto</a>
+                    </div>
+
+                    <div class="alert alert--info" th:if="${message}" th:utext="${message}"></div>
+                    <div class="alert alert--info" th:if="${holidays}">
+                        Tryb wakacyjny jest aktywny. Zaloguj się numerem pokoju; domyślne hasło to „bursa”.
+                    </div>
                 </div>
-                <div align="center" th:if="${holidays}">
-                    <font color="red">UWAGA!</font><br/>
-                    Na okres wakacji zostały wprowadzone małe zmiany.<br/>
-                    <br/>
-                    Login: numer pokoju<br/>
-                    Hasło: bursa<br/>
-                    <br/>
-                    * Numer pokoju składa się z numeru składu i litery oznaczającej pokój. np. 33b, 24c, 19a<br/>
-                    * Zmiana nie dotyczy części asystenckiej.<br/>
-                    * Brak możliwości zmiany terminu.<br/>
-                </div>
-            </div>
-        </center>
+            </section>
+        </main>
+        <div th:replace="fragments/footer :: footer"></div>
     </body>
-    <footer>
-        <div th:replace="fragments/footer :: footer"/>
-    </footer>
 </html>

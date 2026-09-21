@@ -1,29 +1,44 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
-    <head>
-        <div th:include="fragments/header :: header-css"/>
-    </head>
-    <body>
-        <div th:include="fragments/header :: menu"/>
-        <center>
-            <h2>Rejestracja konta</h2>
-            <fieldset class="fieldset">
-                <iframe style="width:100%; height: 1500px; border:none; display: block;" src="https://docs.google.com/document/d/1xIxqpRonfvVgEbaKFVstjVxcJ1lSKuhg/preview"></iframe>
-                <iframe style="width:100%; height: 1500px; border:none; display: block;" src="https://docs.google.com/document/d/1o7BGmwhqZwBQ1P-eTNvNWNFxkmi6_GYT/preview"></iframe>
-            </fieldset>
-            <div style="margin-left: 35%; margin-right: 35%; margin-bottom: 50px;">
-                <form th:action="@{/user/registration}" method="get">
-                    <div align="right">
-                        <p align="center">
-                            <input type="checkbox" name="accept" value="accept" required="true"/>Zgadzam się na przetwarzanie danych
-                        </p>
-                    </div>
-                    <input class="btn" type="submit" value="Dalej" style="margin-bottom: 20px;"/>
-                </form>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Zgody RODO | BJ Pralnia</title>
+    <th:block th:include="fragments/header :: header-css"></th:block>
+</head>
+<body>
+<div class="app-shell">
+    <div th:replace="fragments/header :: menu"></div>
+
+    <main class="page">
+        <div class="container">
+            <a class="link-back" th:href="@{/user/regulations}">Wróć do regulaminu</a>
+            <div class="page-head">
+                <div class="page-head__copy">
+                    <p class="eyebrow">Krok 2 z 2</p>
+                    <h1>Informacje o danych osobowych</h1>
+                    <p class="lead">Przeczytaj informacje dotyczące przetwarzania danych w systemie rezerwacji.</p>
+                </div>
             </div>
-        </center>
-    </body>
-    <footer>
-        <div th:replace="fragments/footer :: footer"/>
-    </footer>
+
+            <section class="surface panel">
+                <iframe class="document-frame"
+                        title="Informacje RODO"
+                        src="https://docs.google.com/document/d/1xIxqpRonfvVgEbaKFVstjVxcJ1lSKuhg/preview"></iframe>
+                <iframe class="document-frame"
+                        title="Zasady przetwarzania danych"
+                        src="https://docs.google.com/document/d/1o7BGmwhqZwBQ1P-eTNvNWNFxkmi6_GYT/preview"></iframe>
+            </section>
+
+            <form class="legal-actions" th:action="@{/user/registration}" method="get">
+                <label class="check-row" for="accept-rodo">
+                    <input id="accept-rodo" type="checkbox" name="accept" value="accept" required="required"/>
+                    <strong>Zgadzam się na przetwarzanie danych</strong>
+                </label>
+                <button class="btn" type="submit">Przejdź do rejestracji</button>
+            </form>
+        </div>
+    </main>
+
+    <div th:replace="fragments/footer :: footer"></div>
+</div>
+</body>
 </html>

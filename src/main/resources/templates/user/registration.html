@@ -1,84 +1,90 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:form="http://www.w3.org/1999/xhtml">
-    <head>
-        <div th:include="fragments/header :: header-css"/>
-    </head>
-    <body>
-        <div th:include="fragments/header :: menu"/>
-        <center>
-            <h2>Rejestracja konta</h2>
-            <img src="/images/logo.jpg"/>
-            <fieldset class="fieldset" style="margin-left: 35%; margin-right: 35%;">
-                <form:select path="room">
-                    <form:option value="" label="...."/>
-                    <form:options items="${rooms}"/>
-                </form:select>
-                <div>
-                    <form th:object="${userRegistrationModel}" th:action="@{/user/registration}" method="post">
-                        <div align="right">
-                            <p>
-                                Pokój:
-                                <select th:field="*{roomId}" required="true">
-                                    <option value=""/>
-                                    <option th:each="room : ${rooms}"
-                                            th:value="${room.id}"
-                                            th:text="${room.room}+${room.type}"/>
-                                </select>
-                                <label th:if="${#fields.hasErrors('roomId')}" th:errors="*{roomId}"
-                                       style="color:red;font-size:15px"
-                                       class="validation-message"/>
-                            </p>
-                            <p>
-                                Imię: <input type="text" th:field="*{name}" minlength="2" maxlength="30"
-                                             required="true"/>
-                            <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}" style="color:red;font-size:15px"
-                               class="validation-message"/>
-                            </p>
-                            <p>
-                                Nazwisko: <input type="text" th:field="*{surname}" minlength="2" maxlength="30"
-                                                 required="true"/>
-                            <p th:if="${#fields.hasErrors('surname')}" th:errors="*{surname}"
-                               style="color:red;font-size:15px"
-                               class="validation-message"/>
-                            </p>
-                            <p>
-                                Email: <input type="text" th:field="*{email}" required="true"/>
-                            <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}"
-                               style="color:red;font-size:15px"
-                               class="validation-message"/>
-                            </p>
-                            <p>
-                                Login: <input type="text" th:field="*{username}" minlength="3" maxlength="30"
-                                              required="true"/>
-                            <p th:if="${#fields.hasErrors('username')}" th:errors="*{username}"
-                               style="color:red;font-size:15px"
-                               class="validation-message"/>
-                            </p>
-                            <p>
-                                Hasło: <input type="password" th:field="*{password}" minlength="5" maxlength="30"
-                                              required="true"/>
-                            <p th:if="${#fields.hasErrors('password')}" th:errors="*{password}"
-                               style="color:red;font-size:15px"
-                               class="validation-message"/>
-                            </p>
-                            <p>
-                                Powtórz hasło: <input type="password" th:field="*{passwordRepeat}" minlength="5"
-                                                      maxlength="30" required="true"/>
-                            <p th:if="${#fields.hasErrors('passwordRepeat')}" th:errors="*{passwordRepeat}"
-                               style="color:red;font-size:15px"
-                               class="validation-message"/>
-                            </p>
-                            <p style="color:green;font-size:15px">
-                                <span th:text="${successMessage}"/>
-                            </p>
-                        </div>
-                        <input class="btn" type="submit" value="Rejestracja" style="margin-bottom: 20px;"/>
-                    </form>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Rejestracja | BJ Pralnia</title>
+    <th:block th:include="fragments/header :: header-css"></th:block>
+</head>
+<body>
+<div class="app-shell">
+    <div th:replace="fragments/header :: menu"></div>
+
+    <main class="page page--narrow">
+        <div class="container">
+            <a class="link-back" th:href="@{/}">Wróć do logowania</a>
+
+            <div class="page-head">
+                <div class="page-head__copy">
+                    <p class="eyebrow">Nowe konto</p>
+                    <h1>Dołącz do systemu rezerwacji</h1>
+                    <p class="lead">Uzupełnij dane mieszkańca. Po rejestracji zalogujesz się i wybierzesz dogodny termin.</p>
                 </div>
-            </fieldset>
-        </center>
-    </body>
-    <footer>
-        <div th:replace="fragments/footer :: footer"/>
-    </footer>
+            </div>
+
+            <section class="surface form-card">
+                <form class="form-stack" th:object="${userRegistrationModel}" th:action="@{/user/registration}" method="post">
+                    <div class="field">
+                        <label for="roomId">Pokój</label>
+                        <select id="roomId" th:field="*{roomId}" required="required">
+                            <option value="">Wybierz pokój</option>
+                            <option th:each="room : ${rooms}"
+                                    th:value="${room.id}"
+                                    th:text="${room.room}+${room.type}"></option>
+                        </select>
+                        <p class="field-error" th:if="${#fields.hasErrors('roomId')}" th:errors="*{roomId}"></p>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="field">
+                            <label for="name">Imię</label>
+                            <input id="name" type="text" th:field="*{name}" minlength="2" maxlength="30"
+                                   autocomplete="given-name" required="required"/>
+                            <p class="field-error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></p>
+                        </div>
+                        <div class="field">
+                            <label for="surname">Nazwisko</label>
+                            <input id="surname" type="text" th:field="*{surname}" minlength="2" maxlength="30"
+                                   autocomplete="family-name" required="required"/>
+                            <p class="field-error" th:if="${#fields.hasErrors('surname')}" th:errors="*{surname}"></p>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label for="email">Adres e-mail</label>
+                        <input id="email" type="email" th:field="*{email}" autocomplete="email" required="required"/>
+                        <p class="field-error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></p>
+                    </div>
+
+                    <div class="field">
+                        <label for="username">Login</label>
+                        <input id="username" type="text" th:field="*{username}" minlength="3" maxlength="30"
+                               autocomplete="username" required="required"/>
+                        <p class="field-error" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></p>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="field">
+                            <label for="password">Hasło</label>
+                            <input id="password" type="password" th:field="*{password}" minlength="5" maxlength="30"
+                                   autocomplete="new-password" required="required"/>
+                            <p class="field-error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></p>
+                        </div>
+                        <div class="field">
+                            <label for="passwordRepeat">Powtórz hasło</label>
+                            <input id="passwordRepeat" type="password" th:field="*{passwordRepeat}" minlength="5"
+                                   maxlength="30" autocomplete="new-password" required="required"/>
+                            <p class="field-error" th:if="${#fields.hasErrors('passwordRepeat')}"
+                               th:errors="*{passwordRepeat}"></p>
+                        </div>
+                    </div>
+
+                    <div class="alert alert--success" th:if="${successMessage}" th:text="${successMessage}"></div>
+                    <button class="btn btn--block" type="submit">Utwórz konto</button>
+                </form>
+            </section>
+        </div>
+    </main>
+
+    <div th:replace="fragments/footer :: footer"></div>
+</div>
+</body>
 </html>

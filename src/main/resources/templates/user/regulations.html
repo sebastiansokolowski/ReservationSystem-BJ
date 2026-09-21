@@ -1,29 +1,43 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
-    <head>
-        <div th:include="fragments/header :: header-css"/>
-    </head>
-    <body>
-        <div th:include="fragments/header :: menu"/>
-        <center>
-            <h2>Rejestracja konta</h2>
-            <fieldset class="fieldset">
-                <iframe style="width:100%; height: 3500px; border:none; display: block;" src="https://docs.google.com/document/d/1UI-0DS33XgHRHhnsTIaK9tO7vb0ajt7g/preview"></iframe>
-                <iframe style="width:100%; height: 3500px; border:none; display: block;" src="https://docs.google.com/document/d/1egQsALlbZo359mVThlxeOSddmOeLyUln/preview"></iframe>
-            </fieldset>
-            <div style="margin-left: 35%; margin-right: 35%; margin-bottom: 50px;">
-                <form th:action="@{/user/rodo}" method="get">
-                    <div align="right">
-                        <p align="center">
-                            <input type="checkbox" name="accept" value="accept" required="true"/>Akceptuje regulamin
-                        </p>
-                    </div>
-                    <input class="btn" type="submit" value="Dalej" style="margin-bottom: 20px;"/>
-                </form>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Regulamin | BJ Pralnia</title>
+    <th:block th:include="fragments/header :: header-css"></th:block>
+</head>
+<body>
+<div class="app-shell">
+    <div th:replace="fragments/header :: menu"></div>
+
+    <main class="page">
+        <div class="container">
+            <div class="page-head">
+                <div class="page-head__copy">
+                    <p class="eyebrow">Krok 1 z 2</p>
+                    <h1>Regulamin pralni</h1>
+                    <p class="lead">Zapoznaj się z zasadami korzystania z pralni przed utworzeniem konta.</p>
+                </div>
             </div>
-        </center>
-    </body>
-    <footer>
-        <div th:replace="fragments/footer :: footer"/>
-    </footer>
+
+            <section class="surface panel">
+                <iframe class="document-frame"
+                        title="Regulamin korzystania z pralni"
+                        src="https://docs.google.com/document/d/1UI-0DS33XgHRHhnsTIaK9tO7vb0ajt7g/preview"></iframe>
+                <iframe class="document-frame"
+                        title="Dodatkowe zasady korzystania z pralni"
+                        src="https://docs.google.com/document/d/1egQsALlbZo359mVThlxeOSddmOeLyUln/preview"></iframe>
+            </section>
+
+            <form class="legal-actions" th:action="@{/user/rodo}" method="get">
+                <label class="check-row" for="accept-regulations">
+                    <input id="accept-regulations" type="checkbox" name="accept" value="accept" required="required"/>
+                    <strong>Akceptuję regulamin</strong>
+                </label>
+                <button class="btn" type="submit">Dalej: zgody RODO</button>
+            </form>
+        </div>
+    </main>
+
+    <div th:replace="fragments/footer :: footer"></div>
+</div>
+</body>
 </html>
