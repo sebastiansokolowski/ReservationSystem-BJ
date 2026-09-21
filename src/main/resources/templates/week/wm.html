@@ -1,148 +1,106 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.w3.org/1999/xhtml">
+<html lang="pl" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
     <head>
-        <link rel="stylesheet"
-              href="//code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css"/>
-        <script src="//code.jquery.com/jquery-1.10.2.js"/>
-        <script src="//code.jquery.com/ui/1.11.2/jquery-ui.js"/>
-        <div th:include="fragments/header :: header-css"/>
+        <title>Kalendarz pralek | BJ Pralnia</title>
+        <th:block th:include="fragments/header :: header-css"></th:block>
     </head>
     <body>
-        <div th:include="fragments/header :: menu"/>
-        <center>
-            <a th:href="@{/type}">Powrót</a>
-            <h1>
-                Lista na pranie na tydzień <span th:text="${weekFrame}"/>
-            </h1>
-            <p>
-                Liczba wolnych miejsc: <span th:text="${freeDevices}"/>
-            </p>
+        <div class="app-shell">
+            <div th:include="fragments/header :: menu"></div>
+            <main class="page">
+                <div class="container">
+                    <a class="link-back" th:href="@{/type}" href="/type">Wybór urządzenia</a>
+                    <div class="page-head">
+                        <div class="page-head__copy">
+                            <p class="eyebrow">Kalendarz pralni</p>
+                            <h1>Wybierz termin prania</h1>
+                            <p class="lead">Tydzień <strong th:text="${weekFrame}">2026/09/21 - 2026/09/27</strong> · wolnych miejsc: <strong th:text="${freeDevices}">0</strong></p>
+                        </div>
+                        <div class="segmented" aria-label="Rodzaj urządzenia">
+                            <a class="is-active" th:href="@{/wm/week}" href="/wm/week">Pralki</a>
+                            <a th:href="@{/td/week}" href="/td/week">Suszarki</a>
+                        </div>
+                    </div>
 
-            <div sec:authorize="hasAuthority('ADMIN')">
-                <form th:action="@{/admin/wm/week/__${prevWeekId}__}" class="alignleft" style="margin-left:50px">
-                    <input class="btn" type="submit" value="Poprzedni tydzień"/>
-                </form>
-                <form th:action="@{/admin/wm/week/__${nextWeekId}__}" class="alignright"
-                      style="margin-right:50px">
-                    <input class="btn" type="submit" value="Następny tydzień"/>
-                </form>
-            </div>
-            <div sec:authorize="!hasAuthority('ADMIN')">
-                <form th:if="${prevWeekButton}" th:action="@{/wm/week/last}" class="alignleft" style="margin-left:50px">
-                    <input class="btn" type="submit" value="Poprzedni tydzień"/>
-                </form>
-                <form th:if="${nextWeekButton}" th:action="@{/wm/week/}" class="alignright"
-                      style="margin-right:50px">
-                    <input class="btn" type="submit" value="Następny tydzień"/>
-                </form>
-            </div>
+                    <div class="calendar-toolbar">
+                        <div class="calendar-nav" sec:authorize="hasAuthority('ADMIN')">
+                            <a class="btn btn--secondary btn--small" th:href="@{/admin/wm/week/__${prevWeekId}__}">← Poprzedni</a>
+                            <a class="btn btn--secondary btn--small" th:href="@{/admin/wm/week/__${nextWeekId}__}">Następny →</a>
+                        </div>
+                        <div class="calendar-nav" sec:authorize="!hasAuthority('ADMIN')">
+                            <a class="btn btn--secondary btn--small" th:if="${prevWeekButton}" th:href="@{/wm/week/last}">← Poprzedni</a>
+                            <a class="btn btn--secondary btn--small" th:if="${nextWeekButton}" th:href="@{/wm/week/}">Następny →</a>
+                        </div>
+                        <span class="muted">Kliknij termin, aby zobaczyć dostępne pralki.</span>
+                    </div>
 
-            <table width="100%">
-                <tbody>
-                    <tr>
-                        <th align="center">Poniedziałek</th>
-                        <th align="center">Wtorek</th>
-                        <th align="center">Środa</th>
-                        <th align="center">Czwartek</th>
-                        <th align="center">Piątek</th>
-                        <th align="center">Sobota</th>
-                    </tr>
-                    <tr>
-                        <th th:each="dayDate : ${timesWeek[0].dates}">
-                            <span th:text="${dayDate.date}"/>
-                            <div sec:authorize="hasAuthority('ADMIN')">
-                                <fieldset class="fieldset">
-                                    Blokowanie
-                                    <form th:action="@{/admin/wm/week/__${weekId}__/block}" method="post">
-                                        <input type="text" name="date" th:value="${dayDate.date}" hidden="hidden"/>
-                                        <span th:each="device: ${devices}">
-                                            <input type="checkbox" name="deviceIds" th:value="${device.id}"/>
-                                            <span th:text="${device.name}"/>
-                                        </span>
-                                        <br/>
-                                        <input class="btn" type="submit" value="Wyslij"/>
-                                    </form>
-                                </fieldset>
-                                <fieldset class="fieldset">
-                                    Odblokowanie
-                                    <form th:action="@{/admin/wm/week/__${weekId}__/unblock}" method="post">
-                                        <input type="text" name="date" th:value="${dayDate.date}" hidden="hidden"/>
-                                        <span th:each="device: ${devices}">
-                                            <input type="checkbox" name="deviceIds" th:value="${device.id}"/>
-                                            <span th:text="${device.name}"/>
-                                        </span>
-                                        <br/>
-                                        <input class="btn" type="submit" value="Wyslij"/>
-                                    </form>
-                                </fieldset>
-                            </div>
-                        </th>
-                    </tr>
-                    <tr th:each="timeWeek,i : ${timesWeek}">
-                        <th th:each="date : ${timeWeek.dates}" class="time" th:bgcolor="${date.color}"
-                            style="border-radius: 10px; cursor: pointer; text-align: center; opacity: 1;">
-                            <form action="#" th:action="@{/wm/__${date.date}__/__${i.count}__/}" method="get">
-                                <button type="submit"
-                                        style="width: 100%; outline: none; border:none; background-color: transparent; cursor:pointer;">
-                                    <span th:text="${timeWeek.time}"/>
-                                    <br/>
-                                    <br/>
-                                    Wolne pralki: <span th:text="${date.freeDevices}"/>
-                                </button>
-                            </form>
-                        </th>
-                    </tr>
-                </tbody>
-            </table>
-        </center>
-        <div>
-            <table class="alignleft">
-                <tbody>
-                    <tr>
-                        <td>Znaczenie kolorów</td>
-                    </tr>
-                    <tr height="50">
-                        <td bgcolor="#E9E581" align="center" >Wolna pralka</td>
-                        <td bgcolor="#ffdb0c" align="center">Moja pralka</td>
-                        <td bgcolor="#B71427" align="center">Zajęta pralka/Termin nieaktualny</td>
-                    </tr>
-                </tbody>
-            </table>
-            <table class="alignright">
-                <tbody>
-                    <tr>
-                        <td>Zasady:</td>
-                    </tr>
-                    <tr>
-                        <td>- każdemu przysługuje jedna pralka na tydzień</td>
-                    </tr>
-                    <tr>
-                        <td>- lista jest resetowana w każdą niedzielę o 20:00</td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <br/>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+                    <section class="surface calendar-card">
+                        <div class="calendar-scroll">
+                            <table class="calendar-table">
+                                <thead>
+                                    <tr>
+                                        <th>Godzina</th>
+                                        <th th:each="dayDate,day : ${timesWeek[0].dates}">
+                                            <span th:switch="${day.index}">
+                                                <span th:case="0">Poniedziałek</span><span th:case="1">Wtorek</span><span th:case="2">Środa</span>
+                                                <span th:case="3">Czwartek</span><span th:case="4">Piątek</span><span th:case="5">Sobota</span>
+                                            </span>
+                                            <span class="calendar-table__date" th:text="${dayDate.date}">2026/09/21</span>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="timeWeek,i : ${timesWeek}">
+                                        <th class="calendar-table__time" th:text="${timeWeek.time}">16:00 - 17:00</th>
+                                        <td th:each="date : ${timeWeek.dates}">
+                                            <form class="slot-form" th:action="@{/wm/__${date.date}__/__${i.count}__/}" method="get">
+                                                <button class="slot" type="submit"
+                                                        th:classappend="${date.color == '#ffdb0c'} ? 'slot--mine' : (${date.freeDevices > 0} ? 'slot--free' : 'slot--busy')">
+                                                    <span class="slot__state" th:if="${date.color == '#ffdb0c'}">Twój termin</span>
+                                                    <span class="slot__state" th:if="${date.color != '#ffdb0c' and date.freeDevices > 0}">Wolne</span>
+                                                    <span class="slot__state" th:if="${date.color != '#ffdb0c' and date.freeDevices == 0}">Zajęte</span>
+                                                    <span class="slot__count" th:if="${date.freeDevices > 0}" th:text="${'Dostępne: ' + date.freeDevices}">Dostępne</span>
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+
+                    <div class="legend">
+                        <span class="legend__item"><span class="legend__swatch legend__swatch--free"></span> Wolny termin</span>
+                        <span class="legend__item"><span class="legend__swatch legend__swatch--busy"></span> Zajęty lub nieaktualny</span>
+                        <span class="legend__item" sec:authorize="isAuthenticated()"><span class="legend__swatch legend__swatch--mine"></span> Twój termin</span>
+                    </div>
+
+                    <section sec:authorize="hasAuthority('ADMIN')" class="admin-tools">
+                        <h2>Zarządzanie dostępnością</h2>
+                        <p class="muted">Zablokuj lub odblokuj wybrane pralki na cały dzień.</p>
+                        <div class="admin-day-grid">
+                            <details class="admin-day" th:each="dayDate : ${timesWeek[0].dates}">
+                                <summary th:text="${dayDate.date}">Data</summary>
+                                <form th:action="@{/admin/wm/week/__${weekId}__/block}" method="post" data-confirm="Zablokować wybrane pralki na cały dzień?">
+                                    <input type="hidden" name="date" th:value="${dayDate.date}"/>
+                                    <div class="device-checks">
+                                        <label th:each="device : ${devices}"><input type="checkbox" name="deviceIds" th:value="${device.id}"/> <span th:text="${device.name}">Urządzenie</span></label>
+                                    </div>
+                                    <button class="btn btn--danger btn--small" type="submit">Zablokuj</button>
+                                </form>
+                                <form th:action="@{/admin/wm/week/__${weekId}__/unblock}" method="post" data-confirm="Odblokować wybrane pralki?">
+                                    <div class="device-checks">
+                                        <input type="hidden" name="date" th:value="${dayDate.date}"/>
+                                        <label th:each="device : ${devices}"><input type="checkbox" name="deviceIds" th:value="${device.id}"/> <span th:text="${device.name}">Urządzenie</span></label>
+                                    </div>
+                                    <button class="btn btn--secondary btn--small" type="submit">Odblokuj</button>
+                                </form>
+                            </details>
+                        </div>
+                    </section>
+                </div>
+            </main>
+            <div th:replace="fragments/footer :: footer"></div>
         </div>
-        <script type="text/javascript">
-        $(function () {
-            $('.time').mouseover(function () {
-                $(this).animate({
-                opacity: 0.75
-                }, 20);
-            });
-            $('.time').mouseout(function () {
-                $(this).animate({
-                opacity: 1
-                }, 20);
-            });
-        });
-        </script>
     </body>
-    <footer>
-        <div th:replace="fragments/footer :: footer"/>
-    </footer>
 </html>

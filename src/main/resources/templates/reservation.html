@@ -1,115 +1,100 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.w3.org/1999/xhtml">
+<html lang="pl" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
     <head>
-        <div th:include="fragments/header :: header-css"/>
+        <title>Wybór urządzenia | BJ Pralnia</title>
+        <th:block th:include="fragments/header :: header-css"></th:block>
     </head>
     <body>
-        <div th:include="fragments/header :: menu"/>
-        <center>
-            <a th:href="${backPath}">Powrót</a>
-            <h1>
-                <span th:text="${dayName}"/> <span th:text="${date}"/>
-                <br/>
-                <span th:text="${time}"/>
-            </h1>
-            <p>
-                Liczba wolnych miejsc:
-                <span th:text="${freeDevices}"/>
-            </p>
-            <table>
-                <tbody>
-                    <tr>
-                        <th th:each="device : ${devices}" style="border-radius: 7px;vertical-align:top"
-                            th:bgcolor="${device.color}">
-                            <span th:text="${device.name}"/>
-                            <br/>
-                            <div th:switch="${device.deviceType.name()}">
-                                <p th:case="WASHING_MACHINE">
-                                    <img style="background-color:#FFFFFF;width: 200px" src="/images/washer.png"/>
-                                </p>
-                                <p th:case="TUMBLE_DRYER">
-                                    <img style="background-color:#FFFFFF;width: 200px" src="/images/dryer.png"/>
-                                </p>
+        <div class="app-shell">
+            <div th:include="fragments/header :: menu"></div>
+            <main class="page">
+                <div class="container">
+                    <a class="link-back" th:href="${backPath}" href="/type">Wróć do kalendarza</a>
+                    <div class="page-head">
+                        <div class="page-head__copy">
+                            <p class="eyebrow">Dostępne urządzenia</p>
+                            <h1>Wybierz urządzenie</h1>
+                            <p class="lead">Sprawdź szczegóły terminu i zarezerwuj wolne urządzenie.</p>
+                        </div>
+                        <div class="token-badge">Wolne urządzenia: <span th:text="${freeDevices}">0</span></div>
+                    </div>
+
+                    <section class="surface panel">
+                        <h2>Wybrany termin</h2>
+                        <div class="reservation-summary">
+                            <div class="summary-item"><span>Dzień</span><strong><span th:text="${dayName}">Poniedziałek</span><span th:text="${date}">2026/09/21</span></strong></div>
+                            <div class="summary-item"><span>Godzina</span><strong th:text="${time}">18:00 - 19:00</strong></div>
+                        </div>
+                    </section>
+
+                    <div class="alert alert--danger" th:if="${errorMessage}">
+                        <span th:text="${errorMessage}">Nie udało się wykonać operacji.</span>
+                    </div>
+
+                    <section class="device-grid" aria-label="Urządzenia">
+                        <article class="device-card" th:each="device : ${devices}"
+                                 th:classappend="${device.type.name() == 'FREE'} ? 'device-card--free' : (${device.type.name() == 'MY'} ? 'device-card--mine' : (${device.type.name() == 'PAST'} ? 'device-card--past' : (${device.type.name() == 'UNAVAILABLE'} ? 'device-card--unavailable' : 'device-card--busy'))) ">
+                            <span class="device-card__status" th:switch="${device.type.name()}">
+                                <span th:case="FREE">Wolne</span>
+                                <span th:case="MY">Twój termin</span>
+                                <span th:case="RESERVED">Zajęte</span>
+                                <span th:case="PAST">Termin minął</span>
+                                <span th:case="UNAVAILABLE">Niedostępne</span>
+                            </span>
+
+                            <img class="device-card__image" th:if="${device.deviceType.name() == 'WASHING_MACHINE'}"
+                                 th:src="@{/images/washer.png}" src="/images/washer.png" alt="Pralka"/>
+                            <img class="device-card__image" th:if="${device.deviceType.name() == 'TUMBLE_DRYER'}"
+                                 th:src="@{/images/dryer.png}" src="/images/dryer.png" alt="Suszarka"/>
+
+                            <div class="device-card__name" th:text="${device.name}">Urządzenie</div>
+                            <div class="device-card__owner" th:if="${device.user != null}">
+                                <span th:if="${device.user.name != null}" th:text="${device.user.name}">Mieszkaniec</span>
+                                <span th:if="${device.user.room != null}"> · pokój <span th:text="${device.user.room.room}">17</span><span th:text="${device.user.room.type}">B</span></span>
                             </div>
-                            <div th:switch="${device.type.name()}">
-                                <p th:case="RESERVED">
-                                    <span th:if="${device.user.name != null}" th:text="${device.user.name}"/>
-                                    <br/>
-                                    <span th:text="${device.user.room.room}+${device.user.room.type}"/>
-                                </p>
-                                <p th:case="MY">
-                                    <span th:if="${device.user.name != null}" th:text="${device.user.name}"/>
-                                    <br/>
-                                    <span th:text="${device.user.room.room}+${device.user.room.type}"/>
-                                </p>
-                                <p th:case="PAST">
-                                    <span>-<br/>-</span>
-                                </p>
-                                <p th:case="FREE">
-                                    <span>-<br/>-</span>
-                                </p>
-                                <p th:case="UNAVAILABLE">
-                                    <span>BLOKADA<br/><br/></span>
-                                </p>
+                            <div class="device-card__owner" th:if="${device.user == null}">
+                                <span th:if="${device.type.name() == 'FREE'}">Gotowe do rezerwacji</span>
+                                <span th:if="${device.type.name() == 'UNAVAILABLE'}">Zablokowane przez administrację</span>
                             </div>
-                            <div th:switch="${device.type.name()}">
-                                <p th:case="FREE">
-                                <div sec:authorize="hasAnyAuthority('USER','ADMIN','GROUP')">
-                                    <div th:if="${user.tokens &gt; 0}">
-                                        <form th:action="@{register}" method="post">
-                                            <input type="text" name="deviceId" th:value="${device.id}" hidden="hidden"/>
-                                            <input class="btn" type="submit" value="Zarezerwuj"/>
+
+                            <div class="device-card__actions">
+                                <div th:if="${device.type.name() == 'FREE'}">
+                                    <div sec:authorize="hasAnyAuthority('USER','ADMIN','GROUP')" th:if="${user.tokens > 0}">
+                                        <form th:action="@{register}" method="post" data-confirm="Potwierdzić rezerwację tego urządzenia w wybranym terminie?">
+                                            <input type="hidden" name="deviceId" th:value="${device.id}"/>
+                                            <button class="btn btn--block" type="submit">Zarezerwuj</button>
+                                        </form>
+                                    </div>
+                                    <div sec:authorize="isAnonymous()">
+                                        <a class="btn btn--block" th:href="@{/login}" href="/login">Zaloguj się, aby zarezerwować</a>
+                                    </div>
+                                    <div sec:authorize="hasAuthority('ADMIN')">
+                                        <form th:action="@{block}" method="post" data-confirm="Zablokować to urządzenie w wybranym terminie?">
+                                            <input type="hidden" name="deviceId" th:value="${device.id}"/>
+                                            <button class="btn btn--danger btn--block" type="submit">Zablokuj termin</button>
                                         </form>
                                     </div>
                                 </div>
-                                <div sec:authorize="hasAuthority('ADMIN')">
-                                    <form th:action="@{block}" method="post">
-                                        <input type="text" name="deviceId" th:value="${device.id}" hidden="hidden"/>
-                                        <input class="btn" type="submit" value="Blokada"/>
+
+                                <div th:if="${device.type.name() == 'MY'}" sec:authorize="hasAnyAuthority('USER','ADMIN')">
+                                    <form th:action="@{unregister}" method="post" data-confirm="Czy na pewno chcesz anulować tę rezerwację?">
+                                        <input type="hidden" name="reservationId" th:value="${device.reservationId}"/>
+                                        <button class="btn btn--danger btn--block" type="submit">Anuluj rezerwację</button>
                                     </form>
                                 </div>
-                                </p>
-                                <p th:case="MY">
-                                <div sec:authorize="hasAnyAuthority('USER','ADMIN')">
-                                    <form th:action="@{unregister}" method="post">
-                                        <input type="text" name="reservationId" th:value="${device.reservationId}"
-                                               hidden="hidden"/>
-                                        <input class="btn" type="submit" value="Wyrejestruj"/>
+
+                                <div th:if="${device.type.name() == 'UNAVAILABLE' or device.type.name() == 'RESERVED'}" sec:authorize="hasAuthority('ADMIN')">
+                                    <form th:action="@{remove}" method="post" data-confirm="Usunąć tę rezerwację lub blokadę?">
+                                        <input type="hidden" name="reservationId" th:value="${device.reservationId}"/>
+                                        <button class="btn btn--danger btn--block" type="submit">Usuń wpis</button>
                                     </form>
                                 </div>
-                                </p>
-                                <p th:case="UNAVAILABLE">
-                                <div sec:authorize="hasAuthority('ADMIN')">
-                                    <form th:action="@{remove}" method="post">
-                                        <input type="text" name="reservationId" th:value="${device.reservationId}"
-                                               hidden="hidden"/>
-                                        <input class="btn" type="submit" value="Usuń"/>
-                                    </form>
-                                </div>
-                                </p>
-                                <p th:case="RESERVED">
-                                <div sec:authorize="hasAuthority('ADMIN')">
-                                    <form th:action="@{remove}" method="post">
-                                        <input type="text" name="reservationId" th:value="${device.reservationId}"
-                                               hidden="hidden"/>
-                                        <input class="btn" type="submit" value="Usuń"/>
-                                    </form>
-                                </div>
-                                </p>
                             </div>
-                        </th>
-                    </tr>
-                </tbody>
-            </table>
-            <p style="color:red;font-size:15px">
-            <span th:text="${errorMessage}"/>
-            </p>
-        </center>
+                        </article>
+                    </section>
+                </div>
+            </main>
+            <div th:replace="fragments/footer :: footer"></div>
+        </div>
     </body>
-    <footer>
-        <a href="https://www.flaticon.com/free-icons/washer" title="washer icons">Washer icons created by xnimrodx - Flaticon</a>
-        <br/>
-        <a href="https://www.flaticon.com/free-icons/dryer" title="dryer icons">Dryer icons created by photo3idea_studio - Flaticon</a>
-        <div th:replace="fragments/footer :: footer"/>
-    </footer>
 </html>
