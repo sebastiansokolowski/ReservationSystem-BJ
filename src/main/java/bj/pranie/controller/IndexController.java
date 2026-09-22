@@ -16,9 +16,6 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class IndexController {
 
-    @Value("${holidays}")
-    private boolean holidays;
-
     @Value("${messagePl:#{''}}")
     private String messagePl;
 
@@ -44,7 +41,6 @@ public class IndexController {
         }
 
         ModelAndView modelAndView = new ModelAndView("index");
-        modelAndView.addObject("holidays", holidays);
         String localizedMessage = "en".equals(LocaleContextHolder.getLocale().getLanguage()) ? messageEng : messagePl;
         if (localizedMessage != null && !localizedMessage.trim().isEmpty()){
             modelAndView.addObject("message", localizedMessage);
