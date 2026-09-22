@@ -81,6 +81,17 @@ img {
     max-width: 100%;
 }
 
+.visually-hidden {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+}
+
 .ui-icon::before {
     display: block;
     font-family: "BJ UIcons";
@@ -1049,6 +1060,11 @@ h3 {
     color: #fff;
 }
 
+.slot--past {
+    background: #eef2f7;
+    color: var(--muted);
+}
+
 .slot__state {
     font-size: 0.78rem;
     font-weight: 850;
@@ -1092,6 +1108,11 @@ h3 {
 
 .legend__swatch--mine {
     background: var(--blue-600);
+}
+
+.legend__swatch--past {
+    border: 1px solid #dfe5ed;
+    background: #eef2f7;
 }
 
 .admin-tools {

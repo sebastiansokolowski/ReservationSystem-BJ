@@ -150,6 +150,7 @@ public abstract class BaseWeekController {
                 date.setDate(localDate.toString(dateFormat));
 
                 boolean isPast = TimeUtil.isPast(reservationTime.getFromTime(), localDate);
+                date.setPast(isPast);
 
                 List<Reservation> reservations = getReservationsByReservationTimeAndDateAndDeviceType(reservationTime.getId(), localDate, getDeviceType());
 

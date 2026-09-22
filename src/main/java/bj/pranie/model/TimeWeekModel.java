@@ -30,6 +30,7 @@ public class TimeWeekModel {
         String date;
         String color;
         int freeDevices;
+        boolean past;
 
         public String getDate() {
             return date;
@@ -53,6 +54,14 @@ public class TimeWeekModel {
 
         public void setFreeDevices(int freeDevices) {
             this.freeDevices = freeDevices;
+        }
+
+        public boolean isPast() {
+            return past;
+        }
+
+        public void setPast(boolean past) {
+            this.past = past;
         }
     }
 }
