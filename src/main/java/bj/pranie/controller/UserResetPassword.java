@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.mail.MessagingException;
 import javax.validation.Valid;
@@ -51,12 +52,12 @@ public class UserResetPassword {
     @RequestMapping(value = "/resetPassword", method = RequestMethod.POST)
     public ModelAndView resetPassword(@RequestParam String resetPasswordKey,
                                       @ModelAttribute("resetPasswordModel") @Valid ResetPasswordModel resetPasswordModel,
-                                      BindingResult bindingResult) throws MessagingException {
+                                      BindingResult bindingResult,
+                                      RedirectAttributes redirectAttributes) throws MessagingException {
         ModelAndView modelAndView = new ModelAndView();
 
         if (!isResetKeyValid(resetPasswordKey)) {
-            modelAndView.setViewName("user/invalidToken");
-            return modelAndView;
+            return new ModelAndView("redirect:/user/invalidToken");
         }
 
         if (!resetPasswordModel.getNewPassword().equals(resetPasswordModel.getNewPasswordRepeat())) {
@@ -72,7 +73,8 @@ public class UserResetPassword {
 
             userDao.save(user);
 
-            modelAndView.addObject("successMessage", messageSource.getMessage("success.reset", null, LocaleContextHolder.getLocale()));
+            redirectAttributes.addFlashAttribute("successMessage", messageSource.getMessage("success.reset", null, LocaleContextHolder.getLocale()));
+            return new ModelAndView("redirect:/login");
         }
 
         modelAndView.addObject("resetPasswordKey", resetPasswordKey);

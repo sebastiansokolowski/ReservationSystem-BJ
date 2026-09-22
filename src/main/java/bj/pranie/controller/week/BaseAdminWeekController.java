@@ -50,8 +50,7 @@ public abstract class BaseAdminWeekController extends BaseWeekController {
     @RequestMapping(path = "/{weekId}/block", method = RequestMethod.POST)
     public String blockDay(@PathVariable String weekId,
                            @RequestParam String date,
-                           @RequestParam(defaultValue = "") String[] deviceIds,
-                           Model model) throws ParseException {
+                           @RequestParam(defaultValue = "") String[] deviceIds) throws ParseException {
         java.sql.Date sqlDate = new java.sql.Date(dateFormat.parseDateTime(date).getMillis());
 
         List<Long> deviceIdsToBlock = parseStringArratToLongList(deviceIds);
@@ -59,15 +58,13 @@ public abstract class BaseAdminWeekController extends BaseWeekController {
         removeUsersRegistrations(sqlDate, deviceIdsToBlock);
         makeReservations(sqlDate, deviceIdsToBlock);
 
-        setModel(weekId, model);
-        return getWeekView();
+        return redirectToWeek(weekId);
     }
 
     @RequestMapping(path = "/{weekId}/unblock", method = RequestMethod.POST)
     public String unblockDay(@PathVariable String weekId,
                              @RequestParam String date,
-                             @RequestParam(defaultValue = "") String[] deviceIds,
-                             Model model) throws ParseException {
+                             @RequestParam(defaultValue = "") String[] deviceIds) throws ParseException {
         java.sql.Date sqlDate = new java.sql.Date(dateFormat.parseDateTime(date).getMillis());
 
         List<Long> deviceIdsToUnlock = parseStringArratToLongList(deviceIds);
@@ -86,8 +83,7 @@ public abstract class BaseAdminWeekController extends BaseWeekController {
             reservationDao.delete(reservation.getId());
         }
 
-        setModel(weekId, model);
-        return getWeekView();
+        return redirectToWeek(weekId);
     }
 
     public void setModel(String weekId, Model model) throws ParseException {
@@ -99,6 +95,10 @@ public abstract class BaseAdminWeekController extends BaseWeekController {
     }
 
     // private
+
+    private String redirectToWeek(String weekId) {
+        return String.format("redirect:/admin/%s/week/%s", getDeviceType().getPathName(), weekId);
+    }
 
     private List<Long> parseStringArratToLongList(String[] array) {
         List<Long> result = new ArrayList<>();

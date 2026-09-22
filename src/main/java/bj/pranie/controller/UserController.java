@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -64,7 +65,9 @@ public class UserController {
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
     @RequestMapping(value = "/settings", method = RequestMethod.POST)
-    public ModelAndView saveUserSettings(@ModelAttribute("userSettingsModel") @Valid UserSettingsModel userSettingsModel, BindingResult bindingResult) {
+    public ModelAndView saveUserSettings(@ModelAttribute("userSettingsModel") @Valid UserSettingsModel userSettingsModel,
+                                         BindingResult bindingResult,
+                                         RedirectAttributes redirectAttributes) {
         ModelAndView modelAndView = new ModelAndView();
 
         User user = userAuthenticatedService.getAuthenticatedUser();
@@ -106,7 +109,8 @@ public class UserController {
 
             userDao.save(user);
 
-            modelAndView.addObject("successMessage", message("success.settings"));
+            redirectAttributes.addFlashAttribute("successMessage", message("success.settings"));
+            return new ModelAndView("redirect:/user/settings");
         }
 
         modelAndView.addObject("user", userAuthenticatedService.getAuthenticatedUser());
@@ -122,7 +126,9 @@ public class UserController {
     }
 
     @RequestMapping(value = "/registration", method = RequestMethod.POST)
-    public ModelAndView createUser(@ModelAttribute("userRegistrationModel") @Valid UserRegistrationModel userRegistrationModel, BindingResult bindingResult) {
+    public ModelAndView createUser(@ModelAttribute("userRegistrationModel") @Valid UserRegistrationModel userRegistrationModel,
+                                   BindingResult bindingResult,
+                                   RedirectAttributes redirectAttributes) {
         ModelAndView modelAndView = new ModelAndView();
 
         User userExist = userDao.findByEmail(userRegistrationModel.getEmail());
@@ -159,7 +165,8 @@ public class UserController {
 
             userDao.save(user);
 
-            modelAndView.addObject("successMessage", message("success.registration"));
+            redirectAttributes.addFlashAttribute("successMessage", message("success.registration"));
+            return new ModelAndView("redirect:/user/registration");
         }
         modelAndView.addObject("rooms", getRegistrationRooms());
 

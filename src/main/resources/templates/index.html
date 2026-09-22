@@ -33,6 +33,8 @@
                     <h2 id="login-title" th:text="#{login.heading}">Zaloguj się</h2>
                     <p class="muted" th:text="#{login.lead}">Wpisz swoje dane, aby przejść do kalendarza.</p>
 
+                    <div class="alert alert--success" th:if="${successMessage}" th:text="${successMessage}"></div>
+
                     <div class="alert alert--danger"
                          th:if="${session[SPRING_SECURITY_LAST_EXCEPTION] != null and session[SPRING_SECURITY_LAST_EXCEPTION].message != null}"
                          th:with="errorMsg=${session[SPRING_SECURITY_LAST_EXCEPTION].message}">

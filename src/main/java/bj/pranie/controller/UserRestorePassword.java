@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
@@ -52,7 +53,8 @@ public class UserRestorePassword {
 
     @RequestMapping(value = "/restorePassword", method = RequestMethod.POST)
     public ModelAndView restorePassword(@RequestHeader String host, @ModelAttribute("restorePasswordModel") @Valid RestorePasswordModel restorePasswordModel,
-                                        BindingResult bindingResult) throws MessagingException {
+                                        BindingResult bindingResult,
+                                        RedirectAttributes redirectAttributes) throws MessagingException {
         ModelAndView modelAndView = new ModelAndView();
 
         User user = userDao.findByEmail(restorePasswordModel.getEmail());
@@ -66,8 +68,8 @@ public class UserRestorePassword {
 
                 Locale locale = LocaleContextHolder.getLocale();
                 sendMail(user, resetPasswordKey, host, locale);
-                modelAndView.addObject("host", host);
-                modelAndView.addObject("successMessage", messageSource.getMessage("success.restore", null, locale));
+                redirectAttributes.addFlashAttribute("successMessage", messageSource.getMessage("success.restore", null, locale));
+                return new ModelAndView("redirect:/user/restorePassword");
             } else {
                 bindingResult.rejectValue("email", "validation.email.notFound");
             }
