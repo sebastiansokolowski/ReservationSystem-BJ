@@ -65,7 +65,7 @@
                     </div>
 
                     <div class="alert alert--info" th:if="${message}" th:utext="${message}"></div>
-                    <div class="alert alert--info" th:if="${holidays}" th:text="#{login.holidays}">
+                    <div class="alert alert--info" th:if="${holidays and message == null}" th:text="#{login.holidays}">
                         Tryb wakacyjny jest aktywny. Zaloguj się numerem pokoju; domyślne hasło to „bursa”.
                     </div>
                 </div>

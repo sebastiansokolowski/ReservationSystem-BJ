@@ -19,11 +19,11 @@ public class IndexController {
     @Value("${holidays}")
     private boolean holidays;
 
-    @Value("${message:#{''}}")
-    private String message;
+    @Value("${messagePl:#{''}}")
+    private String messagePl;
 
-    @Value("${messageEn:#{''}}")
-    private String messageEn;
+    @Value("${messageEng:#{''}}")
+    private String messageEng;
 
     @Autowired
     private UserAuthenticatedService userAuthenticatedService;
@@ -45,8 +45,8 @@ public class IndexController {
 
         ModelAndView modelAndView = new ModelAndView("index");
         modelAndView.addObject("holidays", holidays);
-        String localizedMessage = "en".equals(LocaleContextHolder.getLocale().getLanguage()) ? messageEn : message;
-        if (localizedMessage != null && !localizedMessage.isEmpty()){
+        String localizedMessage = "en".equals(LocaleContextHolder.getLocale().getLanguage()) ? messageEng : messagePl;
+        if (localizedMessage != null && !localizedMessage.trim().isEmpty()){
             modelAndView.addObject("message", localizedMessage);
         }
         return modelAndView;
