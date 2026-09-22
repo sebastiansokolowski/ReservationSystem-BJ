@@ -48,9 +48,12 @@
                     </section>
 
                     <section class="feature-strip" aria-label="Zasady rezerwacji" th:attr="aria-label=#{type.rules}">
-                        <div class="feature-tile"><strong th:text="#{type.rule.weeklyLimit}">Jedna pralka na tydzień</strong><span th:text="#{type.rule.weeklyLimitText}">Każdemu mieszkańcowi przysługuje jedna rezerwacja pralki w tygodniu.</span></div>
-                        <div class="feature-tile"><strong th:text="#{type.rule.reset}">Reset w niedzielę o 20:00</strong><span th:text="#{type.rule.resetText}">Lista jest resetowana w każdą niedzielę o 20:00.</span></div>
-                        <div class="feature-tile"><strong th:text="#{type.rule.calendar}">Tygodniowy kalendarz</strong><span th:text="#{type.rule.calendarText}">Wybierz dogodny termin spośród dostępnych godzin.</span></div>
+                        <div class="feature-tile"><strong th:text="#{type.rule.weeklyLimit}">Tokeny na pralki i suszarki</strong><span th:text="#{type.rule.weeklyLimitText(${tokensPerWeek})}">Każdy mieszkaniec otrzymuje cotygodniową pulę tokenów do wykorzystania na pralki lub suszarki.</span></div>
+                        <div class="feature-tile"><strong th:text="#{type.rule.reset(${resetTime})}">Reset w niedzielę o 20:00</strong><span th:text="#{type.rule.resetText(${resetTime})}">Pula tokenów jest odnawiana w każdą niedzielę o 20:00.</span></div>
+                        <div class="feature-tile">
+                            <strong th:text="#{type.rule.fifteenMinutes}">Zasada 15 minut</strong>
+                            <span th:text="#{type.rule.fifteenMinutesText}">Jeśli osoba rezerwująca nie pojawi się w ciągu 15 minut od rozpoczęcia terminu, pralka jest uznawana za wolną.</span>
+                        </div>
                     </section>
                 </div>
             </main>
