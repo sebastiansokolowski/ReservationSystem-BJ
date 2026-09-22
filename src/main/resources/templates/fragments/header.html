@@ -43,6 +43,10 @@
                             <span class="topnav__icon ui-icon ui-icon--document" aria-hidden="true"></span>
                             <span th:text="#{nav.regulations}">Regulamin</span>
                         </a>
+                        <a class="topnav__link" th:href="@{/contact}" href="/contact">
+                            <span class="topnav__icon ui-icon ui-icon--residents" aria-hidden="true"></span>
+                            <span th:text="#{nav.contact}">Kontakt</span>
+                        </a>
                         <a class="topnav__link" sec:authorize="hasAuthority('ADMIN')"
                            th:href="@{/admin/users}" href="/admin/users">
                             <span class="topnav__icon ui-icon ui-icon--users" aria-hidden="true"></span>
@@ -104,6 +108,10 @@
                             <a th:href="@{/regulations}" href="/regulations">
                                 <span class="mobile-menu__nav-icon ui-icon ui-icon--document" aria-hidden="true"></span>
                                 <span th:text="#{nav.regulations}">Regulamin</span>
+                            </a>
+                            <a th:href="@{/contact}" href="/contact">
+                                <span class="mobile-menu__nav-icon ui-icon ui-icon--residents" aria-hidden="true"></span>
+                                <span th:text="#{nav.contact}">Kontakt</span>
                             </a>
                             <a sec:authorize="hasAuthority('ADMIN')" th:href="@{/admin/users}" href="/admin/users">
                                 <span class="mobile-menu__nav-icon ui-icon ui-icon--users" aria-hidden="true"></span>

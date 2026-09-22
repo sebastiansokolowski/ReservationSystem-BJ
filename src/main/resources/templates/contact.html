@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pl" th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="#{title.contact}">Kontakt | BJ Pralnia</title>
+    <th:block th:include="fragments/header :: header-css"></th:block>
+</head>
+<body>
+<div class="app-shell">
+    <div th:replace="fragments/header :: menu"></div>
+
+    <main class="page page--narrow">
+        <div class="container">
+            <a class="link-back" th:href="@{/type}" href="/type" th:text="#{common.backToDashboard}">Wróć do panelu</a>
+
+            <div class="page-head">
+                <div class="page-head__copy">
+                    <p class="eyebrow" th:text="#{contact.eyebrow}">Kontakt</p>
+                    <h1 th:text="#{contact.heading}">Skontaktuj się z nami</h1>
+                    <p class="lead" th:text="#{contact.lead}">Masz pytanie dotyczące pralni lub rezerwacji? Napisz do nas przez Facebooka albo e-mail.</p>
+                </div>
+            </div>
+
+            <section class="contact-options" aria-label="Kontakt" th:attr="aria-label=#{contact.eyebrow}">
+                <a class="surface contact-option" href="https://m.facebook.com/bursa.jagiellonska"
+                   target="_blank" rel="noopener noreferrer">
+                    <span class="contact-option__icon ui-icon ui-icon--residents" aria-hidden="true"></span>
+                    <span class="contact-option__copy">
+                        <strong>Facebook</strong>
+                        <span th:text="#{contact.facebookHint}">Preferowany kanał kontaktu</span>
+                    </span>
+                    <span class="contact-option__arrow" aria-hidden="true">→</span>
+                    <span class="visually-hidden" th:text="#{contact.facebookAction}">Otwórz profil Bursy Jagiellońskiej</span>
+                </a>
+
+                <a class="surface contact-option" href="mailto:bjpranie@gmail.com">
+                    <span class="contact-option__icon ui-icon ui-icon--document" aria-hidden="true"></span>
+                    <span class="contact-option__copy">
+                        <strong>E-mail</strong>
+                        <span>bjpranie@gmail.com</span>
+                    </span>
+                    <span class="contact-option__arrow" aria-hidden="true">→</span>
+                </a>
+            </section>
+        </div>
+    </main>
+
+    <div th:replace="fragments/footer :: footer"></div>
+</div>
+</body>
+</html>

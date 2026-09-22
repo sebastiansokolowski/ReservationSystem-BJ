@@ -919,6 +919,62 @@ h3 {
     font-size: 0.8rem;
 }
 
+.contact-options {
+    display: grid;
+    gap: 14px;
+}
+
+.contact-option {
+    display: grid;
+    grid-template-columns: 48px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 16px;
+    padding: 20px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    color: var(--ink);
+    transition: border-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
+}
+
+.contact-option:hover {
+    border-color: #b8d8f8;
+    box-shadow: var(--shadow-sm);
+    color: var(--ink);
+    transform: translateY(-1px);
+}
+
+.contact-option__icon {
+    display: grid;
+    width: 48px;
+    height: 48px;
+    place-items: center;
+    border-radius: 13px;
+    background: var(--blue-100);
+    color: var(--blue-700);
+    font-size: 24px;
+}
+
+.contact-option__copy strong,
+.contact-option__copy span {
+    display: block;
+}
+
+.contact-option__copy strong {
+    font-size: 0.98rem;
+}
+
+.contact-option__copy span {
+    margin-top: 2px;
+    color: var(--muted);
+    font-size: 0.82rem;
+}
+
+.contact-option__arrow {
+    color: var(--blue-700);
+    font-size: 1.2rem;
+    font-weight: 800;
+}
+
 /* Calendar */
 .calendar-toolbar {
     display: flex;
